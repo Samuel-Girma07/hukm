@@ -125,14 +125,6 @@ export function SiteSidebar(): React.ReactElement {
 
         <div className="mb-4 flex flex-col items-center gap-1.5">
           <LanguageToggle variant="compact" />
-          <DockNavItem
-            href="/admin"
-            label={t("nav.admin")}
-            active={pathname.startsWith("/admin")}
-            containerRef={navRef}
-          >
-            <Icon name="settings" size={18} />
-          </DockNavItem>
           <form action={logout} className="w-full">
             <button
               type="submit"
@@ -265,14 +257,6 @@ export function SiteSidebar(): React.ReactElement {
 
             <div className="flex items-center justify-between gap-2 border-t border-[rgb(var(--border-subtle))] px-3 py-3">
               <LanguageToggle variant="compact" />
-              <Link
-                href="/admin"
-                onClick={() => setDrawerOpen(false)}
-                className="btn-ghost"
-              >
-                <Icon name="settings" size={16} />
-                <span>{t("nav.admin")}</span>
-              </Link>
               <form action={logout} className="ml-auto">
                 <button
                   type="submit"
