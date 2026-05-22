@@ -217,6 +217,8 @@ export function ScenarioForm(): React.ReactElement {
   function handleCancel(): void {
     setCancelling(true);
     abortRef.current?.abort();
+    setSubmitting(false);
+    setCancelling(false);
   }
 
   const sendDisabled =
