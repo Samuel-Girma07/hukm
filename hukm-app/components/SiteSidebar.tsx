@@ -133,10 +133,10 @@ export function SiteSidebar(): React.ReactElement {
           >
             <Icon name="settings" size={18} />
           </DockNavItem>
-          <form action={logout}>
+          <form action={logout} className="relative w-[45px] h-[45px]">
             <button
               type="submit"
-              className="Btn"
+              className="Btn absolute left-0"
               title="Logout"
               aria-label="Logout"
             >
@@ -271,10 +271,10 @@ export function SiteSidebar(): React.ReactElement {
                 <Icon name="settings" size={16} />
                 <span>{t("nav.admin")}</span>
               </Link>
-              <form action={logout} className="ml-auto">
+              <form action={logout} className="ml-auto relative w-[45px] h-[45px]">
             <button
               type="submit"
-              className="Btn"
+              className="Btn absolute right-0"
               title="Logout"
               aria-label="Logout"
             >

@@ -36,6 +36,9 @@ export async function signup(formData: FormData) {
     redirect('/signup?error=' + encodeURIComponent(error.message))
   }
 
+  // Attempt to sign in immediately after sign up to establish the session
+  await supabase.auth.signInWithPassword(data)
+
   revalidatePath('/', 'layout')
   redirect('/')
 }

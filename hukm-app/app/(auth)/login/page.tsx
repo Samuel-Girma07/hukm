@@ -1,4 +1,5 @@
 import { login } from '../actions'
+import { HukmMarkMetallic } from '@/components/HukmMarkMetallic'
 
 export default function LoginPage({
   searchParams,
@@ -6,57 +7,70 @@ export default function LoginPage({
   searchParams: { error?: string }
 }) {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm rounded-xl border border-surface-variant bg-surface p-8 shadow-sm">
-        <h1 className="mb-6 text-center font-display text-2xl font-semibold text-on-surface">
-          Sign In to HUKM
-        </h1>
+    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-background p-4">
+      {/* Animated background blobs */}
+      <div className="pointer-events-none absolute -left-[10%] -top-[20%] h-[60%] w-[60%] rounded-full bg-[rgb(var(--accent-blue))]/20 blur-[120px] animate-pulse" />
+      <div className="pointer-events-none absolute -right-[10%] bottom-[0%] h-[50%] w-[50%] rounded-full bg-[rgb(var(--accent-red))]/20 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+
+      <div className="relative z-10 w-full max-w-md rounded-[24px] border border-white/5 bg-[rgb(var(--surface))]/60 p-8 shadow-2xl backdrop-blur-xl">
+        <div className="mb-8 flex flex-col items-center">
+          <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-[16px] shadow-lg bg-gradient-to-br from-white/10 to-transparent border border-white/10">
+            <HukmMarkMetallic size={40} className="bg-transparent ring-0" />
+          </div>
+          <h1 className="text-center font-display text-3xl font-bold tracking-tight text-on-surface">
+            Welcome back
+          </h1>
+          <p className="mt-2 text-center text-sm text-on-surface-variant">
+            Enter your credentials to access your account
+          </p>
+        </div>
+
         {searchParams?.error && (
-          <div className="mb-4 rounded bg-error/10 p-3 text-sm text-error">
+          <div className="mb-6 rounded-xl border border-error/20 bg-error/10 p-4 text-sm text-error shadow-sm">
             {searchParams.error}
           </div>
         )}
-        <form className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
+
+        <form className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-on-surface" htmlFor="email">
-              Email
+              Email Address
             </label>
             <input
-              className="rounded-md border border-surface-variant bg-surface-variant/30 px-3 py-2 text-sm text-on-surface outline-none focus:border-primary"
+              className="w-full rounded-xl border border-[rgb(var(--border-subtle))] bg-[rgb(var(--surface-variant))]/30 px-4 py-3.5 text-sm text-on-surface outline-none transition-all focus:border-[rgb(var(--accent-blue))] focus:bg-[rgb(var(--surface-variant))]/50 focus:ring-1 focus:ring-[rgb(var(--accent-blue))]"
               id="email"
               name="email"
               type="email"
+              placeholder="you@example.com"
               required
             />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-on-surface" htmlFor="password">
               Password
             </label>
             <input
-              className="rounded-md border border-surface-variant bg-surface-variant/30 px-3 py-2 text-sm text-on-surface outline-none focus:border-primary"
+              className="w-full rounded-xl border border-[rgb(var(--border-subtle))] bg-[rgb(var(--surface-variant))]/30 px-4 py-3.5 text-sm text-on-surface outline-none transition-all focus:border-[rgb(var(--accent-blue))] focus:bg-[rgb(var(--surface-variant))]/50 focus:ring-1 focus:ring-[rgb(var(--accent-blue))]"
               id="password"
               name="password"
               type="password"
+              placeholder="••••••••"
               required
             />
           </div>
-          <div className="mt-2 flex justify-center w-full">
-            <button
-              formAction={login}
-              className="Btn Btn-primary"
-            >
-              <div className="sign">
-                <svg viewBox="0 0 512 512"><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"></path></svg>
-              </div>
-              <div className="text">Sign In</div>
-            </button>
-          </div>
+          
+          <button
+            formAction={login}
+            className="mt-4 flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-[rgb(var(--accent-blue))] to-[rgb(var(--accent-blue))]/80 px-4 py-3.5 text-sm font-semibold text-white shadow-md transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+          >
+            Sign In
+          </button>
         </form>
-        <p className="mt-6 text-center text-sm text-on-surface-variant">
+
+        <p className="mt-8 text-center text-sm text-on-surface-variant">
           Don't have an account?{' '}
-          <a href="/signup" className="text-primary hover:underline">
-            Sign up
+          <a href="/signup" className="font-medium text-[rgb(var(--accent-blue))] transition-colors hover:text-[rgb(var(--accent-blue))]/80 hover:underline">
+            Create an account
           </a>
         </p>
       </div>
