@@ -1,0 +1,47 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM የኢትዮጵያ የወንጀል ሕግ" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: የኢትዮጵያ የወንጀል ሕግ
+        - navigation "Primary" [ref=e8]:
+          - link "ትንተና" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "ታሪክ" [ref=e10] [cursor=pointer]:
+            - /url: /history
+          - link "አወዳድር" [ref=e11] [cursor=pointer]:
+            - /url: /compare
+          - link "ግንዛቤ" [ref=e12] [cursor=pointer]:
+            - /url: /insights
+          - link "ምንጮች" [ref=e13] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "ቋንቋ ቀይር" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: አማ
+          - button "ጨለማ ሁናቴ ቀይር" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - heading "የአስተዳዳሪ ዳሽቦርድ" [level=1] [ref=e40]
+          - generic [ref=e41]:
+            - button "አድስ" [ref=e42] [cursor=pointer]
+            - button "ውጣ" [ref=e43] [cursor=pointer]
+        - alert [ref=e44]:
+          - generic [ref=e45]:
+            - generic [ref=e46]: error
+            - generic [ref=e47]:
+              - paragraph [ref=e48]: ቅንብር ያስፈልጋል
+              - paragraph [ref=e49]: This feature requires the v2 database migration. Run migrations/002_advanced_features.sql in your Supabase SQL editor.
+          - button "እንደገና ሞክር" [ref=e51] [cursor=pointer]
+    - contentinfo [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]: © 2026 HUKM — የኢትዮጵያ የወንጀል ሕግ
+        - navigation [ref=e33]:
+          - generic [ref=e34]: ሁክም የጥናት መሣሪያ ነው። የሚመለሱ ምላሾች በሰው ሰራሽ ብልህነት የተፈጠሩ ሲሆኑ የሕግ ምክር አይተኩም።
+          - link "ምንጮች" [ref=e35] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e36]

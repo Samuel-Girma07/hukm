@@ -1,0 +1,136 @@
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e133] [cursor=pointer]:
+          - /url: /
+          - generic "HUKM" [ref=e7]:
+            - generic [ref=e8]: HUKM
+          - generic [ref=e11]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e12]:
+          - link "Analyse" [ref=e134] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e14]: Analyse
+          - link "History" [ref=e135] [cursor=pointer]:
+            - /url: /history
+            - generic [ref=e18]: History
+          - link "Compare" [ref=e136] [cursor=pointer]:
+            - /url: /compare
+            - generic [ref=e20]: Compare
+          - link "Insights" [ref=e137] [cursor=pointer]:
+            - /url: /insights
+            - generic [ref=e22]: Insights
+          - link "Resources" [ref=e138] [cursor=pointer]:
+            - /url: /resources
+            - generic [ref=e24]: Resources
+        - generic [ref=e25]:
+          - button "Toggle language" [ref=e139] [cursor=pointer]:
+            - generic [ref=e27]: translate
+            - generic [ref=e28]: EN
+          - button "Toggle dark mode" [active] [ref=e140] [cursor=pointer]:
+            - generic [ref=e30]: dark_mode
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - generic [ref=e37]: Ethiopian Criminal Law
+            - heading "Structured analysis of Ethiopian criminal law scenarios." [level=1] [ref=e141]
+            - paragraph [ref=e39]: Describe the conduct in plain language. HUKM retrieves the relevant articles from the Criminal Code Proclamation 414/2004, runs a rigorous seven-step analysis, and rates its own confidence based on retrieval quality. Output is AI-generated and is not a substitute for a licensed Ethiopian advocate.
+          - complementary [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]: Issue
+                - generic [ref=e44]: 04 May 2026
+              - generic [ref=e45]:
+                - generic [ref=e46]: Edition
+                - generic [ref=e47]: HUKM · Volume 1
+              - generic [ref=e48]:
+                - generic [ref=e49]: Method
+                - generic [ref=e50]: Article-cited RAG
+              - generic [ref=e51]:
+                - generic [ref=e52]: Source
+                - generic [ref=e53]: FDRE Criminal Code 414/2004
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: Describe the scenario
+            - generic [ref=e59]:
+              - textbox "Describe the scenario" [ref=e142]:
+                - /placeholder: Describe the conduct, the parties, the location, and any prior history. Be specific about facts; do not include personal identifying information.
+              - generic: 0 / 5,000
+            - paragraph [ref=e61]: Provide between 10 and 5,000 characters. The system analyses the conduct under the Ethiopian Criminal Code Proclamation 414/2004.
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: Model
+              - button "Model" [ref=e143] [cursor=pointer]:
+                - generic [ref=e67]:
+                  - generic [ref=e68]: GLM-4.7
+                  - generic [ref=e69]: Recommended. Fast, strong reasoning, free tier.
+                - generic [ref=e70]: Premium
+                - generic [ref=e72]: expand_more
+            - generic [ref=e73]:
+              - generic [ref=e74]: Crime category (optional)
+              - generic [ref=e75]:
+                - combobox "Crime category (optional)" [ref=e144]:
+                  - option "Auto-detect" [selected]
+                  - option "Homicide"
+                  - option "Assault"
+                  - option "Theft"
+                  - option "Fraud"
+                  - option "Drug offence"
+                  - option "Sexual offence"
+                  - option "Property damage"
+                  - option "Corruption"
+                  - option "Traffic offence"
+                  - option "Cybercrime"
+                  - option "Other"
+                - generic: expand_more
+          - generic [ref=e78]:
+            - generic [ref=e79]: Response language
+            - radiogroup "Response language" [ref=e145]:
+              - radio "English" [checked] [ref=e81] [cursor=pointer]
+              - radio "Amharic" [ref=e146] [cursor=pointer]
+          - group [ref=e83]:
+            - generic "Advanced options" [ref=e147] [cursor=pointer]:
+              - text: Advanced options
+              - generic [ref=e85]: arrow_drop_down
+          - generic [ref=e86]:
+            - generic [ref=e87]: "Examples:"
+            - button "Robbery example" [ref=e148] [cursor=pointer]
+            - button "Assault example" [ref=e149] [cursor=pointer]
+            - button "Civil-vs-criminal" [ref=e150] [cursor=pointer]
+          - button "Run analysis" [disabled] [ref=e151]:
+            - text: Run analysis
+            - generic [ref=e92]: arrow_forward
+        - generic [ref=e93]:
+          - generic [ref=e94]:
+            - heading "How an analysis is built" [level=2] [ref=e152]
+            - generic [ref=e98]: The method, step by step
+          - list [ref=e99]:
+            - listitem [ref=e100]:
+              - generic [ref=e101]:
+                - generic [ref=e102]: Chapter 01
+                - generic [ref=e104]: list_alt
+              - heading "Analyse" [level=3] [ref=e153]
+              - paragraph [ref=e106]: The seven-step prompt asks the model for facts, classification, elements, defences, sentencing, precedent, and conclusion.
+            - listitem [ref=e107]:
+              - generic [ref=e108]:
+                - generic [ref=e109]: Chapter 02
+                - generic [ref=e111]: menu_book
+              - heading "Cite" [level=3] [ref=e154]
+              - paragraph [ref=e113]: Every claim is grounded in retrieved articles. The model abstains rather than invent article numbers.
+            - listitem [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: Chapter 03
+                - generic [ref=e118]: forum
+              - heading "Conversation" [level=3] [ref=e155]
+              - paragraph [ref=e120]: Refine the analysis by adding new facts or asking follow-up questions within the same conversational context.
+    - contentinfo [ref=e121]:
+      - generic [ref=e127]:
+        - generic [ref=e128]: © 2026 HUKM · Ethiopian Criminal Law
+        - navigation "Footer" [ref=e129]:
+          - generic [ref=e130]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e156] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e132]

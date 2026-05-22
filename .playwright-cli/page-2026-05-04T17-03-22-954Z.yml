@@ -1,0 +1,55 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e8]:
+          - link "Analyse" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e10] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e11] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e12] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e13] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "Toggle language" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: EN
+          - button "Toggle dark mode" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "Your history" [level=1] [ref=e24]
+          - paragraph [ref=e25]: Recent analyses and conversations from this browser session.
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic: search
+            - searchbox "Search scenarios…" [ref=e28]
+          - button "Today" [ref=e29] [cursor=pointer]
+          - button "This week" [ref=e30] [cursor=pointer]
+          - button "All" [ref=e31] [cursor=pointer]
+        - paragraph [ref=e32]: 0 conversations
+        - generic [ref=e33]:
+          - generic [ref=e35]: auto_stories
+          - generic [ref=e36]:
+            - heading "Your research journal starts here" [level=2] [ref=e37]
+            - paragraph [ref=e38]: Every analysis you run is saved as a private conversation, scoped to this browser session. Pick up where you left off, or compare older analyses against new facts.
+          - link "Start a new analysis" [ref=e39] [cursor=pointer]:
+            - /url: /
+            - text: Start a new analysis
+            - generic [ref=e40]: arrow_forward
+    - contentinfo [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e43]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e44]:
+          - generic [ref=e45]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e46] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e47]

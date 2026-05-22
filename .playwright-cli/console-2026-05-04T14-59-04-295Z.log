@@ -1,0 +1,465 @@
+[     922ms] [ERROR] Failed to fetch RSC payload for http://localhost:3000/. Falling back to browser navigation. TypeError: Failed to fetch
+    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:58:27)
+    at fastRefreshReducerImpl (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/reducers/fast-refresh-reducer.js:33:67)
+    at clientReducer (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/router-reducer.js:41:67)
+    at Object.action (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/shared/lib/router/action-queue.js:150:55)
+    at runAction (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/shared/lib/router/action-queue.js:56:38)
+    at dispatchAction (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/shared/lib/router/action-queue.js:113:9)
+    at Object.dispatch (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/shared/lib/router/action-queue.js:145:40)
+    at eval (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/use-reducer-with-devtools.js:130:21)
+    at eval (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:304:25)
+    at startTransition (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react/cjs/react.development.js:2597:25)
+    at Object.fastRefresh (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:303:48)
+    at eval (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:277:28)
+    at startTransition (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react/cjs/react.development.js:2597:25)
+    at processMessage (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:276:44)
+    at WebSocket.handler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:395:17) @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[  939473ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[  939474ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css
+
+Import trace for requested module:
+./app/globals.css @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[  942261ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[  942261ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css
+
+Import trace for requested module:
+./app/globals.css @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[  942849ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/resources?_rsc=1nzwr:0
+[  942884ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/resources?_rsc=1nzwr:0
+[  942954ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/resources?_rsc=1nzwr:0
+[  943069ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/resources:0
+[  944110ms] Error: Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+
+    at getCssError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\parseCss.js:24:16)
+    at getModuleBuildError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\webpackModuleError.js:116:43)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:29:49)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:27:21)
+[  944113ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  944113ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  944141ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favicon.ico:0
+[  948020ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/resources:0
+[  948318ms] Error: Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+
+    at getCssError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\parseCss.js:24:16)
+    at getModuleBuildError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\webpackModuleError.js:116:43)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:29:49)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:27:21)
+[  948318ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  948319ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  948628ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  948628ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  959580ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/resources:0
+[  959798ms] Error: Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+
+    at getCssError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\parseCss.js:24:16)
+    at getModuleBuildError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\webpackModuleError.js:116:43)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:29:49)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:27:21)
+[  959800ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  959800ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  959864ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  959864ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  996621ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[  996621ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css
+
+Import trace for requested module:
+./app/globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1021733ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/resources:0
+[ 1022143ms] Error: Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+
+    at getCssError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\parseCss.js:24:16)
+    at getModuleBuildError (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\webpackModuleError.js:116:43)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:29:49)
+    at async (file://C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\plugins\wellknown-errors-plugin\index.js:27:21)
+[ 1022148ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1022148ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1022304ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1022305ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1059014ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1059015ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css
+
+Import trace for requested module:
+./app/globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1074139ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1074139ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css
+
+Import trace for requested module:
+./app/globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1081606ms] [ERROR] ./app/globals.css:104:5
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive.
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 |  @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1081606ms] [ERROR] ./app/globals.css
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+-- inner error --
+Syntax error: C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css The `dark:bg-forest-700` class does not exist. If `dark:bg-forest-700` is a custom class, make sure it is defined within a `@layer` directive. (104:5)
+
+  102 |      Dark: forest-700 with gold ghost border. */
+  103 |   .card {
+> 104 |     @apply rounded-xl bg-white border border-[rgb(14_42_30_/_0.10)] dark:bg-forest-700 dark:border-[rgb(212_162_76_/_0.18)];
+      |     ^
+  105 |   }
+  106 | 
+Generated code for C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[2]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[13].oneOf[12].use[3]!C:\Users\KATANA\Documents\Law\hukm\hukm-app\app\globals.css
+
+Import trace for requested module:
+./app/globals.css @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 1207348ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[ 1222528ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/_next/static/webpack/34608131b1d1804e.webpack.hot-update.json:0
+[ 1222528ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:349

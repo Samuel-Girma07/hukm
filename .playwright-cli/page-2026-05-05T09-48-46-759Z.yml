@@ -1,0 +1,138 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e8]:
+          - link "Analyse" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e10] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e11] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e12] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e13] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "Toggle language" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: EN
+          - button "Toggle dark mode" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - heading "Structured analysis of Ethiopian criminal law scenarios." [level=1] [ref=e23]
+          - paragraph [ref=e24]: Retrieves relevant articles from Proclamation 414/2004 and returns a cited seven-step analysis.
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]: Describe the scenario
+            - generic [ref=e30]:
+              - textbox "Describe the scenario" [ref=e31]:
+                - /placeholder: Describe the conduct, the parties, the location, and any prior history. Be specific about facts; do not include personal identifying information.
+              - generic: 0 / 5,000
+            - paragraph [ref=e32]: Provide between 10 and 5,000 characters. The system analyses the conduct under the Ethiopian Criminal Code Proclamation 414/2004.
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - generic [ref=e35]:
+                - text: Model
+                - button "Model" [ref=e37] [cursor=pointer]:
+                  - generic [ref=e38]: info
+              - button "Model Model" [expanded] [ref=e39] [cursor=pointer]:
+                - img [ref=e40]
+                - generic [ref=e44]:
+                  - generic [ref=e45]: Nemotron Super 120B
+                  - generic [ref=e46]: NVIDIA flagship — fast, balanced
+                - generic [ref=e47]: unfold_more
+              - listbox "Model Model" [active] [ref=e94]:
+                - option "Nemotron Super 120B NVIDIA flagship — fast, balanced Pro" [selected] [ref=e95] [cursor=pointer]:
+                  - img [ref=e96]
+                  - generic [ref=e100]:
+                    - generic [ref=e101]: Nemotron Super 120B
+                    - generic [ref=e102]: NVIDIA flagship — fast, balanced
+                  - generic [ref=e103]: Pro
+                  - generic [ref=e105]: check
+                - option "GLM-5.1 Latest Z.AI premium Pro" [ref=e106] [cursor=pointer]:
+                  - img [ref=e107]
+                  - generic [ref=e110]:
+                    - generic [ref=e111]: GLM-5.1
+                    - generic [ref=e112]: Latest Z.AI premium
+                  - generic [ref=e113]: Pro
+                - option "Llama 4 Maverick Meta flagship — fast" [ref=e115] [cursor=pointer]:
+                  - img [ref=e116]
+                  - generic [ref=e120]:
+                    - generic [ref=e121]: Llama 4 Maverick
+                    - generic [ref=e122]: Meta flagship — fast
+                - option "Qwen3.5 397B Largest open Qwen Pro" [ref=e124] [cursor=pointer]:
+                  - img [ref=e125]
+                  - generic [ref=e129]:
+                    - generic [ref=e130]: Qwen3.5 397B
+                    - generic [ref=e131]: Largest open Qwen
+                  - generic [ref=e132]: Pro
+                - option "GPT-OSS 120B OpenAI open weights Pro" [ref=e134] [cursor=pointer]:
+                  - img [ref=e135]
+                  - generic [ref=e140]:
+                    - generic [ref=e141]: GPT-OSS 120B
+                    - generic [ref=e142]: OpenAI open weights
+                  - generic [ref=e143]: Pro
+              - paragraph [ref=e48]:
+                - generic [ref=e49]: Powered by
+                - img [ref=e50]
+                - generic [ref=e54]: NVIDIA
+            - generic [ref=e55]:
+              - generic [ref=e56]:
+                - text: Crime category (optional)
+                - button "Crime category (optional)" [ref=e58] [cursor=pointer]:
+                  - generic [ref=e59]: info
+              - generic [ref=e60]:
+                - combobox "Crime category (optional) Crime category (optional)" [ref=e61]:
+                  - option "Auto-detect" [selected]
+                  - option "Homicide"
+                  - option "Assault"
+                  - option "Theft"
+                  - option "Fraud"
+                  - option "Drug offence"
+                  - option "Sexual offence"
+                  - option "Property damage"
+                  - option "Corruption"
+                  - option "Traffic offence"
+                  - option "Cybercrime"
+                  - option "Other"
+                - generic: expand_more
+          - generic [ref=e63]:
+            - generic [ref=e64]: Response language
+            - radiogroup "Response language" [ref=e65]:
+              - radio "English" [checked] [ref=e66] [cursor=pointer]
+              - radio "Amharic" [ref=e67] [cursor=pointer]
+          - group [ref=e68]:
+            - generic "Advanced options Advanced options" [ref=e69] [cursor=pointer]:
+              - text: Advanced options
+              - button "Advanced options" [ref=e71]:
+                - generic [ref=e72]: info
+              - generic [ref=e73]: expand_more
+          - generic [ref=e74]:
+            - generic [ref=e75]: "Examples:"
+            - button "Robbery example" [ref=e76] [cursor=pointer]
+            - button "Assault example" [ref=e77] [cursor=pointer]
+            - button "Property dispute" [ref=e78] [cursor=pointer]
+          - paragraph [ref=e79]:
+            - generic [ref=e80]: info
+            - generic [ref=e81]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - generic [ref=e82]:
+            - button "Run analysis ⌘ Enter" [disabled] [ref=e83]:
+              - text: Run analysis
+              - generic [ref=e84]: gavel
+              - generic [ref=e85]: ⌘ Enter
+            - paragraph [ref=e86]: Press ⌘ Enter (or Ctrl Enter) to submit
+    - contentinfo [ref=e87]:
+      - generic [ref=e88]:
+        - generic [ref=e89]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e90]:
+          - generic [ref=e91]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e92] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e93]

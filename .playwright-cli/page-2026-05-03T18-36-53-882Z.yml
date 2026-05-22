@@ -1,0 +1,68 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e8]:
+          - link "Analyse" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e10] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e11] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e12] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e13] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "Toggle language" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: EN
+          - button "Toggle dark mode" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "Compare two scenarios" [level=1] [ref=e24]
+          - paragraph [ref=e25]: Run two scenarios through the same model side-by-side and see how the analysis differs.
+        - generic [ref=e27]:
+          - generic [ref=e28]: Model
+          - generic [ref=e29]:
+            - combobox "Model" [ref=e30]:
+              - option "GLM-4.7 — Recommended. Fast, strong reasoning, free tier."
+              - option "GLM-5 — Highest quality. 744B MoE, 205K context. Paid endpoint."
+              - option "Llama 4 Maverick — MoE, strong reasoning." [selected]
+              - option "Llama 3.1 405B — Heaviest open Meta model."
+              - option "Llama 3.3 70B — Multilingual, 128K context."
+              - option "DeepSeek V3.2 — 685B MoE, top reasoning."
+              - option "Mistral Large 3 — 675B, multilingual."
+            - generic: expand_more
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - generic [ref=e34]: A
+              - text: Scenario A
+            - generic [ref=e35]:
+              - textbox "Enter scenario facts, charges, and circumstances…" [ref=e36]
+              - generic [ref=e37]: 0 / 5,000
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]: B
+              - text: Scenario B
+            - generic [ref=e41]:
+              - textbox "Enter scenario facts, charges, and circumstances…" [ref=e42]
+              - generic [ref=e43]: 0 / 5,000
+        - button "Analyse both" [ref=e45] [cursor=pointer]:
+          - generic [ref=e46]: analytics
+          - text: Analyse both
+    - contentinfo [ref=e47]:
+      - generic [ref=e48]:
+        - generic [ref=e49]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e50]:
+          - generic [ref=e51]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e52] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e53]

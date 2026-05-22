@@ -1,0 +1,107 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner:
+      - navigation "Primary" [ref=e3]:
+        - link "HUKM" [ref=e4] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e5]: HUKM
+        - navigation "Primary" [ref=e6]:
+          - link "Analyse" [ref=e7] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e8] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e9] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e10] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e11] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e12]:
+          - button "Toggle language" [ref=e13] [cursor=pointer]:
+            - img [ref=e14]
+            - generic [ref=e16]: EN
+          - button "Toggle dark mode" [ref=e17] [cursor=pointer]:
+            - img [ref=e18]
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e25]: Legal analysis engine
+          - heading "Structured analysis of Ethiopian criminal law scenarios." [level=1] [ref=e26]
+          - paragraph [ref=e27]: Retrieves relevant articles from Proclamation 414/2004 and returns a cited seven-step analysis.
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]: Describe the scenario
+            - generic [ref=e34]:
+              - textbox "Describe the scenario" [ref=e35]:
+                - /placeholder: Describe the conduct, the parties, the location, and any prior history. Be specific about facts; do not include personal identifying information.
+              - generic: 0 / 5,000
+            - paragraph [ref=e36]: Provide between 10 and 5,000 characters. The system analyses the conduct under the Ethiopian Criminal Code Proclamation 414/2004.
+          - generic [ref=e37]:
+            - generic [ref=e38]:
+              - generic [ref=e39]:
+                - text: Model
+                - button "Model" [ref=e41] [cursor=pointer]:
+                  - img [ref=e42]
+              - 'button "Model: Nemotron Super 120B" [ref=e45] [cursor=pointer]':
+                - img [ref=e48]
+                - generic [ref=e52]:
+                  - generic [ref=e53]: Nemotron Super 120B
+                  - generic [ref=e54]: NVIDIA flagship — fast, balanced
+                - img [ref=e55]
+              - generic [ref=e57]:
+                - generic [ref=e58]: Powered by
+                - img "NVIDIA" [ref=e59]:
+                  - generic [ref=e62]: NVIDIA
+            - generic [ref=e63]:
+              - generic [ref=e64]:
+                - text: Crime category (optional)
+                - button "Crime category (optional)" [ref=e66] [cursor=pointer]:
+                  - img [ref=e67]
+              - generic [ref=e69]:
+                - combobox "Crime category (optional) Crime category (optional)" [ref=e70]:
+                  - option "Auto-detect" [selected]
+                  - option "Homicide"
+                  - option "Assault"
+                  - option "Theft"
+                  - option "Fraud"
+                  - option "Drug offence"
+                  - option "Sexual offence"
+                  - option "Property damage"
+                  - option "Corruption"
+                  - option "Traffic offence"
+                  - option "Cybercrime"
+                  - option "Other"
+                - img
+          - generic [ref=e72]:
+            - generic [ref=e73]: Response language
+            - radiogroup "Response language" [ref=e74]:
+              - radio "English" [checked] [ref=e75] [cursor=pointer]
+              - radio "Amharic" [ref=e76] [cursor=pointer]
+          - group [ref=e77]:
+            - generic "Advanced options Advanced options" [ref=e78] [cursor=pointer]:
+              - text: Advanced options
+              - button "Advanced options" [ref=e80]:
+                - img [ref=e81]
+              - img [ref=e83]
+          - generic [ref=e85]:
+            - generic [ref=e86]: "Examples:"
+            - button "Robbery example" [ref=e87] [cursor=pointer]
+            - button "Assault example" [ref=e88] [cursor=pointer]
+            - button "Property dispute" [ref=e89] [cursor=pointer]
+          - paragraph [ref=e90]:
+            - img [ref=e91]
+            - generic [ref=e93]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - generic [ref=e94]:
+            - button "Run analysis ⌘ Enter" [disabled] [ref=e95]:
+              - generic [ref=e96]: Run analysis
+              - generic [ref=e97]: ⌘ Enter
+              - img [ref=e99]
+            - paragraph [ref=e101]: Press ⌘ Enter (or Ctrl Enter) to submit
+    - contentinfo [ref=e102]:
+      - generic [ref=e104]:
+        - generic [ref=e105]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e106]:
+          - generic [ref=e107]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e108] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e109]

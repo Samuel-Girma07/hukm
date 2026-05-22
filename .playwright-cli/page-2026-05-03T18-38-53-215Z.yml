@@ -1,0 +1,120 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e8]:
+          - link "Analyse" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e10] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e11] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e12] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e13] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "Toggle language" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: EN
+          - button "Toggle dark mode" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "Compare two scenarios" [level=1] [ref=e24]
+          - paragraph [ref=e25]: Run two scenarios through the same model side-by-side and see how the analysis differs.
+        - generic [ref=e27]:
+          - generic [ref=e28]: Model
+          - generic [ref=e29]:
+            - combobox "Model" [ref=e30]:
+              - option "GLM-4.7 — Recommended. Fast, strong reasoning, free tier."
+              - option "GLM-5 — Highest quality. 744B MoE, 205K context. Paid endpoint."
+              - option "Llama 4 Maverick — MoE, strong reasoning." [selected]
+              - option "Llama 3.1 405B — Heaviest open Meta model."
+              - option "Llama 3.3 70B — Multilingual, 128K context."
+              - option "DeepSeek V3.2 — 685B MoE, top reasoning."
+              - option "Mistral Large 3 — 675B, multilingual."
+            - generic: expand_more
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - generic [ref=e34]: A
+              - text: Scenario A
+            - generic [ref=e35]:
+              - textbox "Enter scenario facts, charges, and circumstances…" [ref=e36]: A man punched another man during an argument breaking his jaw, no prior record
+              - generic [ref=e37]: 78 / 5,000
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]: B
+              - text: Scenario B
+            - generic [ref=e41]:
+              - textbox "Enter scenario facts, charges, and circumstances…" [ref=e42]: A 16-year-old shoplifted candy worth 50 birr from a corner store
+              - generic [ref=e43]: 64 / 5,000
+        - generic [ref=e44]:
+          - button "Analyse both" [ref=e56] [cursor=pointer]:
+            - generic [ref=e57]: analytics
+            - text: Analyse both
+          - button "Export comparison PDF" [ref=e58] [cursor=pointer]:
+            - generic [ref=e59]: picture_as_pdf
+            - text: Export comparison PDF
+        - generic [ref=e61]:
+          - article [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: error
+              - text: Low confidence
+            - generic [ref=e65]:
+              - group [ref=e66]:
+                - generic "Classification" [ref=e67] [cursor=pointer]:
+                  - generic [ref=e68]: Classification
+                  - generic [ref=e69]: expand_more
+                - paragraph [ref=e70]: The conduct described appears to fall under the category of causing bodily harm, which is likely to be classified under the Ethiopian Criminal Code Proclamation No. 414/2004.
+              - group [ref=e71]:
+                - generic "Sentencing framework" [ref=e72] [cursor=pointer]:
+                  - generic [ref=e73]: Sentencing framework
+                  - generic [ref=e74]: expand_more
+              - group [ref=e75]:
+                - generic "Conclusion" [ref=e76] [cursor=pointer]:
+                  - generic [ref=e77]: Conclusion
+                  - generic [ref=e78]: expand_more
+            - generic [ref=e80]:
+              - paragraph [ref=e81]: Estimated punishment
+              - paragraph [ref=e82]: Cannot be estimated
+              - paragraph [ref=e83]: "Model: Llama 4 Maverick"
+          - article [ref=e84]:
+            - generic [ref=e85]:
+              - generic [ref=e86]: error
+              - text: Low confidence
+            - generic [ref=e87]:
+              - group [ref=e88]:
+                - generic "Classification" [ref=e89] [cursor=pointer]:
+                  - generic [ref=e90]: Classification
+                  - generic [ref=e91]: expand_more
+                - paragraph [ref=e92]: The offence can be classified under theft provisions in the Ethiopian Criminal Code Proclamation No. 414/2004.
+              - group [ref=e93]:
+                - generic "Sentencing framework" [ref=e94] [cursor=pointer]:
+                  - generic [ref=e95]: Sentencing framework
+                  - generic [ref=e96]: expand_more
+              - group [ref=e97]:
+                - generic "Conclusion" [ref=e98] [cursor=pointer]:
+                  - generic [ref=e99]: Conclusion
+                  - generic [ref=e100]: expand_more
+            - generic [ref=e102]:
+              - paragraph [ref=e103]: Estimated punishment
+              - paragraph [ref=e104]: Cannot be estimated
+              - paragraph [ref=e105]: "Model: Llama 4 Maverick"
+        - generic [ref=e106]:
+          - generic [ref=e107]: check_circle
+          - text: Both analyses arrived at the same confidence level.
+    - contentinfo [ref=e47]:
+      - generic [ref=e48]:
+        - generic [ref=e49]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e50]:
+          - generic [ref=e51]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e52] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e53]

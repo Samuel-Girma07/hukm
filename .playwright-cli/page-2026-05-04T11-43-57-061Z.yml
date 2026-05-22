@@ -1,0 +1,185 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM የኢትዮጵያ የወንጀል ሕግ" [ref=e205] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: የኢትዮጵያ የወንጀል ሕግ
+        - navigation "Primary" [ref=e8]:
+          - link "ትንተና" [ref=e206] [cursor=pointer]:
+            - /url: /
+          - link "ታሪክ" [ref=e207] [cursor=pointer]:
+            - /url: /history
+          - link "አወዳድር" [ref=e208] [cursor=pointer]:
+            - /url: /compare
+          - link "ግንዛቤ" [ref=e209] [cursor=pointer]:
+            - /url: /insights
+          - link "ምንጮች" [ref=e210] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "ቋንቋ ቀይር" [active] [ref=e211] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: አማ
+          - button "ጨለማ ሁናቴ ቀይር" [ref=e212] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - heading "የሕግ ምንጮች" [level=1] [ref=e213]
+          - paragraph [ref=e24]: በኢትዮጵያ ለምክር ወይም ውክልና ሊገናኙ የሚችሏቸው የተረጋገጡ ተቋማት እና በነጻ የሚያገለግሉ ፕሮግራሞች።
+        - generic [ref=e25]:
+          - button "ሁሉም ምንጮች" [ref=e214] [cursor=pointer]
+          - button "ነጻ አገልግሎቶች ብቻ" [ref=e215] [cursor=pointer]
+          - button "English" [ref=e28] [cursor=pointer]
+          - button "አማርኛ" [ref=e29] [cursor=pointer]
+          - button "የወንጀል ሕግ" [ref=e216] [cursor=pointer]
+          - button "የሕግ እርዳታ" [ref=e217] [cursor=pointer]
+          - button "የጠበቆች ማኅበር" [ref=e218] [cursor=pointer]
+        - generic [ref=e33]:
+          - article [ref=e34]:
+            - generic [ref=e35]:
+              - generic [ref=e36]:
+                - heading "Federal Ethiopian Bar Association" [level=3] [ref=e37]
+                - generic [ref=e39]: የጠበቆች ማኅበር
+                - paragraph [ref=e40]: Addis Ababa
+              - generic [ref=e42]: account_balance
+            - paragraph [ref=e43]: Statutory body that licenses and regulates advocates across the federal courts. Use the bar association as the official starting point for finding a licensed advocate or filing a complaint about professional conduct.
+            - generic [ref=e45]:
+              - generic [ref=e46]: translate
+              - generic [ref=e47]: EN · አማ
+            - generic [ref=e48]:
+              - generic [ref=e49]:
+                - generic [ref=e51]: call
+                - generic [ref=e53]: mail
+              - generic [ref=e54]: በይፋ አልተዘረዘረም
+          - article [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - heading "Ethiopian Women Lawyers Association (EWLA)" [level=3] [ref=e58]
+                - generic [ref=e59]:
+                  - generic [ref=e60]: የሕግ እርዳታ
+                  - generic [ref=e61]:
+                    - generic [ref=e62]: check_circle
+                    - text: ነጻ አገልግሎት
+                - paragraph [ref=e63]: Addis Ababa
+              - generic [ref=e65]: school
+            - paragraph [ref=e66]: Long-running legal-aid organisation that takes on cases involving gender-based violence and serious offences against women and children, often free of charge for indigent clients.
+            - generic [ref=e68]:
+              - generic [ref=e69]: translate
+              - generic [ref=e70]: EN · አማ
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - generic [ref=e74]: call
+                - generic [ref=e76]: mail
+              - generic [ref=e77]: በይፋ አልተዘረዘረም
+          - article [ref=e78]:
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - heading "Ethiopian Catholic Secretariat — Legal Aid" [level=3] [ref=e81]
+                - generic [ref=e82]:
+                  - generic [ref=e83]: የሕግ እርዳታ
+                  - generic [ref=e84]:
+                    - generic [ref=e85]: check_circle
+                    - text: ነጻ አገልግሎት
+                - paragraph [ref=e86]: Addis Ababa
+              - generic [ref=e88]: school
+            - paragraph [ref=e89]: Faith-based pro bono legal-aid programme that supports defendants who cannot afford private representation, irrespective of religion. Triages by need rather than case type.
+            - generic [ref=e91]:
+              - generic [ref=e92]: translate
+              - generic [ref=e93]: EN · አማ
+            - generic [ref=e94]:
+              - generic [ref=e95]:
+                - generic [ref=e97]: call
+                - generic [ref=e99]: mail
+              - generic [ref=e100]: በይፋ አልተዘረዘረም
+          - article [ref=e101]:
+            - generic [ref=e102]:
+              - generic [ref=e103]:
+                - heading "Federal First Instance Court — Public Defender" [level=3] [ref=e104]
+                - generic [ref=e105]:
+                  - generic [ref=e106]: ፍርድ ቤት
+                  - generic [ref=e107]:
+                    - generic [ref=e108]: check_circle
+                    - text: ነጻ አገልግሎት
+                - paragraph [ref=e109]: Addis Ababa
+              - generic [ref=e111]: balance
+            - paragraph [ref=e112]: Court-appointed defence is available to indigent defendants in serious criminal matters. Apply through the registry of the court hearing your case.
+            - generic [ref=e114]:
+              - generic [ref=e115]: translate
+              - generic [ref=e116]: አማ
+            - generic [ref=e117]:
+              - generic [ref=e118]:
+                - generic [ref=e120]: call
+                - generic [ref=e122]: mail
+              - generic [ref=e123]: በይፋ አልተዘረዘረም
+          - article [ref=e124]:
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - heading "Find a private criminal-defence advocate" [level=3] [ref=e127]
+                - generic [ref=e129]: የጠበቆች ድርጅት
+                - paragraph [ref=e130]: Nationwide
+              - generic [ref=e132]: gavel
+            - paragraph [ref=e133]: If you can afford private counsel, contact the Federal Ethiopian Bar Association above for a verified list of licensed criminal-defence advocates in your region.
+            - generic [ref=e135]:
+              - generic [ref=e136]: translate
+              - generic [ref=e137]: EN · አማ
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e141]: call
+                - generic [ref=e143]: mail
+              - generic [ref=e144]: በይፋ አልተዘረዘረም
+          - article [ref=e145]:
+            - generic [ref=e146]:
+              - generic [ref=e147]:
+                - heading "Find a regional state bar association" [level=3] [ref=e148]
+                - generic [ref=e150]: የጠበቆች ማኅበር
+                - paragraph [ref=e151]: Regional
+              - generic [ref=e153]: account_balance
+            - paragraph [ref=e154]: Each regional state in Ethiopia has its own bar association. If your case is in regional courts, contact the bar association for that region directly.
+            - generic [ref=e156]:
+              - generic [ref=e157]: translate
+              - generic [ref=e158]: EN · አማ
+            - generic [ref=e159]:
+              - generic [ref=e160]:
+                - generic [ref=e162]: call
+                - generic [ref=e164]: mail
+              - generic [ref=e165]: በይፋ አልተዘረዘረም
+          - article [ref=e166]:
+            - generic [ref=e167]:
+              - generic [ref=e168]:
+                - heading "Pro bono legal clinics at law faculties" [level=3] [ref=e169]
+                - generic [ref=e170]:
+                  - generic [ref=e171]: የሕግ እርዳታ
+                  - generic [ref=e172]:
+                    - generic [ref=e173]: check_circle
+                    - text: ነጻ አገልግሎት
+                - paragraph [ref=e174]: Multiple
+              - generic [ref=e176]: school
+            - paragraph [ref=e177]: Several Ethiopian law faculties (Addis Ababa University, Bahir Dar, Mekelle, Hawassa) operate supervised legal-aid clinics. They take on civil and minor criminal matters subject to capacity.
+            - generic [ref=e179]:
+              - generic [ref=e180]: translate
+              - generic [ref=e181]: EN · አማ
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - generic [ref=e185]: call
+                - generic [ref=e187]: mail
+              - generic [ref=e188]: በይፋ አልተዘረዘረም
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - generic [ref=e192]: support_agent
+            - generic [ref=e193]:
+              - heading "ተጨማሪ እርዳታ ይፈልጋሉ?" [level=3] [ref=e219]
+              - paragraph [ref=e195]: ከየት እንደሚጀምሩ እርግጠኛ አይደሉም? ለማስተላለፊያ ከኢትዮጵያ ፌዴራላዊ ጠበቆች ማኅበር ጋር ይገናኙ።
+          - link "ማስተላለፊያ ያግኙ" [ref=e220] [cursor=pointer]:
+            - /url: /resources#bar
+            - text: ማስተላለፊያ ያግኙ
+            - generic [ref=e197]: arrow_forward
+    - contentinfo [ref=e198]:
+      - generic [ref=e199]:
+        - generic [ref=e200]: © 2026 HUKM — የኢትዮጵያ የወንጀል ሕግ
+        - navigation [ref=e201]:
+          - generic [ref=e202]: ሁክም የጥናት መሣሪያ ነው። የሚመለሱ ምላሾች በሰው ሰራሽ ብልህነት የተፈጠሩ ሲሆኑ የሕግ ምክር አይተኩም።
+          - link "ምንጮች" [ref=e221] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e204]

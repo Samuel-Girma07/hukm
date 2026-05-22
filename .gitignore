@@ -26,6 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
@@ -34,3 +35,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# legal documents (PDFs)
+legal-docs/
+
+# unused/old app stuff
+hukm-app/
+hukm-app.zip
+*.png
+.ai/
+.claude/
+.devin/
+.opencode/
+test-results/
+e2e/

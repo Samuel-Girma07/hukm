@@ -1,0 +1,41 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner:
+      - navigation "Primary" [ref=e3]:
+        - link "HUKM" [ref=e4] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e5]: HUKM
+        - navigation "Primary" [ref=e6]:
+          - link "Analyse" [ref=e7] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e8] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e9] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e10] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e11] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e12]:
+          - button "Toggle language" [ref=e13] [cursor=pointer]:
+            - img [ref=e14]
+            - generic [ref=e16]: EN
+          - button "Toggle dark mode" [ref=e17] [cursor=pointer]:
+            - img [ref=e18]
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]: Insights
+          - heading "Article heatmap" [level=1] [ref=e25]
+          - paragraph [ref=e26]: Most-cited Ethiopian law articles across all analyses run on this deployment.
+          - paragraph [ref=e27]: "Total analyses: 0"
+        - button "Refresh" [disabled] [ref=e29]:
+          - status "Loading" [ref=e30]
+    - contentinfo [ref=e31]:
+      - generic [ref=e33]:
+        - generic [ref=e34]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e35]:
+          - generic [ref=e36]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e37] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e38]

@@ -1,0 +1,193 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic "HUKM" [ref=e7]:
+            - generic [ref=e8]: HUKM
+          - generic [ref=e11]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e12]:
+          - link "Analyse" [ref=e13] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e14]: Analyse
+          - link "History" [ref=e15] [cursor=pointer]:
+            - /url: /history
+            - generic [ref=e16]: History
+          - link "Compare" [ref=e17] [cursor=pointer]:
+            - /url: /compare
+            - generic [ref=e18]: Compare
+          - link "Insights" [ref=e19] [cursor=pointer]:
+            - /url: /insights
+            - generic [ref=e20]: Insights
+          - link "Resources" [ref=e21] [cursor=pointer]:
+            - /url: /resources
+            - generic [ref=e22]: Resources
+        - generic [ref=e25]:
+          - button "Toggle language" [ref=e26] [cursor=pointer]:
+            - generic [ref=e27]: translate
+            - generic [ref=e28]: EN
+          - button "Toggle dark mode" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30]: dark_mode
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - heading "Legal resources" [level=1] [ref=e34]
+          - paragraph [ref=e35]: Verified institutions and pro-bono programmes you can contact for advice or representation in Ethiopia.
+        - generic [ref=e36]:
+          - button "All resources" [ref=e37] [cursor=pointer]
+          - button "Free services only" [ref=e38] [cursor=pointer]
+          - button "English" [ref=e39] [cursor=pointer]
+          - button "አማርኛ" [ref=e40] [cursor=pointer]
+          - button "Criminal Law" [ref=e41] [cursor=pointer]
+          - button "Legal aid" [ref=e42] [cursor=pointer]
+          - button "Bar association" [ref=e43] [cursor=pointer]
+        - generic [ref=e44]:
+          - article [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]:
+                - heading "Federal Ethiopian Bar Association" [level=3] [ref=e48]
+                - generic [ref=e50]: Bar association
+                - paragraph [ref=e51]: Addis Ababa
+              - generic [ref=e53]: account_balance
+            - paragraph [ref=e54]: Statutory body that licenses and regulates advocates across the federal courts. Use the bar association as the official starting point for finding a licensed advocate or filing a complaint about professional conduct.
+            - generic [ref=e56]:
+              - generic [ref=e57]: translate
+              - generic [ref=e58]: EN · አማ
+            - generic [ref=e59]:
+              - generic [ref=e60]:
+                - generic [ref=e62]: call
+                - generic [ref=e64]: mail
+              - generic [ref=e65]: Not publicly listed
+          - article [ref=e66]:
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - heading "Ethiopian Women Lawyers Association (EWLA)" [level=3] [ref=e69]
+                - generic [ref=e70]:
+                  - generic [ref=e71]: Legal aid
+                  - generic [ref=e72]:
+                    - generic [ref=e73]: check_circle
+                    - text: Free service
+                - paragraph [ref=e74]: Addis Ababa
+              - generic [ref=e76]: school
+            - paragraph [ref=e77]: Long-running legal-aid organisation that takes on cases involving gender-based violence and serious offences against women and children, often free of charge for indigent clients.
+            - generic [ref=e79]:
+              - generic [ref=e80]: translate
+              - generic [ref=e81]: EN · አማ
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - generic [ref=e85]: call
+                - generic [ref=e87]: mail
+              - generic [ref=e88]: Not publicly listed
+          - article [ref=e89]:
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - heading "Ethiopian Catholic Secretariat — Legal Aid" [level=3] [ref=e92]
+                - generic [ref=e93]:
+                  - generic [ref=e94]: Legal aid
+                  - generic [ref=e95]:
+                    - generic [ref=e96]: check_circle
+                    - text: Free service
+                - paragraph [ref=e97]: Addis Ababa
+              - generic [ref=e99]: school
+            - paragraph [ref=e100]: Faith-based pro bono legal-aid programme that supports defendants who cannot afford private representation, irrespective of religion. Triages by need rather than case type.
+            - generic [ref=e102]:
+              - generic [ref=e103]: translate
+              - generic [ref=e104]: EN · አማ
+            - generic [ref=e105]:
+              - generic [ref=e106]:
+                - generic [ref=e108]: call
+                - generic [ref=e110]: mail
+              - generic [ref=e111]: Not publicly listed
+          - article [ref=e112]:
+            - generic [ref=e113]:
+              - generic [ref=e114]:
+                - heading "Federal First Instance Court — Public Defender" [level=3] [ref=e115]
+                - generic [ref=e116]:
+                  - generic [ref=e117]: Court
+                  - generic [ref=e118]:
+                    - generic [ref=e119]: check_circle
+                    - text: Free service
+                - paragraph [ref=e120]: Addis Ababa
+              - generic [ref=e122]: balance
+            - paragraph [ref=e123]: Court-appointed defence is available to indigent defendants in serious criminal matters. Apply through the registry of the court hearing your case.
+            - generic [ref=e125]:
+              - generic [ref=e126]: translate
+              - generic [ref=e127]: አማ
+            - generic [ref=e128]:
+              - generic [ref=e129]:
+                - generic [ref=e131]: call
+                - generic [ref=e133]: mail
+              - generic [ref=e134]: Not publicly listed
+          - article [ref=e135]:
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - heading "Find a private criminal-defence advocate" [level=3] [ref=e138]
+                - generic [ref=e140]: Law firm
+                - paragraph [ref=e141]: Nationwide
+              - generic [ref=e143]: gavel
+            - paragraph [ref=e144]: If you can afford private counsel, contact the Federal Ethiopian Bar Association above for a verified list of licensed criminal-defence advocates in your region.
+            - generic [ref=e146]:
+              - generic [ref=e147]: translate
+              - generic [ref=e148]: EN · አማ
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e152]: call
+                - generic [ref=e154]: mail
+              - generic [ref=e155]: Not publicly listed
+          - article [ref=e156]:
+            - generic [ref=e157]:
+              - generic [ref=e158]:
+                - heading "Find a regional state bar association" [level=3] [ref=e159]
+                - generic [ref=e161]: Bar association
+                - paragraph [ref=e162]: Regional
+              - generic [ref=e164]: account_balance
+            - paragraph [ref=e165]: Each regional state in Ethiopia has its own bar association. If your case is in regional courts, contact the bar association for that region directly.
+            - generic [ref=e167]:
+              - generic [ref=e168]: translate
+              - generic [ref=e169]: EN · አማ
+            - generic [ref=e170]:
+              - generic [ref=e171]:
+                - generic [ref=e173]: call
+                - generic [ref=e175]: mail
+              - generic [ref=e176]: Not publicly listed
+          - article [ref=e177]:
+            - generic [ref=e178]:
+              - generic [ref=e179]:
+                - heading "Pro bono legal clinics at law faculties" [level=3] [ref=e180]
+                - generic [ref=e181]:
+                  - generic [ref=e182]: Legal aid
+                  - generic [ref=e183]:
+                    - generic [ref=e184]: check_circle
+                    - text: Free service
+                - paragraph [ref=e185]: Multiple
+              - generic [ref=e187]: school
+            - paragraph [ref=e188]: Several Ethiopian law faculties (Addis Ababa University, Bahir Dar, Mekelle, Hawassa) operate supervised legal-aid clinics. They take on civil and minor criminal matters subject to capacity.
+            - generic [ref=e190]:
+              - generic [ref=e191]: translate
+              - generic [ref=e192]: EN · አማ
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - generic [ref=e196]: call
+                - generic [ref=e198]: mail
+              - generic [ref=e199]: Not publicly listed
+        - generic [ref=e200]:
+          - generic [ref=e201]:
+            - generic [ref=e203]: support_agent
+            - generic [ref=e204]:
+              - heading "Need further assistance?" [level=3] [ref=e205]
+              - paragraph [ref=e206]: Not sure where to start? Contact the Federal Ethiopian Bar Association for a referral.
+          - link "Get a referral" [ref=e207] [cursor=pointer]:
+            - /url: /resources#bar
+            - text: Get a referral
+            - generic [ref=e208]: arrow_forward
+    - contentinfo [ref=e209]:
+      - generic [ref=e215]:
+        - generic [ref=e216]: © 2026 HUKM · Ethiopian Criminal Law
+        - navigation "Footer" [ref=e217]:
+          - generic [ref=e218]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e219] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e220]

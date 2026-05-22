@@ -1,0 +1,354 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e8]:
+          - link "Analyse" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e10] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e11] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e12] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e13] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "Toggle language" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: EN
+          - button "Toggle dark mode" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "Clarification needed" [level=1] [ref=e25]
+          - generic [ref=e26]:
+            - button "Share publicly" [ref=e27] [cursor=pointer]:
+              - generic [ref=e28]: share
+              - text: Share publicly
+            - button "Continue in chat" [ref=e29] [cursor=pointer]:
+              - generic [ref=e30]: forum
+              - text: Continue in chat
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: Scenario
+          - paragraph [ref=e33]: On 12 March 2024 in Addis Ababa, two men entered a small electronics shop with a knife, threatened the owner, and forced him to hand over the cash register containing roughly 18,000 birr. They fled on a motorcycle. Both were arrested two days later. One has a prior conviction for theft.
+          - paragraph [ref=e34]: "Model: Llama 4 Maverick"
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e37]:
+              - generic [ref=e38]:
+                - generic [ref=e39]: error
+                - text: Low confidence
+              - paragraph [ref=e40]: The retrieved articles did not directly address robbery or provide clear sentencing guidelines for the described conduct. The analysis relies on general principles of Ethiopian criminal law.
+            - button [expanded] [ref=e41] [cursor=pointer]:
+              - generic [ref=e42]: expand_less
+          - generic [ref=e43]:
+            - generic [ref=e44]:
+              - generic [ref=e45]: Retrieval stage
+              - generic [ref=e46]: 1 — primary
+            - generic [ref=e47]:
+              - generic [ref=e48]: Best similarity
+              - generic [ref=e49]: 39.5%
+            - generic [ref=e50]:
+              - generic [ref=e51]: Strong matches (≥70%)
+              - generic [ref=e52]: "0"
+            - generic [ref=e53]:
+              - generic [ref=e54]: Moderate matches (50–70%)
+              - generic [ref=e55]: "0"
+            - generic [ref=e56]:
+              - generic [ref=e57]: Weak matches (<50%)
+              - generic [ref=e58]: "8"
+            - generic [ref=e59]:
+              - generic [ref=e60]: Chunks retrieved
+              - generic [ref=e61]: "8"
+            - generic [ref=e62]:
+              - generic [ref=e63]: Parser
+              - generic [ref=e64]: Structured response received
+          - paragraph [ref=e65]: HIGH confidence requires three or more strong matches with explicit punishment provisions. NEEDS_REVIEW means the parser could not extract a complete response.
+        - generic [ref=e66]:
+          - heading "Clarifying questions" [level=3] [ref=e67]
+          - list [ref=e68]:
+            - listitem [ref=e69]: What is the specific provision of the Ethiopian Criminal Code that defines robbery?
+            - listitem [ref=e70]: What are the typical sentencing ranges for robbery under Ethiopian law?
+            - listitem [ref=e71]: How does Ethiopian law treat prior convictions in sentencing?
+        - region "Seven-step analysis" [ref=e72]:
+          - generic [ref=e74]:
+            - article [ref=e75]:
+              - generic [ref=e76]: "1"
+              - generic [ref=e77]:
+                - heading "Fact identification" [level=3] [ref=e78]
+                - paragraph [ref=e79]: Two men entered an electronics shop, threatened the owner with a knife, and stole approximately 18,000 birr from the cash register. They escaped on a motorcycle and were arrested two days later. One of the perpetrators has a prior conviction for theft.
+            - article [ref=e80]:
+              - generic [ref=e81]: "2"
+              - generic [ref=e82]:
+                - heading "Legal classification" [level=3] [ref=e83]
+                - paragraph [ref=e84]: The conduct described constitutes the offence of robbery, as it involves the use of threat and violence to steal property. Under Ethiopian law, this is likely to be classified under the Criminal Code Proclamation No. 414/2004.
+            - article [ref=e85]:
+              - generic [ref=e86]: "3"
+              - generic [ref=e87]:
+                - heading "Elements of the offence" [level=3] [ref=e88]
+                - paragraph [ref=e89]: The elements of robbery, as likely defined in the Criminal Code, include the unlawful taking of property from a person by means of violence or threat. The facts indicate that the men used a knife to threaten the shop owner and took the cash, fulfilling these elements.
+            - article [ref=e90]:
+              - generic [ref=e91]: "4"
+              - generic [ref=e92]:
+                - heading "Defences & mitigation" [level=3] [ref=e93]
+                - paragraph [ref=e94]: Potential defenses could include challenging the identification of the perpetrators or arguing that the threat was not sufficient to constitute robbery. Mitigating factors might include the relatively short period between the crime and the arrest, indicating effective law enforcement. The prior conviction of one perpetrator could be considered an aggravating factor.
+            - article [ref=e95]:
+              - generic [ref=e96]: "5"
+              - generic [ref=e97]:
+                - heading "Sentencing framework" [level=3] [ref=e98]
+                - paragraph [ref=e99]: The applicable sentencing range for robbery under Ethiopian law requires verification. However, the presence of aggravating factors such as the use of a weapon and a prior conviction may influence the sentence.
+            - article [ref=e100]:
+              - generic [ref=e101]: "6"
+              - generic [ref=e102]:
+                - heading "Precedent application" [level=3] [ref=e103]
+                - paragraph [ref=e104]: No Cassation precedents were directly referenced in the retrieved text that apply to this scenario.
+            - article [ref=e105]:
+              - generic [ref=e107]: flag
+              - generic [ref=e108]:
+                - heading "Conclusion" [level=3] [ref=e109]
+                - paragraph [ref=e110]: The scenario describes a robbery, which is a serious offence under Ethiopian criminal law. The perpetrators' actions, including the use of a knife, constitute aggravating factors. The prior conviction of one perpetrator may further impact sentencing.
+        - generic [ref=e111]:
+          - article [ref=e112]:
+            - generic [ref=e113]:
+              - generic [ref=e114]: balance
+              - heading "Estimated punishment" [level=2] [ref=e115]
+            - paragraph [ref=e116]: Cannot be estimated
+            - paragraph [ref=e117]:
+              - text: Best retrieval similarity
+              - generic [ref=e118]: 39.5%
+          - article [ref=e119]:
+            - generic [ref=e120]:
+              - generic [ref=e121]: route
+              - heading "Procedural roadmap" [level=2] [ref=e122]
+            - paragraph [ref=e123]: The next steps would involve a thorough investigation, gathering evidence, and prosecuting the accused in court. The court would then determine the exact charges and sentence based on the evidence presented and applicable laws.
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - heading "Source articles" [level=2] [ref=e126]
+            - generic [ref=e127]: 8 articles
+          - generic [ref=e128]:
+            - button "Open article General Provisions (Part 13)" [ref=e129] [cursor=pointer]:
+              - generic [ref=e130]:
+                - generic [ref=e131]:
+                  - generic [ref=e133]: gavel
+                  - generic [ref=e134]:
+                    - generic [ref=e135]:
+                      - heading "General Provisions (Part 13)" [level=4] [ref=e136]
+                      - generic [ref=e137]: anti-terrorism-1176-2020
+                    - paragraph [ref=e138]: ፫/ የወንጀል ህጉ አንቀጽ ፴፮ (፪) ቢኖርም በዚህ አንቀጽ ንዑስ አንቀጽ (፩) ወይም (፪) የተመለከተው የወንጀል ድርጊት ተፈጽሞ፣ እንዲፈጸም የተፈለገው የሽብር ወንጀል ያልተሞከረ ወይም ያልተፈጸመ እንደሆነ በንኡስ አንቀጾቹ የተመለከቱትን ድርጊቶች የፈጸመ ሰው ከአንድ ዓመት እስከ አምስት ዓመት በሚደርስ ጽኑ እስራት ይቀጣል፡፡ ፲፩. ከሽብር ወንጀል ጋር የተገናኘ ንብረትን ስለመያዝ ፩/ ከሽብር ወንጀል ጋር የተገናኘ ንብረት መሆኑን እያወቀ ንብረቱን ይዞ የተገኘ ወይም የተገለገለበት ማንኛውም ሰዉ የንብረቱ መወረስ እንደተጠበቀ ሆኖ ከሶስት ዓመት እስከ አስር ዓመት በሚደርስ ፅኑ እሥራት ይቀጣል፡፡ ፪/ በዚህ አንቀጽ ንዑስ አንቀጽ (፩) የተመለከተው ድርጊት የተፈጸመው በቸልተኝነት እንደሆነ ቅጣቱ ከአንድ ዓመት እስከ ሶስት ዓመት በሚደርስ ጽኑ እስራት ይሆናል፡፡ ፲፪. በጠቋሚ እና በምስክር ላይ የሚፈጸም ወንጀል ፩/ ማንኛውም ሰው በዚህ አዋጅ በተመለከተ ወንጀል ጠቋሚ ወይም ምስክር ሊሆን የሚችል ወይም ማስረጃ ያለው ሰው፤ መረጃውን ወይም ማስረጃውን ለፍትሕ አካላት እንዳይሰጥ ወይም በምርመራ ወይም በክርክር ሂደት ምስክር ሆኖ እንዳይቀርብ በእርሱ ወይም ከእርሱ ጋር የቅርብ ግንኙነት ባለው ሰው ላይ የተንኮል፣ የኃይል ስራ፣ የማስፈራራት፣ የማይገባ ጥቅም በመስጠት ወይም በመደለል፣ ወይም በሌላ ማንኛውም መንገድ ጣልቃ በመግባት የከለከለ እንደሆነ ከሶስት ዓመት እስከ ሰባት ዓመት በሚደርስ ጽኑ እስራት ይቀጣል፡፡ ፪/ ማንኛውም ሰው በዚህ አዋጅ የተመለከተ ወንጀልን አስመልክቶ ጥቆማ ወይም መረጃ የሰጠን፣ ወይም ምስክር ሆነ የቀረበን ሰው መረጃ በመስጠቱ ወይም ምስክር ሆኖ በመቅረቡ ምክንያት፤ በእርሱ ላይ ወይም ከእርሱ ጋር የቅርብ ግንኙነት ባለው ሰው ላይ ጥቃት፣ 3/ Notwithstanding the provision of Sub-article (2) of Article 36 of the Criminal Code, where the act mentioned has been committed as provided for in Sub- article (1) or (2) of this Article but the intended crime has not materialized or attempted, the person who commits the acts mentioned in the sub-articles shall be punished with rigorous imprisonment from one year to five years. 11. Possessing Property Associated with Terrorism Crime
+                - generic [ref=e139]:
+                  - generic [ref=e140]:
+                    - generic [ref=e141]: psychology
+                    - text: 39.5% similarity
+                  - generic [ref=e143]: chevron_right
+            - button "Open article Art. 84(1)(d)), and seizure of articles (Art." [ref=e144] [cursor=pointer]:
+              - generic [ref=e145]:
+                - generic [ref=e146]:
+                  - generic [ref=e148]: gavel
+                  - generic [ref=e149]:
+                    - generic [ref=e150]:
+                      - heading "Art. 84(1)(d)), and seizure of articles (Art." [level=4] [ref=e151]
+                      - generic [ref=e152]: criminal-code-414-2004
+                    - paragraph [ref=e153]: Art. 84(1)(d)), and seizure of articles (Art. 140), and where the crime is inspired by motives of gain, the punishment shall be fine not exceeding one hundred thousand Birr. The fine may not exceed two hundred fifty thousand Birr, where the crime of counterfeiting is committed.
+                - generic [ref=e154]:
+                  - generic [ref=e155]:
+                    - generic [ref=e156]: psychology
+                    - text: 37.5% similarity
+                  - generic [ref=e158]: chevron_right
+            - button "Open article General Provisions (Part 56)" [ref=e159] [cursor=pointer]:
+              - generic [ref=e160]:
+                - generic [ref=e161]:
+                  - generic [ref=e163]: gavel
+                  - generic [ref=e164]:
+                    - generic [ref=e165]:
+                      - heading "General Provisions (Part 56)" [level=4] [ref=e166]
+                      - generic [ref=e167]: anti-terrorism-1176-2020
+                    - paragraph [ref=e168]: ፩/ ማንኛውም ሰው በዚህ አዋጅ በተመለከተ ወንጀል ጠቋሚ ወይም ምስክር ሊሆን የሚችል ወይም ማስረጃ ያለው ሰው፤ መረጃውን ወይም ማስረጃውን ለፍትሕ አካላት እንዳይሰጥ ወይም በምርመራ ወይም በክርክር ሂደት ምስክር ሆኖ እንዳይቀርብ በእርሱ ወይም ከእርሱ ጋር የቅርብ ግንኙነት ባለው ሰው ላይ የተንኮል፣ የኃይል ስራ፣ የማስፈራራት፣ የማይገባ ጥቅም በመስጠት ወይም በመደለል፣ ወይም በሌላ ማንኛውም መንገድ ጣልቃ በመግባት የከለከለ እንደሆነ ከሶስት ዓመት እስከ ሰባት ዓመት በሚደርስ ጽኑ እስራት ይቀጣል፡፡ ፪/ ማንኛውም ሰው በዚህ አዋጅ የተመለከተ ወንጀልን አስመልክቶ ጥቆማ ወይም መረጃ የሰጠን፣ ወይም ምስክር ሆነ የቀረበን ሰው መረጃ በመስጠቱ ወይም ምስክር ሆኖ በመቅረቡ ምክንያት፤ በእርሱ ላይ ወይም ከእርሱ ጋር የቅርብ ግንኙነት ባለው ሰው ላይ ጥቃት፣ 3/ Notwithstanding the provision of Sub-article (2) of Article 36 of the Criminal Code, where the act mentioned has been committed as provided for in Sub- article (1) or (2) of this Article but the intended crime has not materialized or attempted, the person who commits the acts mentioned in the sub-articles shall be punished with rigorous imprisonment from one year to five years.
+                - generic [ref=e169]:
+                  - generic [ref=e170]:
+                    - generic [ref=e171]: psychology
+                    - text: 37.2% similarity
+                  - generic [ref=e173]: chevron_right
+            - button "Open article Article 840. (Part 2)" [ref=e174] [cursor=pointer]:
+              - generic [ref=e175]:
+                - generic [ref=e176]:
+                  - generic [ref=e178]: gavel
+                  - generic [ref=e179]:
+                    - generic [ref=e180]:
+                      - heading "Article 840. (Part 2)" [level=4] [ref=e181]
+                      - generic [ref=e182]: criminal-code-414-2004
+                    - paragraph [ref=e183]: is punishable with fine not exceeding one hundred Birr or arrest not exceeding eight days.
+                - generic [ref=e184]:
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: psychology
+                    - text: 36.0% similarity
+                  - generic [ref=e188]: chevron_right
+            - button "Open article Article 806. (Part 4)" [ref=e189] [cursor=pointer]:
+              - generic [ref=e190]:
+                - generic [ref=e191]:
+                  - generic [ref=e193]: gavel
+                  - generic [ref=e194]:
+                    - generic [ref=e195]:
+                      - heading "Article 806. (Part 4)" [level=4] [ref=e196]
+                      - generic [ref=e197]: criminal-code-414-2004
+                    - paragraph [ref=e198]: is punishable with fine not exceeding one hundred Birr or arrest not exceeding one month.
+                - generic [ref=e199]:
+                  - generic [ref=e200]:
+                    - generic [ref=e201]: psychology
+                    - text: 35.8% similarity
+                  - generic [ref=e203]: chevron_right
+            - button "Open article Article 785. (Part 2)" [ref=e204] [cursor=pointer]:
+              - generic [ref=e205]:
+                - generic [ref=e206]:
+                  - generic [ref=e208]: gavel
+                  - generic [ref=e209]:
+                    - generic [ref=e210]:
+                      - heading "Article 785. (Part 2)" [level=4] [ref=e211]
+                      - generic [ref=e212]: criminal-code-414-2004
+                    - paragraph [ref=e213]: is punishable with fine not exceeding three hundred Birr or arrest not exceeding three months.
+                - generic [ref=e214]:
+                  - generic [ref=e215]:
+                    - generic [ref=e216]: psychology
+                    - text: 35.6% similarity
+                  - generic [ref=e218]: chevron_right
+            - button "Open article Article 707. (Part 2)" [ref=e219] [cursor=pointer]:
+              - generic [ref=e220]:
+                - generic [ref=e221]:
+                  - generic [ref=e223]: gavel
+                  - generic [ref=e224]:
+                    - generic [ref=e225]:
+                      - heading "Article 707. (Part 2)" [level=4] [ref=e226]
+                      - generic [ref=e227]: criminal-code-414-2004
+                    - paragraph [ref=e228]: (a) in order to devise or execute any scheme or artifice to steal, defraud, deceive or extort or wrongfully control or obtain money, property, computer services or any data; or (b) in serious cases even in the absence of the scheme provided for under sub-article 2 (a), the punishment shall be rigorous imprisonment for not more than five years, and fine not exceeding twenty thousand Birr.
+                - generic [ref=e229]:
+                  - generic [ref=e230]:
+                    - generic [ref=e231]: psychology
+                    - text: 35.6% similarity
+                  - generic [ref=e233]: chevron_right
+            - button "Open article General Provisions (Part 2365)" [ref=e234] [cursor=pointer]:
+              - generic [ref=e235]:
+                - generic [ref=e236]:
+                  - generic [ref=e238]: gavel
+                  - generic [ref=e239]:
+                    - generic [ref=e240]:
+                      - heading "General Provisions (Part 2365)" [level=4] [ref=e241]
+                      - generic [ref=e242]: cassation-decisions-vol-12
+                    - paragraph [ref=e243]: 195 66 በፌ/ብሓር ጉዲይ (ክርክር) የይርጋ ጊዜ መቆጠር የሚጀምርበትን ጊዜ ሇመወሰን የሚቻሌበት አግባብ የፌ/ብ/ህ/ቁ/. 1846 42700 የባህርና ትራንዚት አገሌግልት ዴርጅት እና አዯጋ መከሊከሌና ዝግጁነት ኤጀንሲ ሏምላ 12/2ዏዏ2 198 67 የእቁብ ገንዘብ ይከፇሇኝ ጥያቄ በይርጋ ዯንብ የሚገዛ እንጂ በፌ/ብ/ህ/ቁ 2024 ሥር በተመሇከተው የህሉና ግምት የሚሸፇን ስሊሇመሆኑ የፌ/ብ/ሔ/ቁ. 2024 46019 የአቶ ዯሣሇው ፊንታ ወራሾች እነ ሙለጌታ ዯሣሇው እና አየሇ ዯበሊ ሏምላ 2ዏ/2ዏዏ2
+                - generic [ref=e244]:
+                  - generic [ref=e245]:
+                    - generic [ref=e246]: psychology
+                    - text: 35.5% similarity
+                  - generic [ref=e248]: chevron_right
+        - generic [ref=e249]:
+          - heading "Suggested follow-up questions" [level=3] [ref=e250]
+          - generic [ref=e251]:
+            - button "What is the specific law governing robbery in Ethiopia?" [ref=e252] [cursor=pointer]
+            - button "How does Ethiopian law treat aggravating factors in sentencing?" [ref=e253] [cursor=pointer]
+            - button "What are the procedural steps for prosecuting robbery in Ethiopia?" [ref=e254] [cursor=pointer]
+        - generic [ref=e255]:
+          - heading "Disclaimer" [level=3] [ref=e256]
+          - paragraph [ref=e257]: This analysis is AI-generated and should not be considered legal advice. It is based on a limited review of retrieved articles and general principles of Ethiopian criminal law.
+        - generic [ref=e258]:
+          - paragraph [ref=e259]: Was this analysis helpful?
+          - generic [ref=e260]:
+            - button "Helpful" [ref=e261] [cursor=pointer]:
+              - generic [ref=e262]: thumb_up
+            - button "Not helpful" [ref=e263] [cursor=pointer]:
+              - generic [ref=e264]: thumb_down
+        - generic [ref=e265]:
+          - heading "Legal resources" [level=2] [ref=e266]
+          - generic [ref=e267]:
+            - article [ref=e268]:
+              - generic [ref=e269]:
+                - generic [ref=e270]:
+                  - heading "Federal Ethiopian Bar Association" [level=3] [ref=e271]
+                  - generic [ref=e273]: Bar association
+                  - paragraph [ref=e274]: Addis Ababa
+                - generic [ref=e276]: account_balance
+              - paragraph [ref=e277]: Statutory body that licenses and regulates advocates across the federal courts. Use the bar association as the official starting point for finding a licensed advocate or filing a complaint about professional conduct.
+              - generic [ref=e279]:
+                - generic [ref=e280]: translate
+                - generic [ref=e281]: EN · አማ
+              - generic [ref=e282]:
+                - generic [ref=e283]:
+                  - generic [ref=e285]: call
+                  - generic [ref=e287]: mail
+                - generic [ref=e288]: Not publicly listed
+            - article [ref=e289]:
+              - generic [ref=e290]:
+                - generic [ref=e291]:
+                  - heading "Ethiopian Women Lawyers Association (EWLA)" [level=3] [ref=e292]
+                  - generic [ref=e293]:
+                    - generic [ref=e294]: Legal aid
+                    - generic [ref=e295]:
+                      - generic [ref=e296]: check_circle
+                      - text: Free service
+                  - paragraph [ref=e297]: Addis Ababa
+                - generic [ref=e299]: school
+              - paragraph [ref=e300]: Long-running legal-aid organisation that takes on cases involving gender-based violence and serious offences against women and children, often free of charge for indigent clients.
+              - generic [ref=e302]:
+                - generic [ref=e303]: translate
+                - generic [ref=e304]: EN · አማ
+              - generic [ref=e305]:
+                - generic [ref=e306]:
+                  - generic [ref=e308]: call
+                  - generic [ref=e310]: mail
+                - generic [ref=e311]: Not publicly listed
+            - article [ref=e312]:
+              - generic [ref=e313]:
+                - generic [ref=e314]:
+                  - heading "Ethiopian Catholic Secretariat — Legal Aid" [level=3] [ref=e315]
+                  - generic [ref=e316]:
+                    - generic [ref=e317]: Legal aid
+                    - generic [ref=e318]:
+                      - generic [ref=e319]: check_circle
+                      - text: Free service
+                  - paragraph [ref=e320]: Addis Ababa
+                - generic [ref=e322]: school
+              - paragraph [ref=e323]: Faith-based pro bono legal-aid programme that supports defendants who cannot afford private representation, irrespective of religion. Triages by need rather than case type.
+              - generic [ref=e325]:
+                - generic [ref=e326]: translate
+                - generic [ref=e327]: EN · አማ
+              - generic [ref=e328]:
+                - generic [ref=e329]:
+                  - generic [ref=e331]: call
+                  - generic [ref=e333]: mail
+                - generic [ref=e334]: Not publicly listed
+            - article [ref=e335]:
+              - generic [ref=e336]:
+                - generic [ref=e337]:
+                  - heading "Federal First Instance Court — Public Defender" [level=3] [ref=e338]
+                  - generic [ref=e339]:
+                    - generic [ref=e340]: Court
+                    - generic [ref=e341]:
+                      - generic [ref=e342]: check_circle
+                      - text: Free service
+                  - paragraph [ref=e343]: Addis Ababa
+                - generic [ref=e345]: balance
+              - paragraph [ref=e346]: Court-appointed defence is available to indigent defendants in serious criminal matters. Apply through the registry of the court hearing your case.
+              - generic [ref=e348]:
+                - generic [ref=e349]: translate
+                - generic [ref=e350]: አማ
+              - generic [ref=e351]:
+                - generic [ref=e352]:
+                  - generic [ref=e354]: call
+                  - generic [ref=e356]: mail
+                - generic [ref=e357]: Not publicly listed
+        - generic [ref=e358]:
+          - button "Compare with another scenario" [ref=e359] [cursor=pointer]:
+            - generic [ref=e360]: compare_arrows
+            - text: Compare with another scenario
+          - button "New analysis" [ref=e361] [cursor=pointer]
+    - contentinfo [ref=e362]:
+      - generic [ref=e363]:
+        - generic [ref=e364]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e365]:
+          - generic [ref=e366]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e367] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e368]

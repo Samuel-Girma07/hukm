@@ -1,0 +1,136 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "HUKM የኢትዮጵያ የወንጀል ሕግ" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic "HUKM" [ref=e7]:
+            - generic [ref=e8]: HUKM
+          - generic [ref=e11]: የኢትዮጵያ የወንጀል ሕግ
+        - navigation "Primary" [ref=e12]:
+          - link "ትንተና" [ref=e13] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e14]: ትንተና
+          - link "ታሪክ" [ref=e17] [cursor=pointer]:
+            - /url: /history
+            - generic [ref=e18]: ታሪክ
+          - link "አወዳድር" [ref=e19] [cursor=pointer]:
+            - /url: /compare
+            - generic [ref=e20]: አወዳድር
+          - link "ግንዛቤ" [ref=e21] [cursor=pointer]:
+            - /url: /insights
+            - generic [ref=e22]: ግንዛቤ
+          - link "ምንጮች" [ref=e23] [cursor=pointer]:
+            - /url: /resources
+            - generic [ref=e24]: ምንጮች
+        - generic [ref=e25]:
+          - button "ቋንቋ ቀይር" [ref=e26] [cursor=pointer]:
+            - generic [ref=e27]: translate
+            - generic [ref=e28]: አማ
+          - button "ጨለማ ሁናቴ ቀይር" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30]: dark_mode
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - generic [ref=e37]: የኢትዮጵያ የወንጀል ሕግ
+            - heading "የኢትዮጵያ የወንጀል ሕግ ትንተና በስርዓት ቀርቧል።" [level=1] [ref=e38]
+            - paragraph [ref=e39]: ድርጊቱን በቀላል ቋንቋ ይግለጹ። ሁክም ከወንጀል ሕግ አዋጅ 414/2004 አግባብ ያላቸውን አንቀጾች አምጥቶ ሰባት ደረጃ ትንተና ያደርጋል፣ የራሱን ትክክለኛነት መጠን ይገምታል። ምላሾች በ AI የተፈጠሩ ስለሆኑ ፈቃድ ያለው ጠበቃን አይተኩም።
+          - complementary [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]: Issue
+                - generic [ref=e44]: 04 May 2026
+              - generic [ref=e45]:
+                - generic [ref=e46]: Edition
+                - generic [ref=e47]: HUKM · Volume 1
+              - generic [ref=e48]:
+                - generic [ref=e49]: Method
+                - generic [ref=e50]: Article-cited RAG
+              - generic [ref=e51]:
+                - generic [ref=e52]: Source
+                - generic [ref=e53]: FDRE Criminal Code 414/2004
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: ሁኔታውን ይግለጹ
+            - generic [ref=e59]:
+              - textbox "ሁኔታውን ይግለጹ" [ref=e60]:
+                - /placeholder: ድርጊቱን፣ ተሳታፊዎችን፣ ስፍራውን፣ እና የቀደመ ታሪክ ካለ ይግለጹ። የግል ማንነት መግለጫ መረጃ አያካትቱ።
+              - generic: 0 / 5,000
+            - paragraph [ref=e61]: በ 10 እና 5,000 ቁምፊ መካከል ያቅርቡ። ሥርዓቱ ድርጊቱን በወንጀል ሕግ አዋጅ 414/2004 መሠረት ይተነትናል።
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: ሞዴል
+              - button "ሞዴል" [ref=e66] [cursor=pointer]:
+                - generic [ref=e67]:
+                  - generic [ref=e68]: GLM-4.7
+                  - generic [ref=e69]: Recommended. Fast, strong reasoning, free tier.
+                - generic [ref=e70]: Premium
+                - generic [ref=e72]: expand_more
+            - generic [ref=e73]:
+              - generic [ref=e74]: የወንጀል ምድብ (አማራጭ)
+              - generic [ref=e75]:
+                - combobox "የወንጀል ምድብ (አማራጭ)" [ref=e76]:
+                  - option "በራስ-ገዝ መለየት" [selected]
+                  - option "ግድያ"
+                  - option "ጥቃት"
+                  - option "ስርቆት"
+                  - option "ማታለያ"
+                  - option "የአደንዛዥ ዕፅ ወንጀል"
+                  - option "የፆታ ጥቃት"
+                  - option "የንብረት ጉዳት"
+                  - option "ሙስና"
+                  - option "የትራፊክ ወንጀል"
+                  - option "የሳይበር ወንጀል"
+                  - option "ሌላ"
+                - generic: expand_more
+          - generic [ref=e78]:
+            - generic [ref=e79]: የመልስ ቋንቋ
+            - radiogroup "የመልስ ቋንቋ" [ref=e80]:
+              - radio "English" [checked] [ref=e81] [cursor=pointer]
+              - radio "አማርኛ" [ref=e82] [cursor=pointer]
+          - group [ref=e83]:
+            - generic "ተጨማሪ አማራጮች" [ref=e84] [cursor=pointer]:
+              - text: ተጨማሪ አማራጮች
+              - generic [ref=e85]: arrow_drop_down
+          - generic [ref=e86]:
+            - generic [ref=e87]: ምሳሌዎች፦
+            - button "የዘረፋ ምሳሌ" [ref=e88] [cursor=pointer]
+            - button "የጥቃት ምሳሌ" [ref=e89] [cursor=pointer]
+            - button "የፍትሐብሔር-ወንጀል ልዩነት" [ref=e90] [cursor=pointer]
+          - button "ትንተና አስኪድ" [disabled] [ref=e91]:
+            - text: ትንተና አስኪድ
+            - generic [ref=e92]: arrow_forward
+        - generic [ref=e93]:
+          - generic [ref=e94]:
+            - heading "ትንተና እንዴት ይገነባል" [level=2] [ref=e97]
+            - generic [ref=e98]: ዘዴው፣ ደረጃ በደረጃ
+          - list [ref=e99]:
+            - listitem [ref=e100]:
+              - generic [ref=e101]:
+                - generic [ref=e102]: Chapter 01
+                - generic [ref=e104]: list_alt
+              - heading "ትንተና" [level=3] [ref=e105]
+              - paragraph [ref=e106]: የሰባት ደረጃ ጥያቄ ሞዴሉ እውነታውን፣ ምደባን፣ ክፍሎችን፣ መከላከያዎችን፣ ቅጣትን፣ ቀደምት ውሳኔዎችን እና መደምደሚያን እንዲያቀርብ ይጠይቃል።
+            - listitem [ref=e107]:
+              - generic [ref=e108]:
+                - generic [ref=e109]: Chapter 02
+                - generic [ref=e111]: menu_book
+              - heading "መጥቀስ" [level=3] [ref=e112]
+              - paragraph [ref=e113]: እያንዳንዱ ይዘት በቀረቡት አንቀጾች ላይ የተመሠረተ ነው። ሞዴሉ የአንቀጽ ቁጥር ከፈጠረ ይልቅ ይታቀብ።
+            - listitem [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: Chapter 03
+                - generic [ref=e118]: forum
+              - heading "ውይይት" [level=3] [ref=e119]
+              - paragraph [ref=e120]: በተመሳሳዩ የውይይት ዐውድ ውስጥ አዲስ እውነታዎች በመጨመር ወይም የቀጣይ ጥያቄዎችን በመጠየቅ ትንተናውን ያጣሩ።
+    - contentinfo [ref=e121]:
+      - generic [ref=e127]:
+        - generic [ref=e128]: © 2026 HUKM · የኢትዮጵያ የወንጀል ሕግ
+        - navigation "Footer" [ref=e129]:
+          - generic [ref=e130]: ሁክም የጥናት መሣሪያ ነው። የሚመለሱ ምላሾች በሰው ሰራሽ ብልህነት የተፈጠሩ ሲሆኑ የሕግ ምክር አይተኩም።
+          - link "ምንጮች" [ref=e131] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e132]

@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "HUKM Ethiopian Criminal Law" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: HUKM
+          - generic [ref=e7]: Ethiopian Criminal Law
+        - navigation "Primary" [ref=e8]:
+          - link "Analyse" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e10] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e11] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e12] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e13] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e14]:
+          - button "Toggle language" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]: translate
+            - generic [ref=e17]: EN
+          - button "Toggle dark mode" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]: light_mode
+    - main [ref=e20]:
+      - generic [ref=e401]:
+        - complementary [ref=e402]:
+          - generic [ref=e403]:
+            - generic [ref=e404]:
+              - heading "Conversation" [level=2] [ref=e405]
+              - paragraph [ref=e406]: Active scenario
+            - generic [ref=e407]:
+              - generic [ref=e408]: error
+              - text: Low confidence
+            - generic [ref=e409]:
+              - heading "Scenario summary" [level=3] [ref=e410]
+              - paragraph [ref=e411]: On 12 March 2024 in Addis Ababa, two men entered a small electronics shop with a knife, threatened the owner, and forced him to hand over the cash register containing roughly 18,000 birr. They fled on a motorcycle. Both were arrested two days later. One has a prior conviction for theft.
+            - generic [ref=e412]:
+              - heading "Model" [level=3] [ref=e413]
+              - paragraph [ref=e414]: Llama 4 Maverick
+        - generic [ref=e415]:
+          - generic [ref=e418]: No messages yet. Ask a follow-up question to begin.
+          - generic [ref=e420]:
+            - generic [ref=e421]:
+              - textbox "Message" [ref=e422]:
+                - /placeholder: Ask a follow-up question. Shift+Enter for newline.
+              - button "Send" [disabled] [ref=e423]:
+                - generic [ref=e424]: send
+            - paragraph [ref=e425]: Press Enter to send. · 0 / 5000
+    - contentinfo [ref=e362]:
+      - generic [ref=e363]:
+        - generic [ref=e364]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e365]:
+          - generic [ref=e366]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e367] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e368]

@@ -1,0 +1,2 @@
+[     138ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/_next/static/css/e3ca4ecde2857cfd.css:0
+[     808ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/_next/static/chunks/app/page-f8d43701583f891a.js:0

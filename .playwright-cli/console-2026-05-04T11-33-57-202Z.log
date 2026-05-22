@@ -1,0 +1,2 @@
+[     914ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3005/api/feedback/bdad8a45-2d04-40ff-8d0d-96c2dd2b3ca1:0
+[     955ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3005/favicon.ico:0

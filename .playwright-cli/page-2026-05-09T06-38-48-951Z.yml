@@ -1,0 +1,71 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner:
+      - navigation "Primary" [ref=e3]:
+        - link "HUKM" [ref=e4] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e5]: HUKM
+        - navigation "Primary" [ref=e6]:
+          - link "Analyse" [ref=e7] [cursor=pointer]:
+            - /url: /
+          - link "History" [ref=e8] [cursor=pointer]:
+            - /url: /history
+          - link "Compare" [ref=e9] [cursor=pointer]:
+            - /url: /compare
+          - link "Insights" [ref=e10] [cursor=pointer]:
+            - /url: /insights
+          - link "Resources" [ref=e11] [cursor=pointer]:
+            - /url: /resources
+        - generic [ref=e12]:
+          - button "Toggle language" [ref=e13] [cursor=pointer]:
+            - img [ref=e14]
+            - generic [ref=e16]: EN
+          - button "Toggle dark mode" [ref=e17] [cursor=pointer]:
+            - img [ref=e18]
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]: Compare
+          - heading "Compare two scenarios" [level=1] [ref=e25]
+          - paragraph [ref=e26]: Run two scenarios through the same model side-by-side and see how the analysis differs.
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - text: Model
+            - button "Model" [ref=e31] [cursor=pointer]:
+              - img [ref=e32]
+          - 'button "Model: Nemotron Super 120B" [ref=e35] [cursor=pointer]':
+            - img [ref=e38]
+            - generic [ref=e42]:
+              - generic [ref=e43]: Nemotron Super 120B
+              - generic [ref=e44]: NVIDIA flagship — fast, balanced
+            - img [ref=e45]
+          - generic [ref=e47]:
+            - generic [ref=e48]: Powered by
+            - img "NVIDIA" [ref=e49]:
+              - generic [ref=e52]: NVIDIA
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - generic [ref=e56]: A
+              - text: Scenario A
+            - generic [ref=e58]:
+              - textbox "Enter scenario facts, charges, and circumstances…" [ref=e59]
+              - generic [ref=e60]: 0 / 5,000
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - generic [ref=e63]: B
+              - text: Scenario B
+            - generic [ref=e65]:
+              - textbox "Enter scenario facts, charges, and circumstances…" [ref=e66]
+              - generic [ref=e67]: 0 / 5,000
+        - button "Analyse both" [ref=e69] [cursor=pointer]:
+          - generic [ref=e70]: Analyse both
+          - img [ref=e72]
+    - contentinfo [ref=e74]:
+      - generic [ref=e76]:
+        - generic [ref=e77]: © 2026 HUKM — Ethiopian Criminal Law
+        - navigation [ref=e78]:
+          - generic [ref=e79]: HUKM is a research tool. Output is AI-generated and is not legal advice.
+          - link "Resources" [ref=e80] [cursor=pointer]:
+            - /url: /resources
+  - alert [ref=e81]
