@@ -433,3 +433,87 @@
     scrollbar-width: none;
   }
 }
+
+/* ============================================================================
+   Animated Button (.Btn)
+   ========================================================================= */
+
+.Btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition-duration: .3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background-color: var(--btn-bg, rgb(var(--accent-red)));
+}
+
+.Btn .sign {
+  width: 100%;
+  transition-duration: .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Btn .sign svg {
+  width: 17px;
+}
+
+.Btn .sign svg path {
+  fill: currentColor;
+}
+
+.Btn .text {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: inherit;
+  font-size: 1em;
+  font-weight: 600;
+  transition-duration: .3s;
+}
+
+.Btn:hover {
+  width: 125px;
+  border-radius: 40px;
+  transition-duration: .3s;
+}
+
+.Btn:hover .sign {
+  width: 30%;
+  transition-duration: .3s;
+  padding-left: 20px;
+}
+
+.Btn:hover .text {
+  opacity: 1;
+  width: 70%;
+  transition-duration: .3s;
+  padding-right: 10px;
+}
+
+.Btn:active {
+  transform: translate(2px ,2px);
+}
+
+.Btn.Btn-primary {
+  --btn-bg: rgb(var(--accent-blue));
+  color: white;
+}
+.Btn.Btn-secondary {
+  --btn-bg: rgb(var(--surface-elevated));
+  color: white;
+}
+.Btn.Btn-danger {
+  --btn-bg: rgb(255, 65, 65);
+  color: white;
+}
+

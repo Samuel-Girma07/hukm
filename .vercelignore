@@ -1,0 +1,10 @@
+hukm-app/
+hukm-app.zip
+test-results/
+e2e/
+.opencode/
+.ai/
+.claude/
+.devin/
+legal-docs/
+*.png

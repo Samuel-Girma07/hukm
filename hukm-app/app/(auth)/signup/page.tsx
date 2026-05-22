@@ -41,12 +41,17 @@ export default function SignupPage({
               required
             />
           </div>
-          <button
-            formAction={signup}
-            className="mt-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-on-primary transition-colors hover:bg-primary/90"
-          >
-            Sign Up
-          </button>
+          <div className="mt-2 flex justify-center w-full">
+            <button
+              formAction={signup}
+              className="Btn Btn-primary"
+            >
+              <div className="sign">
+                <svg viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"></path></svg>
+              </div>
+              <div className="text">Sign Up</div>
+            </button>
+          </div>
         </form>
         <p className="mt-6 text-center text-sm text-on-surface-variant">
           Already have an account?{' '}

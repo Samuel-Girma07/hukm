@@ -32,14 +32,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup')
+  const isAuthRoute = 
+    request.nextUrl.pathname.startsWith('/login') || 
+    request.nextUrl.pathname.startsWith('/signup') ||
+    request.nextUrl.pathname.startsWith('/onboarding')
   
   if (!user && !isAuthRoute) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = '/onboarding'
     return NextResponse.redirect(url)
   }
 
+  // Redirect authenticated users away from auth pages to the main app
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/'

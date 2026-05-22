@@ -84,64 +84,38 @@ export interface ChatModel {
   };
 }
 
-/**
- * Primary models exposed to end users via the model selector.
- * Ordered by speed → depth. Default first.
- */
 export const PRIMARY_MODELS: readonly ChatModel[] = [
   {
-    id: "meta/llama-4-maverick-17b-128e-instruct",
+    id: "nvidia/nemotron-3-super-120b-a12b",
     displayName: "Fast",
     tagline: "Instant results, great for simple cases",
-    modelName: "Llama 4 Maverick 17B MoE",
-    contextLength: "128K",
-    bestFor: "Quick checks, simple cases",
-    icon: "speed",
-    vendor: "meta",
-    tier: "standard",
-  },
-  {
-    id: "nvidia/nemotron-3-super-120b-a12b",
-    displayName: "Fast thinking",
-    tagline: "Fast with reasoning",
     modelName: "Nemotron Super 120B",
     contextLength: "128K",
-    bestFor: "Balanced speed and depth",
+    bestFor: "Quick checks, simple cases",
     icon: "speed",
     vendor: "nvidia",
     tier: "standard",
   },
   {
-    id: "qwen/qwen3.5-397b-a17b",
-    displayName: "Thinking low",
-    tagline: "Deep analysis, best quality-to-speed ratio",
-    modelName: "Qwen3.5 397B",
+    id: "moonshotai/kimi-k2.6",
+    displayName: "Balanced",
+    tagline: "Balanced speed and depth",
+    modelName: "Kimi k2.6",
     contextLength: "128K",
     bestFor: "Most analyses",
     icon: "brain",
-    vendor: "qwen",
+    vendor: "z-ai",
     tier: "standard",
   },
   {
-    id: "openai/gpt-oss-120b",
-    displayName: "Thinking medium",
-    tagline: "Thorough reasoning",
-    modelName: "GPT-OSS 120B",
-    contextLength: "128K",
-    bestFor: "Complex scenarios",
-    icon: "brain",
-    vendor: "openai",
-    tier: "standard",
-  },
-  {
-    id: "z-ai/glm-5.1",
+    id: "qwen/qwen3-coder-480b-a35b-instruct",
     displayName: "Thinking high",
     tagline: "Maximum reasoning depth",
-    modelName: "GLM-5.1",
+    modelName: "Qwen3 Coder 480B",
     contextLength: "128K",
     bestFor: "Critical cases",
     icon: "brain",
-    vendor: "z-ai",
+    vendor: "qwen",
     tier: "premium",
     thinkingConfig: { enable_thinking: false },
   },
@@ -219,7 +193,7 @@ export const ALL_MODELS: readonly ChatModel[] = [
 ];
 
 /** Default: Thinking low (best quality-to-speed ratio). */
-export const DEFAULT_MODEL_ID = PRIMARY_MODELS[2]!.id;
+export const DEFAULT_MODEL_ID = PRIMARY_MODELS[1]!.id;
 
 // ---------------------------------------------------------------------------
 // Helpers
