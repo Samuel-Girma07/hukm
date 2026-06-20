@@ -1,10 +1,43 @@
-hukm-app/
-hukm-app.zip
-test-results/
-e2e/
-.opencode/
-.ai/
-.claude/
-.devin/
-legal-docs/
+# Vercel builds the app inside ./hukm-app (set via Project Settings → Root Directory).
+# This file is evaluated relative to the repository root BEFORE Vercel switches
+# into the Root Directory, so anything we list here is removed entirely.
+#
+# IMPORTANT: patterns WITHOUT a leading slash match at any depth (gitignore style).
+# So we anchor every root-app pattern with a leading "/" so it ONLY matches the
+# legacy root app, never the same folder names inside ./hukm-app/.
+
+# --- Legacy root Next.js app (v0.1.0, pre-redesign) — never build this. ---
+/package.json
+/package-lock.json
+/next.config.mjs
+/tsconfig.json
+/tailwind.config.ts
+/postcss.config.mjs
+/playwright.config.ts
+/vitest.config.ts
+/vitest.setup.ts
+/instrumentation.ts
+/app/
+/components/
+/lib/
+/__tests__/
+/scripts/
+/.env.example
+/.eslintrc.json
+
+# --- Archives / test artifacts that should never ship. ---
+/hukm-app.zip
+/test-results/
+/e2e/
+
+# --- Local agent / IDE config dirs. ---
+/.opencode/
+/.ai/
+/.claude/
+/.devin/
+/.kiro/
+/legal-docs/
+
+# --- Binaries. Note: leading slash NOT used here, so this matches at any depth. ---
 *.png
+*.zip
