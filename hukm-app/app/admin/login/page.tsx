@@ -7,27 +7,22 @@ import { ErrorState, InlineError } from "@/components/ErrorState";
 import { Spinner } from "@/components/Spinner";
 import { useT } from "@/contexts/LanguageContext";
 
-interface LoginResponse {
+interface ConfigResponse {
   success: boolean;
   configured?: boolean;
-  digest?: string;
   error?: string;
 }
 
-const ADMIN_KEY = "hukm-admin-auth";
-
-async function sha256Hex(value: string): Promise<string> {
-  const enc = new TextEncoder();
-  const buffer = await crypto.subtle.digest("SHA-256", enc.encode(value));
-  const bytes = Array.from(new Uint8Array(buffer));
-  return bytes.map((b) => b.toString(16).padStart(2, "0")).join("");
+interface LoginResponse {
+  success: boolean;
+  error?: string;
+  code?: string;
 }
 
 export default function AdminLoginPage(): React.ReactElement {
   const t = useT();
   const router = useRouter();
   const [password, setPassword] = useState("");
-  const [serverDigest, setServerDigest] = useState<string | null>(null);
   const [configured, setConfigured] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -37,14 +32,13 @@ export default function AdminLoginPage(): React.ReactElement {
     void (async () => {
       try {
         const response = await fetch("/api/admin/login");
-        const data = (await response.json()) as LoginResponse;
+        const data = (await response.json()) as ConfigResponse;
         if (cancelled) return;
         if (!data.success) {
           setError(data.error ?? `HTTP ${response.status}`);
           return;
         }
         setConfigured(Boolean(data.configured));
-        setServerDigest(data.digest ?? null);
       } catch (err) {
         if (cancelled) return;
         setError(err instanceof Error ? err.message : String(err));
@@ -60,16 +54,22 @@ export default function AdminLoginPage(): React.ReactElement {
   ): Promise<void> {
     event.preventDefault();
     setError(null);
-    if (!serverDigest) return;
     setSubmitting(true);
     try {
-      const digest = await sha256Hex(password);
-      if (digest !== serverDigest) {
-        setError(t("admin.signInError"));
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = (await response.json()) as LoginResponse;
+      if (!response.ok || !data.success) {
+        setError(data.error ?? `HTTP ${response.status}`);
         return;
       }
-      window.sessionStorage.setItem(ADMIN_KEY, digest);
+      // Server set the hukm-admin-auth HTTP-only cookie. Navigate to /admin.
       router.replace("/admin");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setSubmitting(false);
     }
@@ -110,14 +110,14 @@ export default function AdminLoginPage(): React.ReactElement {
               value={password}
               onChange={(event) => setPassword(event.currentTarget.value)}
               autoComplete="current-password"
-              disabled={submitting || !serverDigest}
+              disabled={submitting || configured !== true}
               required
             />
           </label>
           {error ? <InlineError message={error} /> : null}
           <button
             type="submit"
-            disabled={submitting || !serverDigest}
+            disabled={submitting || configured !== true}
             className="btn-primary justify-center"
           >
             {submitting ? (

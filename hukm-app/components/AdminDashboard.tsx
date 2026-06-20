@@ -29,8 +29,6 @@ import type {
   CacheStatsResponse,
 } from "@/lib/types";
 
-const ADMIN_KEY = "hukm-admin-auth";
-
 /**
  * Dark dashboard recharts palette. Maps confidence levels to the same
  * accent colours used by `ConfidenceBadge`.
@@ -120,9 +118,13 @@ export function AdminDashboard(): React.ReactElement {
     [heatmap],
   );
 
-  function signOut(): void {
-    if (typeof window !== "undefined") {
-      window.sessionStorage.removeItem(ADMIN_KEY);
+  async function signOut(): Promise<void> {
+    try {
+      // DELETE /api/admin/login clears the hukm-admin-auth cookie server-side.
+      await fetch("/api/admin/login", { method: "DELETE" });
+    } catch {
+      // Best-effort — even if the network call fails, navigate away so
+      // the user sees the login screen. The cookie will expire on its own.
     }
     router.replace("/admin/login");
   }

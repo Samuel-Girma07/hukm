@@ -1,13 +1,13 @@
 /**
  * GET /api/admin/stats
  *
- * Aggregates analytics for the admin dashboard. Read-only; no admin
- * auth on the API itself (the dashboard page guards access via the
- * admin-login flow). All queries are read-only RPCs / SELECTs.
+ * Aggregates analytics for the admin dashboard. Requires admin auth
+ * (the `hukm-admin-auth` cookie set by POST /api/admin/login).
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
+import { requireAdmin } from "@/lib/adminAuth";
 import { describeDbError } from "@/lib/dbErrors";
 import { jsonError } from "@/lib/http";
 import { logger } from "@/lib/logger";
@@ -40,7 +40,12 @@ interface FeedbackRowMinimal {
   created_at: string;
 }
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(
+  request: NextRequest,
+): Promise<NextResponse> {
+  const denied = requireAdmin(request);
+  if (denied) return denied;
+
   const supabase = getServerClient();
 
   try {
