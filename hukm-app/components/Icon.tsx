@@ -34,6 +34,7 @@ import {
   CloudSlash,
   CheckCircle,
   Clock,
+  Cpu,
   Envelope,
   Eye,
   FilePdf,
@@ -57,6 +58,7 @@ import {
   Scales,
   SealCheck,
   ShareNetwork,
+  SignOut,
   SlidersHorizontal,
   ThumbsDown,
   ThumbsUp,
@@ -147,6 +149,8 @@ const ICONS: Record<string, PhosphorIcon> = {
   picture_as_pdf: FilePdf,
   schedule: Clock,
   support_agent: Headset,
+  logout: SignOut,
+  model: Cpu,
 };
 
 function resolveWeight(weight: number | undefined, filled: boolean): IconWeight {
