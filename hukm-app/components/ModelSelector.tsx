@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 
 import { Icon } from "./Icon";
 
-import { PRIMARY_MODELS, type ChatModel } from "@/lib/models";
+import { PRIMARY_MODELS, type ChatModel, type ModelIcon } from "@/lib/models";
 import { useT } from "@/contexts/LanguageContext";
 
 interface ModelSelectorProps {
@@ -15,64 +15,68 @@ interface ModelSelectorProps {
   variant?: "card" | "compact";
 }
 
-const MODEL_META: Record<
-  string,
-  { icon: React.ReactNode; badge?: string; badgeClass?: string; iconColor: string }
-> = {
-  "meta/llama-4-maverick-17b-128e-instruct": {
-    icon: <Icon name="bolt" size={18} />,
-    iconColor: "text-yellow-500",
-  },
+/**
+ * Per-model visual metadata. Keys MUST match the `id` field of models in
+ * lib/models.ts PRIMARY_MODELS. To keep this in sync, we assert at module
+ * load that every primary model has an entry — see PRIMARY_MODEL_IDS below.
+ *
+ * If you add a new model to PRIMARY_MODELS, add an entry here too.
+ */
+interface ModelVisualMeta {
+  /** Tailwind text color class for the icon. */
+  iconColor: string;
+  /** Optional badge ("Most Popular", "Premium", etc.). */
+  badge?: string;
+  badgeClass?: string;
+}
+
+function iconForModel(icon: ModelIcon): React.ReactNode {
+  // Map the abstract icon name from lib/models.ts to a concrete <Icon> name
+  // or custom SVG. "speed" → lightning bolt, "brain" → thinking depth.
+  switch (icon) {
+    case "speed":
+      return <Icon name="bolt" size={18} />;
+    case "brain":
+      return <Icon name="psychology" size={18} />;
+    default:
+      return <Icon name="model" size={18} />;
+  }
+}
+
+const MODEL_META: Record<string, ModelVisualMeta> = {
+  // ── Primary models (kept in sync with lib/models.ts PRIMARY_MODELS) ──
   "nvidia/nemotron-3-super-120b-a12b": {
-    icon: <Icon name="psychology" size={18} />,
     iconColor: "text-orange-400",
   },
-  "qwen/qwen3.5-397b-a17b": {
-    icon: (
-      <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    ),
+  "moonshotai/kimi-k2.6": {
     iconColor: "text-cyan-400",
     badge: "Most Popular",
     badgeClass:
       "text-[10px] font-semibold text-[rgb(var(--accent-blue))] bg-[rgb(var(--accent-blue))]/10 px-1.5 py-0.5 rounded-full border border-[rgb(var(--accent-blue))]/20",
   },
-  "openai/gpt-oss-120b": {
-    icon: (
-      <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    ),
-    iconColor: "text-cyan-500",
-  },
-  "z-ai/glm-5.1": {
-    icon: (
-      <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    ),
-    iconColor: "text-cyan-600",
+  "qwen/qwen3-coder-480b-a35b-instruct": {
+    iconColor: "text-indigo-400",
     badge: "Premium",
     badgeClass:
       "text-[9px] uppercase tracking-wider font-bold text-indigo-300 bg-gradient-to-r from-indigo-900/50 to-purple-900/50 px-2 py-0.5 rounded-full border border-indigo-500/30",
   },
 };
+
+// Compile-time assertion that every primary model has a META entry.
+// If you add a model to PRIMARY_MODELS without adding it to MODEL_META,
+// this line will throw at runtime in dev — surfacing the gap early.
+const PRIMARY_MODEL_IDS = PRIMARY_MODELS.map((m) => m.id);
+if (process.env.NODE_ENV !== "production") {
+  for (const id of PRIMARY_MODEL_IDS) {
+    if (!MODEL_META[id]) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[ModelSelector] Missing MODEL_META entry for primary model "${id}". ` +
+          `Add it to components/ModelSelector.tsx or the icon/badge will be missing.`,
+      );
+    }
+  }
+}
 
 export function ModelSelector({
   value,
@@ -118,7 +122,7 @@ export function ModelSelector({
           aria-expanded={open}
         >
           <span className={MODEL_META[selected.id]?.iconColor ?? ""}>
-            {MODEL_META[selected.id]?.icon ?? <Icon name="model" size={14} />}
+            {iconForModel(selected.icon)}
           </span>
           <span className="hidden sm:inline">{selected.displayName}</span>
           <Icon name="expand_more" size={14} />
@@ -222,7 +226,7 @@ function ModelOption({
 
       <div className="flex-1 flex items-start gap-2 min-w-0">
         <div className={`mt-0.5 shrink-0 ${meta?.iconColor ?? "text-on-surface-variant"}`}>
-          {meta?.icon ?? <Icon name="model" size={compact ? 16 : 20} />}
+          {iconForModel(model.icon)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">

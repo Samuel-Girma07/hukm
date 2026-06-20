@@ -1,6 +1,8 @@
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { ChatInterface } from "@/components/ChatInterface";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { isConversationOwner } from "@/lib/ownership";
 import { getOrCreateSessionId } from "@/lib/session";
 import { getServerClient } from "@/lib/supabase";
@@ -68,11 +70,19 @@ export default async function ChatPage({
 
   return (
     <div className="mx-auto w-full max-w-[1280px]">
-      <ChatInterface
-        conversation={conversationLookup.data}
-        initialMessages={messages}
-        sessionId={sessionId}
-      />
+      <Suspense
+        fallback={
+          <div className="mx-auto max-w-3xl">
+            <LoadingSkeleton />
+          </div>
+        }
+      >
+        <ChatInterface
+          conversation={conversationLookup.data}
+          initialMessages={messages}
+          sessionId={sessionId}
+        />
+      </Suspense>
     </div>
   );
 }

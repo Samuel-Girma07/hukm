@@ -8,18 +8,41 @@ interface AnimatedTextProps {
   className?: string;
 }
 
+/**
+ * Animated SVG stroke-draw hero text.
+ *
+ * Re-runs the animation when `text` changes (e.g. user toggles language
+ * EN → AM). The previous anime.js instance is paused + destroyed on
+ * cleanup to prevent leaks.
+ *
+ * Each render also re-measures `getComputedTextLength()` against the
+ * new text content so the dasharray is correct.
+ */
 export function AnimatedHeroText({ text, className = "" }: AnimatedTextProps): React.ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
-  const hasAnimated = useRef(false);
+  const animationRef = useRef<ReturnType<typeof anime> | null>(null);
 
   useEffect(() => {
-    if (!svgRef.current || hasAnimated.current) return;
-    hasAnimated.current = true;
+    if (!svgRef.current) return;
+
+    // Pause + clean up any previous animation before starting a new one.
+    // This matters when `text` changes — the old anime.js instance was
+    // still ticking on detached SVG nodes.
+    if (animationRef.current) {
+      try {
+        animationRef.current.pause();
+      } catch {
+        /* anime v3 .pause() is safe but defensive */
+      }
+      animationRef.current = null;
+    }
 
     const texts = svgRef.current.querySelectorAll(".hero-stroke-text");
     if (texts.length === 0) return;
 
-    // Set dasharray to path length for each text element
+    // Set dasharray to path length for each text element.
+    // Re-measured every time `text` changes — the previous version
+    // computed it once on mount and never updated.
     texts.forEach((el) => {
       const textEl = el as SVGTextElement;
       const length = textEl.getComputedTextLength();
@@ -28,7 +51,7 @@ export function AnimatedHeroText({ text, className = "" }: AnimatedTextProps): R
     });
 
     // Animate stroke drawing
-    anime({
+    animationRef.current = anime({
       targets: texts,
       strokeDashoffset: [anime.setDashoffset, 0],
       easing: "easeInOutQuad",
@@ -37,7 +60,18 @@ export function AnimatedHeroText({ text, className = "" }: AnimatedTextProps): R
       loop: true,
       direction: "alternate",
     });
-  }, []);
+
+    return () => {
+      if (animationRef.current) {
+        try {
+          animationRef.current.pause();
+        } catch {
+          /* ignore */
+        }
+        animationRef.current = null;
+      }
+    };
+  }, [text]);
 
   return (
     <svg

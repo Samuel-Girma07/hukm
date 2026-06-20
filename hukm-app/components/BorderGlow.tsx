@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useCallback, useState, useEffect, type ReactNode } from 'react';
 
 interface BorderGlowProps {
@@ -46,16 +48,44 @@ interface AnimateOpts {
  ease?: (t: number) => number; onUpdate: (v: number) => void; onEnd?: () => void;
 }
 
-function animateValue({ start = 0, end = 100, duration = 1000, delay = 0, ease = easeOutCubic, onUpdate, onEnd }: AnimateOpts) {
+/**
+ * Returns a cancel function. Call it on unmount to stop pending timers
+ * and the active rAF loop, preventing state updates on an unmounted
+ * component ("Can't perform a React state update on an unmounted
+ * component" warning).
+ */
+function animateValue({ start = 0, end = 100, duration = 1000, delay = 0, ease = easeOutCubic, onUpdate, onEnd }: AnimateOpts): () => void {
+ let rafId: number | null = null;
+ let timeoutId: number | null = null;
+ let cancelled = false;
  const t0 = performance.now() + delay;
  function tick() {
+ if (cancelled) return;
  const elapsed = performance.now() - t0;
  const t = Math.min(elapsed / duration, 1);
  onUpdate(start + (end - start) * ease(t));
- if (t < 1) requestAnimationFrame(tick);
- else if (onEnd) onEnd();
+ if (t < 1) {
+   rafId = requestAnimationFrame(tick);
+ } else if (onEnd) {
+   onEnd();
  }
- setTimeout(() => requestAnimationFrame(tick), delay);
+ }
+ timeoutId = window.setTimeout(() => {
+   timeoutId = null;
+   if (cancelled) return;
+   rafId = requestAnimationFrame(tick);
+ }, delay);
+ return () => {
+   cancelled = true;
+   if (timeoutId !== null) {
+     window.clearTimeout(timeoutId);
+     timeoutId = null;
+   }
+   if (rafId !== null) {
+     cancelAnimationFrame(rafId);
+     rafId = null;
+   }
+ };
 }
 
 const GRADIENT_POSITIONS = ['80% 55%', '69% 34%', '8% 6%', '41% 38%', '86% 85%', '82% 18%', '51% 4%'];
@@ -139,17 +169,24 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
  setSweepActive(true);
  setCursorAngle(angleStart);
 
- animateValue({ duration: 500, onUpdate: v => setEdgeProximity(v / 100) });
- animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
+ // Track cancel functions so we can stop all animations on unmount
+ // (prevents "state update on unmounted component" warnings + leaks).
+ const cancels: Array<() => void> = [];
+ cancels.push(animateValue({ duration: 500, onUpdate: v => setEdgeProximity(v / 100) }));
+ cancels.push(animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
  setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
- }});
- animateValue({ ease: easeOutCubic, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: v => {
+ }}));
+ cancels.push(animateValue({ ease: easeOutCubic, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: v => {
  setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
- }});
- animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
+ }}));
+ cancels.push(animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
  onUpdate: v => setEdgeProximity(v / 100),
  onEnd: () => setSweepActive(false),
- });
+ }));
+
+ return () => {
+   for (const cancel of cancels) cancel();
+ };
  }, [animated]);
 
  /* ── focus-driven slow rotation ── */
