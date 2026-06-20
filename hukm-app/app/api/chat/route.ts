@@ -32,6 +32,7 @@ import {
   checkRateLimit,
   identifyClient,
   rateLimitHeaders,
+  type RateLimitOutcome,
 } from "@/lib/ratelimit";
 import { retrieveContext } from "@/lib/retrieval";
 import {
@@ -104,6 +105,13 @@ interface PreparedRequest {
   scenarioDescription: string | null;
   history: MessageRow[];
   retrieval: RetrievalResult;
+  /**
+   * The rate-limit outcome from the single checkRateLimit() call inside
+   * prepareRequest(). Reused by the POST handler to attach X-RateLimit-*
+   * headers to the 200 response WITHOUT calling checkRateLimit() a
+   * second time (which would double-charge the user's quota).
+   */
+  rateLimit: RateLimitOutcome;
 }
 
 async function prepareRequest(
@@ -203,6 +211,7 @@ async function prepareRequest(
       scenarioDescription: conversationLookup.data.scenario_description,
       history,
       retrieval,
+      rateLimit,
     },
   };
 }
@@ -638,13 +647,11 @@ export async function POST(
 
   const wantsStream =
     new URL(request.url).searchParams.get("stream") === "true";
-  // Re-resolve the rate limit outcome for headers (already passed in prep
-  // when used). For simplicity, recompute headers from the same outcome —
-  // but we already consumed it; pass empty here, rate-limit headers were
-  // already attached if 429. For 200 responses without streaming we want
-  // to still emit X-RateLimit-* — derive cheaply by sampling current.
-  const sample = await checkRateLimit(prep.data.cookieSessionId, prep.data.modelId);
-  const headers = rateLimitHeaders(sample);
+  // Reuse the rate-limit outcome from prepareRequest() — calling
+  // checkRateLimit() again here would double-charge the user's quota.
+  // We still attach the X-RateLimit-* headers to the 200 response so
+  // clients can show remaining-quota UI.
+  const headers = rateLimitHeaders(prep.data.rateLimit);
 
   if (wantsStream) {
     return handleStreaming(prep.data, headers, request);
