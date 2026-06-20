@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { ChatInterface } from "@/components/ChatInterface";
 import { isConversationOwner } from "@/lib/ownership";
@@ -35,10 +35,13 @@ export default async function ChatPage({
   const conversationId = params.conversationId?.trim();
   if (!conversationId) notFound();
 
-  // Mint a session id if needed so anonymous first-arrivals don't 404
-  // (they wouldn't own the conversation anyway, but the cookie set here
-  // means /api/chat won't reject them with SESSION_MISMATCH).
+  // Read the authenticated user's id. If they're not logged in, redirect
+  // to /onboarding instead of throwing a 500 — anonymous users can't own
+  // a conversation anyway, so we never want them on this page.
   const sessionId = await getOrCreateSessionId();
+  if (!sessionId) {
+    redirect("/onboarding");
+  }
 
   const owns = await isConversationOwner(conversationId, sessionId);
   if (!owns) notFound();

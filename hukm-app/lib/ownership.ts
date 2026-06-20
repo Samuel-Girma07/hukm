@@ -26,7 +26,7 @@ interface ConversationOwnershipRow {
  */
 export async function isConversationOwner(
   conversationId: string,
-  sessionId: string,
+  sessionId: string | null,
 ): Promise<boolean> {
   if (!conversationId || !sessionId) return false;
 
@@ -55,7 +55,7 @@ interface AnalysisOwnershipRow {
 
 export async function isAnalysisOwner(
   analysisId: string,
-  sessionId: string,
+  sessionId: string | null,
 ): Promise<boolean> {
   if (!analysisId || !sessionId) return false;
 

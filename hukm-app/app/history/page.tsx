@@ -8,10 +8,13 @@ import type { RecentConversationRow } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export default async function HistoryPage(): Promise<React.ReactElement> {
-  // Ensure the session cookie exists; the rest of the page reads via the API.
-  await getOrCreateSessionId();
-
+  // Get the authenticated user's id. If they're not logged in, redirect
+  // to /onboarding instead of throwing a 500.
   const sessionId = await getOrCreateSessionId();
+  if (!sessionId) {
+    redirect("/onboarding");
+  }
+
   const supabase = getServerClient();
   const { data, error } = await supabase.rpc("get_recent_conversations", {
     p_session_id: sessionId,

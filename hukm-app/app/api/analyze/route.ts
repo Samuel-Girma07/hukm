@@ -853,10 +853,9 @@ export async function POST(
   }
   const body = validation;
 
-  let sessionId: string;
-  try {
-    sessionId = await getOrCreateSessionId();
-  } catch (err) {
+  let sessionId: string | null;
+  sessionId = await getOrCreateSessionId();
+  if (!sessionId) {
     return jsonError(401, "Authentication required.", "UNAUTHORIZED");
   }
 

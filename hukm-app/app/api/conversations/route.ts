@@ -99,6 +99,9 @@ export async function POST(
   const { scenarioDescription, modelId, analysisId } = validated;
 
   const sessionId = await getOrCreateSessionId();
+  if (!sessionId) {
+    return jsonError(401, "You must be signed in to start a conversation.", "UNAUTHENTICATED");
+  }
   const supabase = getServerClient();
 
   // If seeded from an analysis, verify ownership and copy summary fields.
