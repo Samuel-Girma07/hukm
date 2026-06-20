@@ -7,6 +7,7 @@ import { Icon } from "./Icon";
 import { SourcesPanel } from "./SourcesPanel";
 
 import { useT } from "@/contexts/LanguageContext";
+import { formatDate } from "@/lib/date";
 import { getModelTierLabel } from "@/lib/models";
 import type { AnalysisResult, LawChunk } from "@/lib/types";
 
@@ -76,7 +77,7 @@ export function SharedAnalysisView({
             {getModelTierLabel(modelId)}
           </span>{" "}
           <span className="opacity-50">·</span>{" "}
-          {new Date(createdAt).toLocaleDateString()}
+          {formatDate(createdAt)}
         </p>
       </header>
 

@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Icon } from "@/components/Icon";
 import { Spinner } from "@/components/Spinner";
 import { useT } from "@/contexts/LanguageContext";
+import { formatDateTime } from "@/lib/date";
 import { getAllAnalyses, type StoredAnalysis } from "@/lib/idb";
 
 export default function OfflinePage(): React.ReactElement {
@@ -70,7 +71,7 @@ export default function OfflinePage(): React.ReactElement {
                 </Link>
                 <p className="mt-3 flex items-center gap-2 text-[11px] font-medium tabular-nums text-on-surface-variant">
                   <Icon name="schedule" size={12} />
-                  {new Date(entry.created_at).toLocaleString()}
+                  {formatDateTime(entry.created_at)}
                   <span className="opacity-50">·</span>
                   <span>{entry.modelId}</span>
                 </p>

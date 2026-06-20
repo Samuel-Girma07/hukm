@@ -14,49 +14,6 @@ import React from "react";
 export function HeroCornerDecoration(): React.ReactElement {
   return (
     <>
-      <style>{`
-        @keyframes hukm-move-h {
-          0%   { top: 0; opacity: 0; }
-          25%  { opacity: 1; }
-          50%  { top: 30%; opacity: 1; }
-          75%  { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-        @keyframes hukm-move-v {
-          0%   { left: 0; opacity: 0; }
-          25%  { opacity: 1; }
-          50%  { left: 45%; opacity: 1; }
-          75%  { opacity: 1; }
-          100% { left: 100%; opacity: 0; }
-        }
-        @keyframes hukm-effect {
-          0%   { opacity: 0; }
-          50%  { opacity: 1; }
-          100% { opacity: 0; }
-        }
-        @keyframes hukm-rot {
-          0%   { transform: rotate(0deg); }
-          50%  { transform: rotate(180deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes hukm-scale {
-          0%   { scale: 1; }
-          50%  { scale: 1.9; }
-          100% { scale: 1; }
-        }
-        @keyframes hukm-height {
-          0%   { bottom: 0%; left: 0%; height: 0px; }
-          25%  { height: 90px; }
-          50%  { bottom: 100%; left: 100%; height: 90px; }
-          75%  { height: 0px; }
-          100% { bottom: 0%; left: 0%; height: 0px; }
-        }
-        @keyframes hukm-width {
-          0%   { left: 0%; width: 0px; }
-          50%  { left: 100%; width: 90px; }
-          100% { left: 0%; width: 0px; }
-        }
-      `}</style>
 
       {/* Container: fixed top-right, flipped horizontally so the motion
           aligns with the right edge. Pointer-events none so it never

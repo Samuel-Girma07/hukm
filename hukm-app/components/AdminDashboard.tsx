@@ -22,6 +22,7 @@ import { Icon } from "./Icon";
 import { Spinner } from "./Spinner";
 
 import { useT } from "@/contexts/LanguageContext";
+import { formatDateTime } from "@/lib/date";
 import { getModelTierLabel } from "@/lib/models";
 import type {
   AdminStatsResponse,
@@ -318,7 +319,7 @@ export function AdminDashboard(): React.ReactElement {
                       <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant">
                         {entry.rating === 1 ? "↑" : "↓"}{" "}
                         <span className="opacity-50">·</span>{" "}
-                        {new Date(entry.created_at).toLocaleString()}
+                        {formatDateTime(entry.created_at)}
                       </p>
                       <p className="mt-1.5 text-[13px] leading-relaxed text-on-surface">
                         {entry.comment}

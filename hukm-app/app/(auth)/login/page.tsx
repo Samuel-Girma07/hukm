@@ -1,11 +1,17 @@
-import { login } from '../actions'
-import { HukmMarkMetallic } from '@/components/HukmMarkMetallic'
+"use client";
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { error?: string }
-}) {
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+
+import { HukmMarkMetallic } from "@/components/HukmMarkMetallic";
+import { useT } from "@/contexts/LanguageContext";
+import { login } from "../actions";
+
+export default function LoginPage() {
+  const t = useT();
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error") ?? undefined;
+
   return (
     <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-background p-4">
       {/* Animated background blobs */}
@@ -18,62 +24,62 @@ export default function LoginPage({
             <HukmMarkMetallic size={40} className="bg-transparent ring-0" />
           </div>
           <h1 className="text-center font-display text-3xl font-bold tracking-tight text-on-surface">
-            Welcome back
+            {t("auth.loginTitle")}
           </h1>
           <p className="mt-2 text-center text-sm text-on-surface-variant">
-            Enter your credentials to access your account
+            {t("auth.loginSubtitle")}
           </p>
         </div>
 
-        {searchParams?.error && (
+        {error ? (
           <div className="mb-6 rounded-xl border border-error/20 bg-error/10 p-4 text-sm text-error shadow-sm">
-            {searchParams.error}
+            {error}
           </div>
-        )}
+        ) : null}
 
         <form className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-on-surface" htmlFor="email">
-              Email Address
+              {t("auth.emailLabel")}
             </label>
             <input
               className="w-full rounded-xl border border-[rgb(var(--border-subtle))] bg-[rgb(var(--surface-variant))]/30 px-4 py-3.5 text-sm text-on-surface outline-none transition-all focus:border-[rgb(var(--accent-blue))] focus:bg-[rgb(var(--surface-variant))]/50 focus:ring-1 focus:ring-[rgb(var(--accent-blue))]"
               id="email"
               name="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("auth.emailPlaceholder")}
               required
             />
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-on-surface" htmlFor="password">
-              Password
+              {t("auth.passwordLabel")}
             </label>
             <input
               className="w-full rounded-xl border border-[rgb(var(--border-subtle))] bg-[rgb(var(--surface-variant))]/30 px-4 py-3.5 text-sm text-on-surface outline-none transition-all focus:border-[rgb(var(--accent-blue))] focus:bg-[rgb(var(--surface-variant))]/50 focus:ring-1 focus:ring-[rgb(var(--accent-blue))]"
               id="password"
               name="password"
               type="password"
-              placeholder="••••••••"
+              placeholder={t("auth.passwordPlaceholder")}
               required
             />
           </div>
-          
+
           <button
             formAction={login}
             className="mt-4 flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-[rgb(var(--accent-blue))] to-[rgb(var(--accent-blue))]/80 px-4 py-3.5 text-sm font-semibold text-white shadow-md transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
           >
-            Sign In
+            {t("auth.signInButton")}
           </button>
         </form>
 
         <p className="mt-8 text-center text-sm text-on-surface-variant">
-          Don't have an account?{' '}
+          {t("auth.noAccountPrompt")}{' '}
           <a href="/signup" className="font-medium text-[rgb(var(--accent-blue))] transition-colors hover:text-[rgb(var(--accent-blue))]/80 hover:underline">
-            Create an account
+            {t("auth.noAccountLink")}
           </a>
         </p>
       </div>
     </div>
-  )
+  );
 }

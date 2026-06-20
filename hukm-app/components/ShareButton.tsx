@@ -25,13 +25,6 @@ export function ShareButton({
 }: ShareButtonProps): React.ReactElement {
   return (
     <>
-      <style>{`
-        @keyframes hukm-share-pulse {
-          0%   { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0.25); }
-          70%  { box-shadow: 0 0 0 6px rgba(10, 132, 255, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0); }
-        }
-      `}</style>
 
       <button
         type="button"

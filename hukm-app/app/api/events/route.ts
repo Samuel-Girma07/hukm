@@ -11,6 +11,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { isValidEventType, trackEvent } from "@/lib/analytics";
 import { jsonError } from "@/lib/http";
+import { checkEndpointRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { readSessionId } from "@/lib/session";
 
 export const runtime = "nodejs";
@@ -19,6 +20,23 @@ export const dynamic = "force-dynamic";
 const MAX_METADATA_BYTES = 4 * 1024;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  // Rate-limit by IP to prevent pollution of usage_events with fake data.
+  // 60 events / minute / IP is generous for real users (most fire < 5/min)
+  // but stops an attacker from flooding the table.
+  const rateLimit = await checkEndpointRateLimit(request, {
+    endpoint: "events",
+    max: 60,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.allowed) {
+    return jsonError(
+      429,
+      `Rate limit exceeded. Retry after ${rateLimit.retryAfterSeconds} seconds.`,
+      "RATE_LIMIT",
+      rateLimitHeaders(rateLimit),
+    );
+  }
+
   let raw: unknown;
   try {
     raw = await request.json();

@@ -17,6 +17,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { embedCached } from "@/lib/embeddings";
 import { jsonError } from "@/lib/http";
 import { logger } from "@/lib/logger";
+import { checkEndpointRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { deduplicateChunks } from "@/lib/similarity";
 import { getServerClient } from "@/lib/supabase";
 import type { LawChunk } from "@/lib/types";
@@ -41,12 +42,29 @@ interface MatchRow {
 }
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { reference: string } },
 ): Promise<NextResponse> {
   const reference = decodeURIComponent(params.reference ?? "").trim();
   if (!reference) {
     return jsonError(400, "Missing article reference.", "VALIDATION");
+  }
+
+  // Rate-limit by IP — this endpoint triggers a paid NVIDIA embedding call
+  // on cache miss, so an attacker iterating article references could rack
+  // up significant API costs. 30/min/IP is generous for real users.
+  const rateLimit = await checkEndpointRateLimit(request, {
+    endpoint: "articles-related",
+    max: 30,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.allowed) {
+    return jsonError(
+      429,
+      `Rate limit exceeded. Retry after ${rateLimit.retryAfterSeconds} seconds.`,
+      "RATE_LIMIT",
+      rateLimitHeaders(rateLimit),
+    );
   }
 
   const supabase = getServerClient();

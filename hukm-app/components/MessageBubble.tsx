@@ -6,6 +6,7 @@ import { Icon } from "./Icon";
 import { SourcesPanel } from "./SourcesPanel";
 
 import { useT } from "@/contexts/LanguageContext";
+import { formatTime } from "@/lib/date";
 import type { LawChunk } from "@/lib/types";
 
 interface MessageBubbleProps {
@@ -95,17 +96,6 @@ export function MessageBubble({
       </span>
     </div>
   );
-}
-
-function formatTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return "";
-  }
 }
 
 export function ThinkingBubble(): React.ReactElement {

@@ -161,14 +161,28 @@ export async function POST(
 
   // Seed with a system message that gives the chat model a starting
   // point even if no previous analysis was available.
-  await supabase
+  const seedInsert = await supabase
     .from("messages")
     .insert({
       conversation_id: conversationId,
       role: "system",
       content: `Conversation started for scenario: ${scenarioDescription}`,
       metadata: analysisId ? { analysisId } : null,
+    })
+    .select("id")
+    .maybeSingle<{ id: string }>();
+
+  if (seedInsert.error || !seedInsert.data?.id) {
+    // The conversation row was created but the seed message failed.
+    // Log it so we can investigate, but DON'T fail the request — the
+    // conversation is still usable, just missing its bootstrap system
+    // message. The previous code silently swallowed this error.
+    logger.error("[conversations] seed system message insert failed", {
+      conversationId,
+      error: seedInsert.error?.message,
+      code: seedInsert.error?.code,
     });
+  }
 
   logger.info("[conversations] created", { conversationId, hasAnalysis: !!analysisId });
 

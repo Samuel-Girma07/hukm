@@ -265,6 +265,57 @@ export function rateLimitHeaders(
   return headers;
 }
 
+/**
+ * Generic rate-limit check for unauthenticated endpoints (events, share
+ * views, article lookups, etc.). Uses the client IP (via identifyClient)
+ * as the bucket key so anonymous abuse can be throttled.
+ *
+ * Defaults: 60 requests / minute / IP. Pass `max` and `windowMs` to override.
+ *
+ * Like checkRateLimit(), this fails open on backend errors (Redis down).
+ */
+export async function checkEndpointRateLimit(
+  request: { headers: Headers },
+  opts: { endpoint: string; max?: number; windowMs?: number },
+): Promise<RateLimitOutcome> {
+  const max = opts.max ?? 60;
+  const windowMs = opts.windowMs ?? 60_000;
+  const identifier = identifyClient(request.headers);
+  const key = `ep:${opts.endpoint}:${identifier}`;
+
+  let entry: { count: number; resetAtMs: number };
+  try {
+    entry = await rateLimiter.hit(key, windowMs);
+  } catch (err) {
+    logger.error("[ratelimit] endpoint limiter.hit() failed; failing open", err);
+    return {
+      allowed: true,
+      remaining: max,
+      limit: max,
+      retryAfterSeconds: 1,
+    };
+  }
+
+  const retryAfterMs = Math.max(0, entry.resetAtMs - Date.now());
+  const retryAfterSeconds = Math.max(1, Math.ceil(retryAfterMs / 1000));
+
+  if (entry.count > max) {
+    return {
+      allowed: false,
+      remaining: 0,
+      limit: max,
+      retryAfterSeconds,
+    };
+  }
+
+  return {
+    allowed: true,
+    remaining: Math.max(0, max - entry.count),
+    limit: max,
+    retryAfterSeconds,
+  };
+}
+
 export function identifyClient(headers: Headers): string {
   const forwarded = headers.get("x-forwarded-for");
   if (forwarded) {

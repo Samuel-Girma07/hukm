@@ -11,6 +11,7 @@ import { Icon } from "./Icon";
 import { Spinner } from "./Spinner";
 
 import { useT } from "@/contexts/LanguageContext";
+import { formatDateTime } from "@/lib/date";
 import { getModelTierLabel } from "@/lib/models";
 import type { RecentConversationRow } from "@/lib/types";
 
@@ -210,10 +211,7 @@ export function HistoryList({
                   </Link>
                   <p className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-medium tracking-tight text-on-surface-variant tabular-nums">
                     <Icon name="schedule" size={12} />
-                    {new Date(row.updated_at).toLocaleString([], {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
+                    {formatDateTime(row.updated_at)}
                     <span className="opacity-50">·</span>
                     <span>{getModelTierLabel(row.model_id)}</span>
                     <span className="opacity-50">·</span>

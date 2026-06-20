@@ -517,3 +517,154 @@
   color: white;
 }
 
+
+/* ─── Hoisted inline component styles ──────────────────────────────────
+   These were previously <style> blocks injected on every render of
+   AnalysisProgress, DownloadButton, HeroCornerDecoration, and
+   ShareButton. Moving them here avoids needless React reconciliation
+   of <style> tags and lets the browser cache the CSS.
+   ──────────────────────────────────────────────────────────────────── */
+
+/* AnalysisProgress border-spin */
+@keyframes hukm-progress-border-spin {
+  0%   { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.hukm-progress-wrap {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 0;
+}
+.hukm-progress-wrap::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    #EA4335,
+    #FBBC05,
+    #34A853,
+    #4285F4,
+    #EA4335
+  );
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: hukm-progress-border-spin 4s linear infinite;
+  z-index: 0;
+}
+.hukm-progress-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 12px;
+  background: rgb(var(--surface-elevated));
+  z-index: 1;
+}
+.hukm-progress-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* DownloadButton morph */
+@keyframes hukm-download-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.hukm-download-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 125px;
+  height: 45px;
+  border-radius: 20px;
+  border: 1px solid rgb(var(--border-subtle));
+  padding: 5px 10px;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  background: rgb(var(--surface-overlay));
+  box-shadow: 0 0 1em 0.5em rgba(0, 0, 0, 0.15);
+  transition: width 0.5s linear, height 0.5s linear,
+              border-radius 0.5s linear, background 0.3s ease,
+              border-color 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+.hukm-download-btn:hover:not(:disabled) {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgb(var(--surface-container-high));
+  border-color: rgb(var(--accent-cyan));
+  box-shadow: 0 0 1em 0.5em rgba(0, 0, 0, 0.2),
+              0 0 0.5em 0.1em rgba(90, 200, 250, 0.15);
+}
+.hukm-download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hukm-download-btn .hukm-dl-text {
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
+.hukm-download-btn:hover:not(:disabled) .hukm-dl-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+/* HeroCornerDecoration animations */
+@keyframes hukm-move-h {
+  0%   { top: 0; opacity: 0; }
+  25%  { opacity: 1; }
+  50%  { top: 30%; opacity: 1; }
+  75%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+@keyframes hukm-move-v {
+  0%   { left: 0; opacity: 0; }
+  25%  { opacity: 1; }
+  50%  { left: 45%; opacity: 1; }
+  75%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes hukm-effect {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes hukm-rot {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes hukm-scale {
+  0%   { scale: 1; }
+  50%  { scale: 1.9; }
+  100% { scale: 1; }
+}
+@keyframes hukm-height {
+  0%   { bottom: 0%; left: 0%; height: 0px; }
+  25%  { height: 90px; }
+  50%  { bottom: 100%; left: 100%; height: 90px; }
+  75%  { height: 0px; }
+  100% { bottom: 0%; left: 0%; height: 0px; }
+}
+@keyframes hukm-width {
+  0%   { left: 0%; width: 0px; }
+  50%  { left: 100%; width: 90px; }
+  100% { left: 0%; width: 0px; }
+}
+
+/* ShareButton pulse */
+@keyframes hukm-share-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0.25); }
+  70%  { box-shadow: 0 0 0 6px rgba(10, 132, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0); }
+}

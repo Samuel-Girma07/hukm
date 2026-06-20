@@ -3,11 +3,14 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
+import { useT } from "@/contexts/LanguageContext";
+
 const LightRays = dynamic(() => import("@/components/LightRays"));
 const AnimatedHeroText = dynamic(() => import("@/components/AnimatedHeroText").then((mod) => mod.AnimatedHeroText));
 const HeroCornerDecoration = dynamic(() => import("@/components/HeroCornerDecoration").then((mod) => mod.HeroCornerDecoration));
 
 export default function OnboardingPage() {
+  const t = useT();
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-[rgb(var(--bg))] text-on-surface">
       {/* Background light rays */}
@@ -35,10 +38,10 @@ export default function OnboardingPage() {
         {/* Logo and Intro */}
         <div className="flex flex-col items-center gap-6">
           <h1 className="font-display text-4xl font-bold tracking-tight text-balance sm:text-5xl">
-            Welcome to HUKM
+            {t("onboarding.welcomeTitle")}
           </h1>
           <AnimatedHeroText
-            text="The premier Ethiopian legal analysis platform."
+            text={t("onboarding.welcomeBody")}
             className="h-8 max-w-prose sm:h-10 text-on-surface-variant"
           />
         </div>
@@ -49,9 +52,11 @@ export default function OnboardingPage() {
             href="/signup"
             className="group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-full bg-white text-lg font-semibold text-black transition-transform active:scale-95"
           >
-            <span className="relative z-10 transition-transform group-hover:-translate-y-10">Get Started</span>
+            <span className="relative z-10 transition-transform group-hover:-translate-y-10">
+              {t("onboarding.getCta")}
+            </span>
             <span className="absolute inset-0 z-10 flex items-center justify-center translate-y-10 transition-transform group-hover:translate-y-0">
-              Create an Account
+              {t("onboarding.getCtaHover")}
             </span>
           </Link>
 
@@ -59,9 +64,11 @@ export default function OnboardingPage() {
             href="/login"
             className="group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--border-subtle))] bg-[rgb(var(--surface-elevated))] text-lg font-semibold text-white transition-transform active:scale-95"
           >
-            <span className="relative z-10 transition-transform group-hover:-translate-y-10">Sign In</span>
+            <span className="relative z-10 transition-transform group-hover:-translate-y-10">
+              {t("onboarding.signInCta")}
+            </span>
             <span className="absolute inset-0 z-10 flex items-center justify-center translate-y-10 transition-transform group-hover:translate-y-0">
-              Welcome Back
+              {t("onboarding.signInCtaHover")}
             </span>
           </Link>
         </div>

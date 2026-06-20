@@ -58,49 +58,6 @@ export function AnalysisProgress({
 
   return (
     <>
-      <style>{`
-        @keyframes hukm-progress-border-spin {
-          0%   { transform: translate(-50%, -50%) rotate(0deg); }
-          100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        .hukm-progress-wrap {
-          position: relative;
-          border-radius: 14px;
-          overflow: hidden;
-          z-index: 0;
-        }
-        .hukm-progress-wrap::before {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 200%;
-          height: 200%;
-          background: conic-gradient(
-            from 0deg,
-            #EA4335,
-            #FBBC05,
-            #34A853,
-            #4285F4,
-            #EA4335
-          );
-          transform: translate(-50%, -50%) rotate(0deg);
-          animation: hukm-progress-border-spin 4s linear infinite;
-          z-index: 0;
-        }
-        .hukm-progress-wrap::after {
-          content: '';
-          position: absolute;
-          inset: 2px;
-          border-radius: 12px;
-          background: rgb(var(--surface-elevated));
-          z-index: 1;
-        }
-        .hukm-progress-content {
-          position: relative;
-          z-index: 2;
-        }
-      `}</style>
 
       <div className="hukm-progress-wrap">
         <section

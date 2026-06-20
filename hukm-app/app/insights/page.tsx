@@ -7,6 +7,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { Icon } from "@/components/Icon";
 import { Spinner } from "@/components/Spinner";
 import { useT } from "@/contexts/LanguageContext";
+import { formatTime } from "@/lib/date";
 import type { ArticleHeatmapRow } from "@/lib/types";
 
 interface HeatmapResponse {
@@ -74,10 +75,7 @@ export default function InsightsPage(): React.ReactElement {
           {generatedAt ? (
             <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant tabular-nums">
               {t("insights.lastUpdated", {
-                time: new Date(generatedAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
+                time: formatTime(generatedAt),
               })}
             </span>
           ) : null}

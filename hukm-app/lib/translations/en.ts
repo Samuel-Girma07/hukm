@@ -412,6 +412,30 @@ export const en = {
     cancel: "Cancel",
     confirm: "Confirm",
   },
+  onboarding: {
+    welcomeTitle: "Welcome to HUKM",
+    welcomeBody: "The premier Ethiopian legal analysis platform.",
+    getCta: "Get Started",
+    getCtaHover: "Create an Account",
+    signInCta: "Sign In",
+    signInCtaHover: "Welcome Back",
+  },
+  auth: {
+    loginTitle: "Welcome back",
+    loginSubtitle: "Enter your credentials to access your account",
+    signupTitle: "Create an Account",
+    signupSubtitle: "Join HUKM to start analyzing legal cases",
+    emailLabel: "Email Address",
+    passwordLabel: "Password",
+    emailPlaceholder: "you@example.com",
+    passwordPlaceholder: "••••••••",
+    signInButton: "Sign In",
+    signUpButton: "Sign Up",
+    noAccountPrompt: "Don't have an account?",
+    noAccountLink: "Create an account",
+    haveAccountPrompt: "Already have an account?",
+    haveAccountLink: "Sign in",
+  },
 } as const;
 
 /**

@@ -3,70 +3,74 @@
  *
  * Returns the most frequently accessed articles based on article_access_log.
  * Used for the admin dashboard to show which legal provisions are most queried.
+ *
+ * Uses the `get_article_heatmap(p_limit)` Postgres RPC for aggregation
+ * instead of fetching up to 10k rows and aggregating in memory with a Map.
+ * The SQL GROUP BY is faster and uses less memory than the JS equivalent.
  */
 
 import { NextResponse, type NextRequest } from "next/server";
 
 import { jsonError } from "@/lib/http";
 import { logger } from "@/lib/logger";
+import { checkEndpointRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { getServerClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-interface HeatmapRow {
+interface HeatmapRpcRow {
   article_reference: string;
   document_name: string;
   access_count: number;
 }
 
+const TOP_N = 50;
+
 export async function GET(
   request: NextRequest,
 ): Promise<NextResponse> {
+  // Rate-limit by IP. This endpoint is public and returns aggregate data —
+  // 30/min/IP is enough for the admin dashboard refresh pattern.
+  const rateLimit = await checkEndpointRateLimit(request, {
+    endpoint: "articles-heatmap",
+    max: 30,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.allowed) {
+    return jsonError(
+      429,
+      `Rate limit exceeded. Retry after ${rateLimit.retryAfterSeconds} seconds.`,
+      "RATE_LIMIT",
+      rateLimitHeaders(rateLimit),
+    );
+  }
+
   const supabase = getServerClient();
 
   try {
-    // Aggregate access counts by article
-    const { data, error } = await supabase
-      .from("article_access_log")
-      .select("article_reference, document_name")
-      .limit(10000); // Safety limit
+    // Use the SQL RPC for aggregation — much faster than fetching 10k rows
+    // and aggregating in memory.
+    const { data, error } = await supabase.rpc("get_article_heatmap", {
+      p_limit: TOP_N,
+    });
 
     if (error) {
-      logger.error("[articles/heatmap] query failed", {
+      logger.error("[articles/heatmap] RPC failed", {
         error: error.message,
         code: error.code,
       });
       return jsonError(500, "Could not load article heatmap.", "DB_READ");
     }
 
-    // Aggregate in memory (more efficient than GROUP BY for now)
-    const counts = new Map<string, { article_reference: string; document_name: string; count: number }>();
-    
-    for (const row of data ?? []) {
-      const key = `${row.document_name}::${row.article_reference}`;
-      const existing = counts.get(key);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        counts.set(key, {
-          article_reference: row.article_reference,
-          document_name: row.document_name,
-          count: 1,
-        });
-      }
-    }
+    const rows = (data as HeatmapRpcRow[] | null) ?? [];
+    const maxCount = rows[0]?.access_count ?? 1;
 
-    const sorted = Array.from(counts.values())
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 50);
-    const maxCount = sorted[0]?.count ?? 1;
-
-    const heatmap = sorted.map((row) => ({
+    const heatmap = rows.map((row) => ({
       article_reference: row.article_reference,
       document_name: row.document_name,
-      access_count: row.count,
-      percentage: maxCount > 0 ? Math.round((row.count / maxCount) * 100) : 0,
+      access_count: row.access_count,
+      percentage: maxCount > 0 ? Math.round((row.access_count / maxCount) * 100) : 0,
     }));
 
     return NextResponse.json({

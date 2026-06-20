@@ -12,6 +12,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { trackEvent } from "@/lib/analytics";
 import { jsonError } from "@/lib/http";
 import { logger } from "@/lib/logger";
+import { checkEndpointRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { readSessionId } from "@/lib/session";
 import { getServerClient } from "@/lib/supabase";
 import type { AnalysisResult, LawChunk, ShareViewResponse } from "@/lib/types";
@@ -35,12 +36,29 @@ interface AnalysisRow {
 }
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { token: string } },
 ): Promise<NextResponse<ShareViewResponse>> {
   const token = params.token?.trim();
   if (!token) {
     return jsonError(400, "Missing share token.", "VALIDATION");
+  }
+
+  // Rate-limit by IP — share views are public, but we don't want an
+  // attacker enumerating tokens or inflating view counts. 60/min/IP
+  // is generous for legitimate sharing.
+  const rateLimit = await checkEndpointRateLimit(request, {
+    endpoint: "share-view",
+    max: 60,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.allowed) {
+    return jsonError(
+      429,
+      `Rate limit exceeded. Retry after ${rateLimit.retryAfterSeconds} seconds.`,
+      "RATE_LIMIT",
+      rateLimitHeaders(rateLimit),
+    ) as NextResponse<ShareViewResponse>;
   }
 
   const supabase = getServerClient();

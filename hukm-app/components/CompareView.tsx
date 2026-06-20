@@ -9,7 +9,7 @@ import { Icon } from "./Icon";
 import { ModelSelector } from "./ModelSelector";
 import { Spinner } from "./Spinner";
 
-import { useT } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { DEFAULT_MODEL_ID, getModelTierLabel } from "@/lib/models";
 import type {
   AnalysisResult,
@@ -51,7 +51,7 @@ const initial: SideState = {
 };
 
 export function CompareView(): React.ReactElement {
-  const t = useT();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -124,7 +124,7 @@ export function CompareView(): React.ReactElement {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scenario: trimmed, modelId, language: "en" }),
+        body: JSON.stringify({ scenario: trimmed, modelId, language }),
       });
       const data = (await response.json().catch(() => null)) as
         | AnalyzeResponse
@@ -397,7 +397,7 @@ interface SideResultProps {
 }
 
 function SideResult({ side }: SideResultProps): React.ReactElement | null {
-  const t = useT();
+  const { t } = useLanguage();
   if (side.loading) {
     return (
       <div className="rounded-[14px] border border-[rgb(var(--border-subtle))] bg-[rgb(var(--surface-elevated))] p-5">
