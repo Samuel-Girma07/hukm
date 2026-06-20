@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 
 import "./globals.css";
 
+import { AppShell } from "@/components/AppShell";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 import { ShortcutsHelp } from "@/components/ShortcutsHelp";
@@ -85,12 +86,10 @@ export default function RootLayout({
         <LanguageProvider initial="en">
           <ErrorBoundary language="en">
             <SiteSidebar />
-            <main className="min-h-[100dvh] pt-16 md:pt-8 md:pl-[72px]">
-              <div className="px-4 pb-12 sm:px-6 lg:px-10 lg:pb-16">
-                {children}
-              </div>
+            <AppShell>
+              {children}
               <SiteFooter />
-            </main>
+            </AppShell>
             <ShortcutsHelp />
           </ErrorBoundary>
           <ServiceWorkerRegistrar />

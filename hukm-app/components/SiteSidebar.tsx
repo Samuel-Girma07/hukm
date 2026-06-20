@@ -37,6 +37,12 @@ const PRIMARY_NAV: ReadonlyArray<NavItem> = [
  * Mobile (<md): hidden by default; a small floating menu button at top-left
  * opens a slide-in drawer with the same items at full width.
  */
+// Routes that should NOT show the app chrome (sidebar / footer / shortcuts).
+// These are unauthenticated entry points — showing the sidebar there is
+// confusing (e.g. a logout button with no logged-in user) and breaks
+// centered layouts like the login card.
+const BARE_ROUTES = ["/login", "/signup", "/onboarding"];
+
 export function SiteSidebar(): React.ReactElement {
   const t = useT();
   const pathname = usePathname() ?? "/";
@@ -63,6 +69,12 @@ export function SiteSidebar(): React.ReactElement {
       document.body.style.overflow = prev;
     };
   }, [drawerOpen]);
+
+  // Hide the entire sidebar on auth / onboarding routes. Done AFTER all hooks
+  // so we don't violate the Rules of Hooks.
+  if (BARE_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "/"))) {
+    return <></>;
+  }
 
   function isActive(item: NavItem): boolean {
     if (item.exact) return pathname === item.href;
