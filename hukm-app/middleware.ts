@@ -28,12 +28,32 @@ import { NextResponse, type NextRequest } from 'next/server'
  *     - `sb-<project-ref>-auth-token`             (small sessions)
  *     - `sb-<project-ref>-auth-token.0`, `.1`, …   (chunked for large sessions)
  *   So we look for any cookie whose name matches `sb-*-auth-token*`.
+ *
+ * Admin routes:
+ *   /admin/* uses a separate auth model — a server-set HTTP-only cookie
+ *   called `hukm-admin-auth`. Admins do NOT need a Supabase user session
+ *   to access /admin or /admin/login. So /admin/* is excluded from the
+ *   Supabase cookie check entirely. The /admin/login page itself is always
+ *   accessible; /admin/* (the dashboard) is gated client-side and via the
+ *   admin cookie. Server-side enforcement on admin API routes is in
+ *   /api/admin/* (each route checks the cookie).
  */
 
 const AUTH_COOKIE_PATTERN = /^sb-.+-auth-token(\..*)?$/
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Admin routes use their own auth — skip the Supabase cookie check entirely.
+  // /admin/login must always be reachable so admins can log in.
+  // /admin/* (the dashboard) is gated by the `hukm-admin-auth` cookie, but
+  // we let the page load so the client can check the cookie and redirect
+  // to /admin/login if missing. (Server Components cannot easily read
+  // HTTP-only cookies set by Route Handlers without a refresh, so we accept
+  // the client-side gate for the page itself.)
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    return NextResponse.next()
+  }
 
   const isAuthRoute =
     pathname.startsWith('/login') ||
