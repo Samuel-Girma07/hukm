@@ -8,6 +8,13 @@
  * flows naturally from the existing ON DELETE CASCADE on
  * analysis_results.
  *
+ * Cache key: the caller passes a `cacheKey` that should include BOTH
+ * the scenario hash AND the session id (see app/api/analyze/route.ts).
+ * This prevents the cross-user leak where user B submitting the same
+ * scenario text as user A would receive user A's resultId — which they
+ * couldn't access (ownership check returns 404) but which leaked the
+ * fact that user A had run the same scenario.
+ *
  * TTL is 7 days by default — old hits expire so the cache doesn't
  * pin a stale model output forever.
  */
@@ -31,16 +38,16 @@ export interface CachedAnalysisHit {
 }
 
 export async function getCachedAnalysis(
-  scenarioHash: string,
+  cacheKey: string,
   ttlDays: number = DEFAULT_TTL_DAYS,
 ): Promise<CachedAnalysisHit | null> {
-  if (!scenarioHash) return null;
+  if (!cacheKey) return null;
   try {
     const supabase = getServerClient();
     const { data: cached, error } = await supabase
       .from("cached_analyses")
       .select("result_id, created_at")
-      .eq("scenario_hash", scenarioHash)
+      .eq("scenario_hash", cacheKey)
       .maybeSingle<CachedAnalysisRow>();
 
     if (error || !cached) {
@@ -62,7 +69,7 @@ export async function getCachedAnalysis(
         await supabase
           .from("cached_analyses")
           .delete()
-          .eq("scenario_hash", scenarioHash);
+          .eq("scenario_hash", cacheKey);
         return null;
       }
     }
@@ -79,7 +86,7 @@ export async function getCachedAnalysis(
       await supabase
         .from("cached_analyses")
         .delete()
-        .eq("scenario_hash", scenarioHash);
+        .eq("scenario_hash", cacheKey);
       return null;
     }
 
@@ -93,15 +100,15 @@ export async function getCachedAnalysis(
 }
 
 export async function setCachedAnalysis(
-  scenarioHash: string,
+  cacheKey: string,
   resultId: string,
 ): Promise<boolean> {
-  if (!scenarioHash || !resultId) return false;
+  if (!cacheKey || !resultId) return false;
   try {
     const supabase = getServerClient();
     const { error } = await supabase.from("cached_analyses").upsert(
       {
-        scenario_hash: scenarioHash,
+        scenario_hash: cacheKey,
         result_id: resultId,
       },
       { onConflict: "scenario_hash", ignoreDuplicates: false },

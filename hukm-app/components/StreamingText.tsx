@@ -14,6 +14,20 @@ interface StreamingTextProps {
   onError: (message: string) => void;
 }
 
+/**
+ * Streaming text renderer for SSE endpoints.
+ *
+ * Effect re-runs only when `endpoint` or `body` changes (those are the
+ * things that determine what to fetch). The `onComplete` / `onError`
+ * callbacks are kept in refs so the effect always invokes the LATEST
+ * version without re-running the fetch when parent re-renders pass new
+ * callback identities.
+ *
+ * The previous code had `body`, `onComplete`, `onError` captured in the
+ * effect closure but not in the deps array (with eslint-disable). That
+ * meant if `body` changed (e.g. user edited the prompt), the request
+ * was NOT re-issued; and stale `onComplete`/`onError` were called.
+ */
 export function StreamingText({
   endpoint,
   body,
@@ -27,6 +41,17 @@ export function StreamingText({
   );
   const abortRef = useRef<AbortController | null>(null);
   const completedRef = useRef(false);
+
+  // Keep the latest callback identities in refs so the streaming effect
+  // can call them without depending on them (no re-fetch on identity change).
+  const onCompleteRef = useRef(onComplete);
+  const onErrorRef = useRef(onError);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
 
   useEffect(() => {
     completedRef.current = false;
@@ -52,14 +77,14 @@ export function StreamingText({
           }
           if (!cancelled) {
             setPhase("error");
-            onError(errMsg);
+            onErrorRef.current(errMsg);
           }
           return;
         }
         if (!response.body) {
           if (!cancelled) {
             setPhase("error");
-            onError("Empty response body.");
+            onErrorRef.current("Empty response body.");
           }
           return;
         }
@@ -71,23 +96,23 @@ export function StreamingText({
           } else if (event.type === "done") {
             completedRef.current = true;
             setPhase("done");
-            onComplete(event);
+            onCompleteRef.current(event);
             return;
           } else if (event.type === "error") {
             setPhase("error");
-            onError(event.error);
+            onErrorRef.current(event.error);
             return;
           }
         }
         if (!cancelled && !completedRef.current) {
           setPhase("error");
-          onError("Stream ended without a done event.");
+          onErrorRef.current("Stream ended without a done event.");
         }
       } catch (err) {
         if (cancelled) return;
         if (err instanceof Error && err.name === "AbortError") return;
         setPhase("error");
-        onError(err instanceof Error ? err.message : String(err));
+        onErrorRef.current(err instanceof Error ? err.message : String(err));
       }
     })();
 
@@ -95,8 +120,7 @@ export function StreamingText({
       cancelled = true;
       controller.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoint]);
+  }, [endpoint, body]);
 
   return (
     <div className="card p-5 sm:p-6">

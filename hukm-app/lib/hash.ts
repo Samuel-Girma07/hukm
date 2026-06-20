@@ -36,8 +36,10 @@ export function hashEmbeddingInput(input: string): string {
  * Anonymising hash for a session id used in logs and Sentry user tags.
  * Returns the first 16 hex characters of sha256 — enough to correlate
  * across log lines without leaking the real session id.
+ * Accepts null (returns "anonymous") so callers that have already
+ * null-checked don't need to repeat the check.
  */
-export function hashSession(sessionId: string): string {
+export function hashSession(sessionId: string | null | undefined): string {
   if (!sessionId) return "anonymous";
   return createHash("sha256").update(sessionId, "utf8").digest("hex").slice(0, 16);
 }

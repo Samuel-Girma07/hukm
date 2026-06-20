@@ -69,12 +69,37 @@ export async function GET(
     return jsonError(404, "Shared analysis not available.", "NOT_FOUND");
   }
 
-  // Increment view count (best-effort).
-  const newCount = (shareLookup.data.view_count ?? 0) + 1;
-  void supabase
-    .from("shared_analyses")
-    .update({ view_count: newCount })
-    .eq("id", shareLookup.data.id);
+  // Increment view count atomically via a Postgres RPC.
+  // The previous code did `newCount = view_count + 1; update(view_count=newCount)`
+  // which is a classic read-then-write race — concurrent viewers all read
+  // the same count, compute +1, and overwrite, causing undercounting.
+  // The RPC does `UPDATE ... SET view_count = view_count + 1 RETURNING
+  // view_count` in a single atomic statement.
+  let viewCount = (shareLookup.data.view_count ?? 0) + 1;
+  try {
+    const { data: newCount, error: incError } = await supabase.rpc(
+      "increment_share_view_count",
+      { p_token: token },
+    );
+    if (!incError && typeof newCount === "number") {
+      viewCount = newCount;
+    } else if (incError) {
+      // RPC not defined yet (migration not applied) — fall back to the
+      // old non-atomic update. Best-effort; logs the warning.
+      logger.warn("[share/get] increment RPC failed, falling back to non-atomic update", {
+        message: incError.message,
+        code: incError.code,
+      });
+      void supabase
+        .from("shared_analyses")
+        .update({ view_count: viewCount })
+        .eq("id", shareLookup.data.id);
+    }
+  } catch (err) {
+    logger.warn("[share/get] increment RPC threw", {
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   // Fire-and-forget analytics. Use the viewer's session id if we have one.
   const viewerSession = (await readSessionId()) ?? "anonymous";
@@ -99,7 +124,7 @@ export async function GET(
     retrievedChunks,
     modelId: analysisLookup.data.model_id,
     scenario,
-    viewCount: newCount,
+    viewCount,
     createdAt: shareLookup.data.created_at,
   });
 }

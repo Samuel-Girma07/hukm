@@ -23,11 +23,29 @@ export function Toast({
       return;
     }
     setVisible(true);
-    const timeout = window.setTimeout(() => {
+
+    // Track both timeouts so cleanup can cancel either one.
+    // The previous code only cleared the first timeout; if the component
+    // unmounted during the 200ms window between setVisible(false) and
+    // onDismiss(), onDismiss would fire on the unmounted component.
+    let hideTimeout: number | null = null;
+    let dismissTimeout: number | null = null;
+
+    hideTimeout = window.setTimeout(() => {
       setVisible(false);
-      window.setTimeout(onDismiss, 200);
+      dismissTimeout = window.setTimeout(onDismiss, 200);
     }, durationMs);
-    return () => window.clearTimeout(timeout);
+
+    return () => {
+      if (hideTimeout !== null) {
+        window.clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
+      if (dismissTimeout !== null) {
+        window.clearTimeout(dismissTimeout);
+        dismissTimeout = null;
+      }
+    };
   }, [message, durationMs, onDismiss]);
 
   if (!message) return null;

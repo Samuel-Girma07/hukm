@@ -285,8 +285,12 @@ async function runPipelineBuffered(
   });
 
   // Cache check.
-  const scenarioHash = hashScenario(body.scenario);
-  const cached = await getCachedAnalysis(scenarioHash);
+  // The cache key includes BOTH the scenario hash AND the session id
+  // so user B submitting the same scenario text as user A does NOT
+  // receive user A's resultId (which would leak that user A had run
+  // the same scenario, even though user B couldn't access the result).
+  const cacheKey = `${hashScenario(body.scenario)}:${hashSession(sessionId)}`;
+  const cached = await getCachedAnalysis(cacheKey);
   if (cached) {
     reqLog.info({ cacheHit: true, resultId: cached.resultId }, "analysis cache hit");
     const r = cached.analysis.result;
@@ -452,7 +456,7 @@ async function runPipelineBuffered(
   }
 
   // Background work.
-  void setCachedAnalysis(scenarioHash, resultId);
+  void setCachedAnalysis(cacheKey, resultId);
   void logArticleAccesses(resultId, retrieval.chunks);
   trackEvent({
     eventType: "analyze",
@@ -524,9 +528,9 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
       };
 
       try {
-        // Cache check.
-        const scenarioHash = hashScenario(body.scenario);
-        const cached = await getCachedAnalysis(scenarioHash);
+        // Cache check (scoped to this session — see non-streaming branch).
+        const cacheKey = `${hashScenario(body.scenario)}:${hashSession(sessionId)}`;
+        const cached = await getCachedAnalysis(cacheKey);
         if (cached) {
           reqLog.info({ cacheHit: true, resultId: cached.resultId }, "analysis cache hit");
           const r = cached.analysis.result;
@@ -670,7 +674,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
           return;
         }
 
-        void setCachedAnalysis(scenarioHash, resultId);
+        void setCachedAnalysis(cacheKey, resultId);
         void logArticleAccesses(resultId, retrieval.chunks);
         trackEvent({
           eventType: "analyze",
