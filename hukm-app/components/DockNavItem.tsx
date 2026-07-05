@@ -90,24 +90,22 @@ export function DockNavItem({
 
   return (
     <div className="relative flex items-center justify-center">
-      <Link
-        ref={ref}
-        href={href}
-        aria-current={active ? 'page' : undefined}
-        aria-label={label}
-        title={label}
+      <motion.div
+        style={{ width: size, height: size }}
         onMouseEnter={() => isHovered.set(1)}
         onMouseLeave={() => isHovered.set(0)}
         onFocus={() => isHovered.set(1)}
         onBlur={() => isHovered.set(0)}
       >
-        <motion.div
-          style={{
-            width: size,
-            height: size,
-          }}
+        <Link
+          ref={ref}
+          href={href}
+          aria-current={active ? 'page' : undefined}
+          aria-label={label}
+          title={label}
           className={`
             relative inline-flex items-center justify-center rounded-[12px]
+            w-full h-full
             transition-colors duration-150
             ${active
               ? 'bg-[rgb(var(--surface-elevated))] text-on-surface'
@@ -122,8 +120,8 @@ export function DockNavItem({
               className="absolute -left-px top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-[rgb(var(--accent-blue))]"
             />
           ) : null}
-        </motion.div>
-      </Link>
+        </Link>
+      </motion.div>
 
       {/* Tooltip label */}
       <AnimatePresence>
