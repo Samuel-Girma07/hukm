@@ -99,7 +99,7 @@ describe("ChatInterface", () => {
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe("/api/chat");
     expect(init.method).toBe("POST");
     const body = JSON.parse(init.body as string);
@@ -148,7 +148,8 @@ describe("ChatInterface", () => {
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const callArgs = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const init = callArgs[1];
     expect(
       (init.headers as Record<string, string>).Accept,
     ).toBe("application/x-ndjson");

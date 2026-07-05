@@ -47,7 +47,7 @@ vi.mock("@/lib/rag", () => ({
   ]),
 }));
 
-const callChatAPI = vi.fn(async () => ({
+const callChatAPI = vi.fn(async (...args: any[]) => ({
   step1FactIdentification: "Facts",
   step2LegalClassification: "Class",
   step3ElementsAnalysis: "Elements",
@@ -66,7 +66,7 @@ const callChatAPI = vi.fn(async () => ({
 }));
 
 vi.mock("@/lib/nvidia", () => ({
-  callChatAPI: (...args: unknown[]) => callChatAPI(...args),
+  callChatAPI: (...args: any[]) => callChatAPI(...args),
 }));
 
 import { POST } from "@/app/api/analyze/route";
@@ -184,8 +184,8 @@ describe("POST /api/analyze", () => {
 
   it("returns 500 when persistence fails", async () => {
     insertSelectSingle.mockImplementationOnce(async () => ({
-      data: null,
-      error: { message: "db down" },
+      data: null as any,
+      error: { message: "db down" } as any,
     }));
 
     const res = await POST(
