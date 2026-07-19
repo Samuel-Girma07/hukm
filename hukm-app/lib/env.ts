@@ -21,13 +21,17 @@ type RequiredVar =
   | "NVIDIA_API_KEY"
   | "NEXT_PUBLIC_SUPABASE_URL"
   | "NEXT_PUBLIC_SUPABASE_ANON_KEY"
-  | "SUPABASE_SERVICE_ROLE_KEY";
+  | "SUPABASE_SERVICE_ROLE_KEY"
+  | "DATABASE_URL"
+  | "JWT_SECRET";
 
 const REQUIRED_VARS: ReadonlyArray<RequiredVar> = [
   "NVIDIA_API_KEY",
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
+  "DATABASE_URL",
+  "JWT_SECRET",
 ];
 
 /**
@@ -88,6 +92,12 @@ export const env = {
   },
   get SUPABASE_SERVICE_ROLE_KEY(): string {
     return readRequired("SUPABASE_SERVICE_ROLE_KEY");
+  },
+  get DATABASE_URL(): string {
+    return readRequired("DATABASE_URL");
+  },
+  get JWT_SECRET(): string {
+    return readRequired("JWT_SECRET");
   },
   REDIS_URL: process.env.REDIS_URL ?? null,
   SENTRY_DSN: process.env.SENTRY_DSN ?? null,

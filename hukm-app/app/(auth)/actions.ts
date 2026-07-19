@@ -1,9 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { userQuery } from '@/lib/db/userQuery'
+import { comparePassword, hashPassword, signToken, setAuthCookie, clearAuthCookie } from '@/lib/auth'
 
 /**
  * Login a user with email + password.
@@ -16,8 +16,6 @@ import { createClient } from '@/lib/supabase/server'
  * need to (and cannot) return anything.
  */
 export async function login(formData: FormData) {
-  const supabase = await createClient()
-
   const email = String(formData.get('email') ?? '').trim()
   const password = String(formData.get('password') ?? '')
 
@@ -25,10 +23,23 @@ export async function login(formData: FormData) {
     redirect('/login?error=' + encodeURIComponent('Email and password are required.'))
   }
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  try {
+    const user = await userQuery.findByEmail(email)
+    if (!user) {
+      redirect('/login?error=' + encodeURIComponent('Invalid email or password.'))
+    }
 
-  if (error) {
-    redirect('/login?error=' + encodeURIComponent(error.message))
+    const isValidPassword = await comparePassword(password, user.password_hash)
+    if (!isValidPassword) {
+      redirect('/login?error=' + encodeURIComponent('Invalid email or password.'))
+    }
+
+    const token = await signToken({ sub: user.id, email: user.email })
+    await setAuthCookie(token)
+  } catch (error: any) {
+    // If the redirect itself throws, we let it bubble up
+    if (error.message === 'NEXT_REDIRECT') throw error;
+    redirect('/login?error=' + encodeURIComponent('An error occurred during login.'))
   }
 
   // Force layout to re-render so Server Components pick up the new session.
@@ -39,22 +50,10 @@ export async function login(formData: FormData) {
 /**
  * Sign up a new user, then immediately sign them in.
  *
- * Supabase behavior:
- *   - If "Confirm email" is DISABLED in your Supabase project: signUp()
- *     returns a session and signInWithPassword() is redundant but harmless.
- *   - If "Confirm email" is ENABLED: signUp() returns a user but no session.
- *     The subsequent signInWithPassword() establishes the session only if
- *     Supabase allows login without email confirmation (it does by default,
- *     even when signup requires confirmation). If your project requires
- *     email confirmation before login, this will fail and the user will
- *     see an error message telling them to confirm their email.
- *
  * On success: redirect to "/".
  * On error:   redirect to "/signup?error=<message>".
  */
 export async function signup(formData: FormData) {
-  const supabase = await createClient()
-
   const email = String(formData.get('email') ?? '').trim()
   const password = String(formData.get('password') ?? '')
 
@@ -69,38 +68,24 @@ export async function signup(formData: FormData) {
     )
   }
 
-  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-  })
+  try {
+    const existingUser = await userQuery.findByEmail(email)
+    if (existingUser) {
+      redirect('/signup?error=' + encodeURIComponent('An account with that email already exists.'))
+    }
 
-  if (signUpError) {
-    redirect('/signup?error=' + encodeURIComponent(signUpError.message))
-  }
+    const hashed = await hashPassword(password)
+    const newUser = await userQuery.create(email, hashed)
 
-  // If signUp already established a session (email confirmation disabled),
-  // we're done — skip the redundant sign-in.
-  if (signUpData.session) {
-    revalidatePath('/', 'layout')
-    redirect('/')
-  }
-
-  // Otherwise, try to sign in immediately. This works when Supabase allows
-  // login without prior email confirmation (the default).
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
-
-  if (signInError) {
-    // Most likely cause: email confirmation is required and the user hasn't
-    // clicked the link yet. Give them a clear, actionable message.
-    redirect(
-      '/login?error=' +
-        encodeURIComponent(
-          'Account created. Please check your email to confirm your address, then sign in.',
-        ),
-    )
+    const token = await signToken({ sub: newUser.id, email: newUser.email })
+    await setAuthCookie(token)
+  } catch (error: any) {
+    if (error.message === 'NEXT_REDIRECT') throw error;
+    // Handle Postgres unique constraint violation explicitly just in case
+    if (error.code === '23505') {
+      redirect('/signup?error=' + encodeURIComponent('An account with that email already exists.'))
+    }
+    redirect('/signup?error=' + encodeURIComponent('Could not create account: ' + error.message))
   }
 
   revalidatePath('/', 'layout')
@@ -110,38 +95,9 @@ export async function signup(formData: FormData) {
 /**
  * Log the user out and send them to /onboarding (the landing page that has
  * both Sign In and Sign Up CTAs).
- *
- * We call signOut() but do NOT await its result — if it fails (network
- * hiccup, expired refresh token, etc.) we still want to clear local
- * cookies and redirect. The server-side cookie clearing is what actually
- * matters for the next request; signOut() just invalidates the token on
- * Supabase's side, which is best-effort.
- *
- * We also explicitly delete the Supabase auth cookies via the cookie store
- * to guarantee they're gone even if signOut() threw internally.
  */
 export async function logout() {
-  const supabase = await createClient()
-
-  // Best-effort: invalidate the session server-side. Ignore errors — even
-  // if this fails, clearing the cookie below is enough to log the user out
-  // from this browser. The orphaned refresh token on Supabase's side will
-  // expire on its own.
-  try {
-    await supabase.auth.signOut()
-  } catch {
-    // swallow — see comment above
-  }
-
-  // Forcefully clear all Supabase cookies from the browser to break any
-  // redirect loops in middleware if signOut() failed above.
-  const cookieStore = await cookies()
-  const allCookies = cookieStore.getAll()
-  for (const c of allCookies) {
-    if (c.name.startsWith('sb-')) {
-      cookieStore.delete(c.name)
-    }
-  }
+  await clearAuthCookie()
 
   // Force layout re-render so Server Components see no session.
   revalidatePath('/', 'layout')

@@ -23,23 +23,19 @@
  */
 
 import "server-only";
-import { createClient } from "./supabase/server";
+import { getSessionPayload, clearAuthCookie } from "./auth";
 
 /**
  * Returns the current authenticated user's ID, or `null` if not authenticated.
  *
  * Despite the name (kept for backward compat), this does NOT mint a new
- * anonymous session — it simply reads the authenticated Supabase user's ID.
+ * anonymous session — it simply reads the authenticated JWT from the cookie.
  * Unauthenticated callers get `null`; they should redirect to /onboarding
  * (in Server Components) or return a 401 (in API routes).
  */
 export async function getOrCreateSessionId(): Promise<string | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user ? user.id : null;
+  const payload = await getSessionPayload();
+  return payload ? payload.sub : null;
 }
 
 /**
@@ -52,12 +48,11 @@ export async function readSessionId(): Promise<string | null> {
 }
 
 /**
- * Forcibly logs out the user by signing out of Supabase.
+ * Forcibly logs out the user by clearing the custom JWT cookie.
  * Returns an empty string for backward compatibility with old callers
  * that expected a session id return value (the value was unused).
  */
 export async function rotateSessionId(): Promise<string> {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  await clearAuthCookie();
   return "";
 }
