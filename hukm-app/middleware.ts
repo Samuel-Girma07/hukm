@@ -39,7 +39,13 @@ import { NextResponse, type NextRequest } from 'next/server'
  *   /api/admin/* (each route checks the cookie).
  */
 
-const AUTH_COOKIE_PATTERN = /^sb-.+-auth-token(\..*)?$/
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const projectIdMatch = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/);
+const projectId = projectIdMatch ? projectIdMatch[1] : null;
+
+const AUTH_COOKIE_PATTERN = projectId
+  ? new RegExp(`^sb-${projectId}-auth-token(\\..*)?$`)
+  : /^sb-.+-auth-token(\..*)?$/;
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl

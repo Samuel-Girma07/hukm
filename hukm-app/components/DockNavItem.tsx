@@ -43,14 +43,17 @@ export function DockNavItem({
 
   // Use a shared mouseY from the container, or track locally
   const mouseY = useMotionValue(Infinity);
+  const boundsRef = useRef({ y: 0, height: baseItemSize });
+
+  useEffect(() => {
+    if (ref.current) {
+      boundsRef.current = ref.current.getBoundingClientRect();
+    }
+  }, []);
 
   const mouseDistance = useTransform(mouseY, (val) => {
     if (val === Infinity) return Infinity;
-    const rect = ref.current?.getBoundingClientRect() ?? {
-      y: 0,
-      height: baseItemSize,
-    };
-    return val - rect.y - baseItemSize / 2;
+    return val - boundsRef.current.y - (boundsRef.current.height / 2);
   });
 
   const targetSize = useTransform(
@@ -134,7 +137,7 @@ export function DockNavItem({
             exit={{ opacity: 0, x: -4 }}
             transition={{ duration: 0.15 }}
             className="
-              absolute left-full ml-2 w-fit whitespace-pre rounded-md
+              absolute left-full top-1/2 ml-2 w-fit whitespace-pre rounded-md
               border border-[rgb(var(--border-subtle))]
               bg-[rgb(var(--surface-elevated))] px-2 py-0.5
               text-xs text-on-surface shadow-md
