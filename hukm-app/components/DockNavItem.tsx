@@ -45,12 +45,6 @@ export function DockNavItem({
   const mouseY = useMotionValue(Infinity);
   const boundsRef = useRef({ y: 0, height: baseItemSize });
 
-  useEffect(() => {
-    if (ref.current) {
-      boundsRef.current = ref.current.getBoundingClientRect();
-    }
-  }, []);
-
   const mouseDistance = useTransform(mouseY, (val) => {
     if (val === Infinity) return Infinity;
     return val - boundsRef.current.y - (boundsRef.current.height / 2);
@@ -68,6 +62,11 @@ export function DockNavItem({
     const container = containerRef?.current;
     if (!container) return;
 
+    const handleMouseEnter = () => {
+      if (ref.current) {
+        boundsRef.current = ref.current.getBoundingClientRect();
+      }
+    };
     const handleMouseMove = (e: MouseEvent) => {
       mouseY.set(e.clientY);
     };
@@ -75,9 +74,11 @@ export function DockNavItem({
       mouseY.set(Infinity);
     };
 
+    container.addEventListener('mouseenter', handleMouseEnter);
     container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('mouseleave', handleMouseLeave);
     return () => {
+      container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('mouseleave', handleMouseLeave);
     };

@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
@@ -130,6 +131,16 @@ export async function logout() {
     await supabase.auth.signOut()
   } catch {
     // swallow — see comment above
+  }
+
+  // Forcefully clear all Supabase cookies from the browser to break any
+  // redirect loops in middleware if signOut() failed above.
+  const cookieStore = await cookies()
+  const allCookies = cookieStore.getAll()
+  for (const c of allCookies) {
+    if (c.name.startsWith('sb-')) {
+      cookieStore.delete(c.name)
+    }
   }
 
   // Force layout re-render so Server Components see no session.
