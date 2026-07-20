@@ -65,6 +65,7 @@ import type {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -170,7 +171,15 @@ interface PersistArgs {
 }
 
 async function persistAnalysis(args: PersistArgs): Promise<string | null> {
-  const supabase = getServerClient();
+  let supabase;
+  try {
+    supabase = getServerClient();
+  } catch (err) {
+    logger.error("[analyze] failed to init database client for persist", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return null;
+  }
   const { data, error } = await supabase
     .from("analysis_results")
     .insert({

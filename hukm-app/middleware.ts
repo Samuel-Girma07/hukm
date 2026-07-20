@@ -39,13 +39,7 @@ import { NextResponse, type NextRequest } from 'next/server'
  *   /api/admin/* (each route checks the cookie).
  */
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const projectIdMatch = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/);
-const projectId = projectIdMatch ? projectIdMatch[1] : null;
-
-const AUTH_COOKIE_PATTERN = projectId
-  ? new RegExp(`^sb-${projectId}-auth-token(\\..*)?$`)
-  : /^sb-.+-auth-token(\..*)?$/;
+// (Supabase cookie logic removed as auth now uses hukm_token)
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -66,9 +60,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/signup') ||
     pathname.startsWith('/onboarding')
 
-  // Synchronous O(n) scan of request cookies — n is typically < 10.
-  const cookies = request.cookies.getAll()
-  const hasAuthCookie = cookies.some((c) => AUTH_COOKIE_PATTERN.test(c.name))
+  // Check for the custom JWT auth cookie
+  const hasAuthCookie = request.cookies.has('hukm_token')
 
   // Unauthenticated user hitting a protected route → send to onboarding.
   if (!hasAuthCookie && !isAuthRoute) {

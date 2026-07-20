@@ -46,6 +46,7 @@ import type { ChatResponse, LawChunk, RetrievalResult } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const MESSAGE_MIN_LENGTH = 1;
 const MESSAGE_MAX_LENGTH = 5000;
@@ -146,7 +147,20 @@ async function prepareRequest(
     };
   }
 
-  const supabase = getServerClient();
+  let supabase;
+  try {
+    supabase = getServerClient();
+  } catch (err) {
+    logger.error("[chat] failed to init database client", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return {
+      ok: false,
+      status: 500,
+      error: "Could not connect to the database.",
+      code: "DB_INIT",
+    };
+  }
   const conversationLookup = await supabase
     .from("conversations")
     .select("model_id, scenario_description")
@@ -227,7 +241,15 @@ interface PersistChatTurnArgs {
 async function persistChatTurn(
   args: PersistChatTurnArgs,
 ): Promise<{ ok: boolean; assistantId?: string }> {
-  const supabase = getServerClient();
+  let supabase;
+  try {
+    supabase = getServerClient();
+  } catch (err) {
+    logger.error("[chat] failed to init database client for persist", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return { ok: false };
+  }
   const insertResult = await supabase
     .from("messages")
     .insert([
