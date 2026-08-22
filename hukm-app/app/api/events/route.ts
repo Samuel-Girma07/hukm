@@ -69,7 +69,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const sessionId = (await readSessionId()) ?? "anonymous";
-  trackEvent({
+  await trackEvent({
     eventType,
     sessionId,
     modelId: typeof body.modelId === "string" ? body.modelId : null,

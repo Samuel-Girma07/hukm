@@ -333,7 +333,7 @@ async function runPipelineBuffered(
         0,
       ),
     };
-    trackEvent({
+    await trackEvent({
       eventType: "analyze",
       sessionId,
       modelId: cached.analysis.model_id,
@@ -342,7 +342,7 @@ async function runPipelineBuffered(
       language: body.language,
       metadata: { cache: true, requestId },
     });
-    void logArticleAccesses(cached.resultId, chunks);
+    await logArticleAccesses(cached.resultId, chunks);
     return {
       ok: true,
       resultId: cached.resultId,
@@ -465,9 +465,11 @@ async function runPipelineBuffered(
   }
 
   // Background work.
-  void setCachedAnalysis(cacheKey, resultId);
-  void logArticleAccesses(resultId, retrieval.chunks);
-  trackEvent({
+  await Promise.all([
+    setCachedAnalysis(cacheKey, resultId),
+    logArticleAccesses(resultId, retrieval.chunks),
+  ]);
+  await trackEvent({
     eventType: "analyze",
     sessionId,
     modelId: actualModelId,
@@ -557,7 +559,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
           });
           enqueue("DONE");
           closeStream();
-          trackEvent({
+          await trackEvent({
             eventType: "analyze",
             sessionId,
             modelId: cached.analysis.model_id,
@@ -566,7 +568,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
             language: body.language,
             metadata: { cache: true, stream: true, requestId },
           });
-          void logArticleAccesses(cached.resultId, r.retrievedChunks ?? []);
+          await logArticleAccesses(cached.resultId, r.retrievedChunks ?? []);
           return;
         }
 
@@ -693,9 +695,11 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
           return;
         }
 
-        void setCachedAnalysis(cacheKey, resultId);
-        void logArticleAccesses(resultId, retrieval.chunks);
-        trackEvent({
+        await Promise.all([
+          setCachedAnalysis(cacheKey, resultId),
+          logArticleAccesses(resultId, retrieval.chunks),
+        ]);
+        await trackEvent({
           eventType: "analyze",
           sessionId,
           modelId: actualModelId,

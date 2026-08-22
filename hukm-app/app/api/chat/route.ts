@@ -369,7 +369,7 @@ async function handleBuffered(
     );
   }
 
-  trackEvent({
+  await trackEvent({
     eventType: "chat",
     sessionId: prepared.cookieSessionId,
     modelId: actualModelId,
@@ -516,7 +516,7 @@ function handleStreaming(
           return;
         }
 
-        trackEvent({
+        await trackEvent({
           eventType: "chat",
           sessionId: prepared.cookieSessionId,
           modelId: actualModelId,

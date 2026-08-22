@@ -115,7 +115,7 @@ export async function POST(
     return jsonError(described.status, described.error, described.code);
   }
 
-  trackEvent({
+  await trackEvent({
     eventType: "feedback_submitted",
     sessionId,
     metadata: {

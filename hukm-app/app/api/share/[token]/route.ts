@@ -121,7 +121,7 @@ export async function GET(
 
   // Fire-and-forget analytics. Use the viewer's session id if we have one.
   const viewerSession = (await readSessionId()) ?? "anonymous";
-  trackEvent({
+  await trackEvent({
     eventType: "share_viewed",
     sessionId: viewerSession,
     metadata: { token, analysisId: shareLookup.data.analysis_id },

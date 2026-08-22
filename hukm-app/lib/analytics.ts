@@ -39,21 +39,32 @@ export interface UsageEventPayload {
 }
 
 /**
- * Insert a usage event. Returns immediately; the actual write happens in
- * the background. Errors are swallowed (logged at debug level) so a
- * misbehaving analytics layer never affects user-facing behaviour.
+ * Insert a usage event. Bounded-await contract:
+ *
+ *   - NEVER throws (failures logged at debug level).
+ *   - Resolves within `timeoutMs` even if the database is unreachable, so
+ *     awaiting it in a route adds a hard latency ceiling.
+ *   - Callers on hot paths AWAIT this so the insert is guaranteed to run
+ *     before the response flushes (fire-and-forget writes are dropped when
+ *     serverless functions freeze after responding).
  */
-export function trackEvent(payload: UsageEventPayload): void {
-  // Schedule on next tick so this is truly fire-and-forget even if the
-  // caller awaits it accidentally.
-  queueMicrotask(() => {
-    void writeEvent(payload).catch((err) => {
-      logger.debug("[analytics] insert failed (ignored)", {
-        eventType: payload.eventType,
-        message: err instanceof Error ? err.message : String(err),
-      });
+export async function trackEvent(
+  payload: UsageEventPayload,
+  timeoutMs = 1_500,
+): Promise<void> {
+  try {
+    await Promise.race([
+      writeEvent(payload),
+      new Promise<"timeout">((resolve) =>
+        setTimeout(() => resolve("timeout"), Math.max(0, timeoutMs)),
+      ),
+    ]);
+  } catch (err) {
+    logger.debug("[analytics] insert failed (ignored)", {
+      eventType: payload.eventType,
+      message: err instanceof Error ? err.message : String(err),
     });
-  });
+  }
 }
 
 async function writeEvent(payload: UsageEventPayload): Promise<void> {
@@ -88,3 +99,4 @@ const VALID_EVENT_TYPES: ReadonlySet<UsageEventType> = new Set([
 export function isValidEventType(value: string): value is UsageEventType {
   return VALID_EVENT_TYPES.has(value as UsageEventType);
 }
+

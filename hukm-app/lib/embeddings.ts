@@ -134,8 +134,9 @@ export async function embedCached(
   }
 
   const fresh = await embed(trimmed, inputType);
-  // Fire-and-forget cache write.
-  void setCachedEmbedding(hash, fresh);
+  // Await the cache write so it survives response-flush freezing on
+  // serverless runtimes (the write itself never throws).
+  await setCachedEmbedding(hash, fresh);
   return { embedding: fresh, cacheHit: false };
 }
 
