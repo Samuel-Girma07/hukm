@@ -431,6 +431,7 @@ export const am: Translations = {
     emailPlaceholder: "you@example.com",
     passwordPlaceholder: "••••••••",
     signInButton: "ይግቡ",
+    signInAgain: "ኙነቱ አልፏል — ለመቀጠል ይግቡ",
     signUpButton: "ይመዝገቡ",
     noAccountPrompt: "መለያ የለዎትም?",
     noAccountLink: "መለያ ይፍጠሩ",

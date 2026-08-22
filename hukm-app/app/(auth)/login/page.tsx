@@ -38,6 +38,7 @@ export default function LoginPage() {
         ) : null}
 
         <form className="flex flex-col gap-5">
+          <input type="hidden" name="next" value={searchParams.get('next') ?? ''} />
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-on-surface" htmlFor="email">
               {t("auth.emailLabel")}

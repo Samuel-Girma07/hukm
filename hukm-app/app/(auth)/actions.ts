@@ -1,11 +1,33 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { userQuery } from '@/lib/db/userQuery'
 import { comparePassword, hashPassword, signToken, setAuthCookie, clearAuthCookie } from '@/lib/auth'
-import { isValidEmail, passwordPolicyError } from '@/lib/validation'
+import { isValidEmail, passwordPolicyError, safeNextPath } from '@/lib/validation'
 import { logger } from '@/lib/logger'
+
+/**
+ * Resolves the post-auth redirect target: explicit form field first,
+ * then the hukm_next cookie the middleware plants when bouncing an
+ * unauthenticated visitor away from a protected route.
+ */
+async function resolveNext(formData: FormData): Promise<string> {
+  const fromForm = String(formData.get('next') ?? '')
+  if (fromForm) return safeNextPath(fromForm)
+  try {
+    const store = await cookies()
+    const fromCookie = store.get('hukm_next')?.value
+    if (fromCookie) {
+      store.delete('hukm_next')
+      return safeNextPath(fromCookie)
+    }
+  } catch {
+    // cookies() unavailable — fall through
+  }
+  return '/'
+}
 
 /**
  * Login a user with email + password.
@@ -29,6 +51,8 @@ export async function login(formData: FormData) {
     redirect('/login?error=' + encodeURIComponent('Please enter a valid email address.'))
   }
 
+  const nextPath = await resolveNext(formData)
+
   try {
     const user = await userQuery.findByEmail(email)
     if (!user) {
@@ -50,7 +74,7 @@ export async function login(formData: FormData) {
 
   // Force layout to re-render so Server Components pick up the new session.
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect(nextPath)
 }
 
 /**
@@ -75,6 +99,8 @@ export async function signup(formData: FormData) {
   if (policyError) {
     redirect('/signup?error=' + encodeURIComponent(policyError))
   }
+
+  const nextPath = await resolveNext(formData)
 
   try {
     const existingUser = await userQuery.findByEmail(email)
@@ -102,7 +128,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect(nextPath)
 }
 
 /**

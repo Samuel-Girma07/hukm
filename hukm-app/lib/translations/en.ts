@@ -430,6 +430,7 @@ export const en = {
     emailPlaceholder: "you@example.com",
     passwordPlaceholder: "••••••••",
     signInButton: "Sign In",
+    signInAgain: "Session expired — sign in to continue",
     signUpButton: "Sign Up",
     noAccountPrompt: "Don't have an account?",
     noAccountLink: "Create an account",

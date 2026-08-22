@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ArticlePanel } from "./ArticlePanel";
@@ -75,6 +75,7 @@ export function ChatInterface({
 }: ChatInterfaceProps): React.ReactElement {
   const t = useT();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const [messages, setMessages] = useState<UiMessage[]>(() =>
     initialMessages.map((m) => ({
@@ -88,6 +89,7 @@ export function ChatInterface({
   const [draft, setDraft] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [authRequired, setAuthRequired] = useState(false);
   const [validation, setValidation] = useState<string | null>(null);
   const [openChunk, setOpenChunk] = useState<LawChunk | null>(null);
   const [contextOpen, setContextOpen] = useState(false);
@@ -145,16 +147,20 @@ export function ChatInterface({
 
         if (!response.ok) {
           let msg = `HTTP ${response.status}`;
+          let code: string | undefined;
           try {
-            const data = (await response.json()) as { error?: string };
+            const data = (await response.json()) as { error?: string; code?: string };
             if (data.error) msg = data.error;
+            code = data.code;
           } catch {
             // ignore
           }
+          setAuthRequired(code === "UNAUTHORIZED" || code === "SESSION_MISMATCH");
           setError(msg);
           setMessages((prev) => prev.filter((m) => m.id !== placeholderId));
           return;
         }
+        setAuthRequired(false);
 
         let assembled = "";
         let chunks: LawChunk[] = [];
@@ -305,6 +311,16 @@ export function ChatInterface({
               <div className="pointer-events-auto mx-auto flex max-w-[820px] flex-col gap-2 px-1 pb-2">
                 {error ? (
                   <ErrorState message={error} onRetry={() => setError(null)} />
+                ) : null}
+                {authRequired ? (
+                  <p className="px-2 text-center text-[12px]">
+                    <a
+                      href={`/login?next=${encodeURIComponent(pathname ?? "/")}`}
+                      className="font-medium text-[rgb(var(--accent-cyan))] hover:underline"
+                    >
+                      {t("auth.signInAgain")}
+                    </a>
+                  </p>
                 ) : null}
                 {validation ? <InlineError message={validation} /> : null}
                 <BorderGlow

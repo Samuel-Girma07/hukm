@@ -36,3 +36,14 @@ export function passwordPolicyError(password: string): string | null {
   }
   return null;
 }
+
+/**
+ * Validates a post-auth redirect target. Only same-origin relative paths
+ * are allowed ("//evil.com" and absolute URLs are rejected).
+ */
+export function safeNextPath(next: string | null | undefined): string {
+  if (!next) return "/";
+  if (!next.startsWith("/")) return "/";
+  if (next.startsWith("//")) return "/";
+  return next;
+}

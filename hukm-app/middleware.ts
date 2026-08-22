@@ -1,90 +1,159 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from "next/server";
+import { jwtVerify, SignJWT } from "jose";
 
 /**
- * Bulletproof middleware — zero network calls, zero Supabase client init.
+ * Middleware: UX routing + sliding session renewal.
  *
- * Why this exists:
- *   The previous version used `supabase.auth.getSession()` via `@supabase/ssr`'s
- *   `createServerClient`. Even though `getSession()` itself doesn't make a
- *   network call, the Supabase client initialization on Vercel Edge cold
- *   starts can add enough latency (combined with any token auto-refresh
- *   background work) to exceed Vercel's middleware timeout and return
- *   `504 MIDDLEWARE_INVOCATION_TIMEOUT`.
+ * Zero network calls — the only crypto is local HS256 verification via
+ * `jose` (CPU-only, sub-millisecond), preserving the original design
+ * goal that middleware can never time out on Supabase/network calls.
  *
- * What this version does:
- *   Just checks whether a Supabase auth cookie exists. If yes, the request
- *   passes through. If no (and the route isn't an auth route), redirect to
- *   /onboarding. That's it — synchronous, sub-millisecond, cannot time out.
- *
- * What about session validity?
- *   The middleware is NOT the place to validate the session — it's only for
- *   UX routing (redirect unauth'd users to /onboarding). Authoritative auth
- *   checks happen inside Server Components and Route Handlers via
- *   `supabase.auth.getUser()` (which DOES make a network call, but runs on
- *   Node.js runtime where timeouts are far more generous than Edge).
- *
- * Cookie name format:
- *   `@supabase/ssr` stores the session in cookies named:
- *     - `sb-<project-ref>-auth-token`             (small sessions)
- *     - `sb-<project-ref>-auth-token.0`, `.1`, …   (chunked for large sessions)
- *   So we look for any cookie whose name matches `sb-*-auth-token*`.
- *
- * Admin routes:
- *   /admin/* uses a separate auth model — a server-set HTTP-only cookie
- *   called `hukm-admin-auth`. Admins do NOT need a Supabase user session
- *   to access /admin or /admin/login. So /admin/* is excluded from the
- *   Supabase cookie check entirely. The /admin/login page itself is always
- *   accessible; /admin/* (the dashboard) is gated client-side and via the
- *   admin cookie. Server-side enforcement on admin API routes is in
- *   /api/admin/* (each route checks the cookie).
+ * Responsibilities:
+ *   1. /admin/*      → pass through (separate hukm-admin-auth model; the
+ *                      dashboard page client-gates and every /api/admin/*
+ *                      route enforces server-side).
+ *   2. /share/*      → public by design (token IS the credential).
+ *   3. Auth routes   → logged-in users are bounced home.
+ *   4. Protected     → no cookie / invalid / expired token redirects to
+ *                      /onboarding?next=<original>, so login returns the
+ *                      user to where they were.
+ *   5. Sliding       → a valid token with < RENEW_THRESHOLD left is
+ *                      transparently re-issued for 24h so active users
+ *                      never hit a hard mid-session expiry.
  */
 
-// (Supabase cookie logic removed as auth now uses hukm_token)
+const COOKIE_NAME = "hukm_token";
+const TOKEN_TTL_SECONDS = 60 * 60 * 24; // 24h
+/** Renew when less than half the token's life remains. */
+const RENEW_THRESHOLD_MS = 12 * 60 * 60 * 1000;
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+function secretKey(): Uint8Array {
+  const secret = process.env.JWT_SECRET ?? "";
+  return new TextEncoder().encode(secret);
+}
 
-  // Admin routes use their own auth — skip the Supabase cookie check entirely.
-  // /admin/login must always be reachable so admins can log in.
-  // /admin/* (the dashboard) is gated by the `hukm-admin-auth` cookie, but
-  // we let the page load so the client can check the cookie and redirect
-  // to /admin/login if missing. (Server Components cannot easily read
-  // HTTP-only cookies set by Route Handlers without a refresh, so we accept
-  // the client-side gate for the page itself.)
-  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
-    return NextResponse.next()
+interface VerifiedSession {
+  sub: string;
+  email: string;
+}
+
+async function verifySession(
+  token: string,
+): Promise<{ payload: VerifiedSession; expiresAtMs: number } | null> {
+  if (!process.env.JWT_SECRET) return null;
+  try {
+    const { payload } = await jwtVerify(token, secretKey());
+    const exp = typeof payload.exp === "number" ? payload.exp : 0;
+    if (!payload.sub || typeof payload.email !== "string" || exp === 0) {
+      return null;
+    }
+    return { payload: { sub: payload.sub, email: payload.email }, expiresAtMs: exp * 1000 };
+  } catch {
+    return null;
+  }
+}
+
+async function mintToken(session: VerifiedSession): Promise<string> {
+  return new SignJWT({ email: session.email })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(session.sub)
+    .setIssuedAt()
+    // jose treats a NUMERIC expiration as an absolute unix timestamp;
+    // pass a relative-duration STRING so this is "now + 24h".
+    .setExpirationTime(`${TOKEN_TTL_SECONDS}s`)
+    .sign(secretKey());
+}
+
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+  const { pathname, search } = request.nextUrl;
+
+  // Admin routes use their own auth model — skip entirely.
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return NextResponse.next();
+  }
+
+  // Public share links: the token in the URL is the credential.
+  if (pathname.startsWith("/share")) {
+    return NextResponse.next();
   }
 
   const isAuthRoute =
-    pathname.startsWith('/login') ||
-    pathname.startsWith('/signup') ||
-    pathname.startsWith('/onboarding')
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/onboarding");
 
-  // Public share links must be viewable by anyone — the /share/[token]
-  // page enforces token validity server-side, so the middleware must not
-  // bounce anonymous visitors to /onboarding.
-  const isPublicShare = pathname.startsWith('/share')
+  const token = request.cookies.get(COOKIE_NAME)?.value;
 
-  // Check for the custom JWT auth cookie
-  const hasAuthCookie = request.cookies.has('hukm_token')
-
-  // Unauthenticated user hitting a protected route → send to onboarding.
-  if (!hasAuthCookie && !isAuthRoute && !isPublicShare) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/onboarding'
-    url.search = ''
-    return NextResponse.redirect(url)
+  // ── No cookie at all ────────────────────────────────────────────────
+  if (!token) {
+    if (isAuthRoute) return NextResponse.next();
+    const url = request.nextUrl.clone();
+    url.pathname = "/onboarding";
+    url.search = "";
+    const redirect = NextResponse.redirect(url);
+    // Preserve destination so login can bring the user back.
+    redirect.cookies.set("hukm_next", `${pathname}${search}`, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 600,
+      secure: process.env.NODE_ENV === "production",
+    });
+    return redirect;
   }
 
-  // Authenticated user hitting an auth route → send to home.
-  if (hasAuthCookie && isAuthRoute) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
-    url.search = ''
-    return NextResponse.redirect(url)
+  // ── Cookie present: verify ──────────────────────────────────────────
+  const verified = await verifySession(token);
+  if (!verified) {
+    // Stale/garbage cookie behaves like no cookie (previously it silently
+    // passed middleware and exploded deeper in the stack).
+    if (isAuthRoute) {
+      const res = NextResponse.next();
+      res.cookies.delete(COOKIE_NAME);
+      return res;
+    }
+    const url = request.nextUrl.clone();
+    url.pathname = "/onboarding";
+    url.search = "";
+    const redirect = NextResponse.redirect(url);
+    redirect.cookies.set(COOKIE_NAME, "", { path: "/", maxAge: 0 });
+    redirect.cookies.set("hukm_next", `${pathname}${search}`, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 600,
+      secure: process.env.NODE_ENV === "production",
+    });
+    return redirect;
   }
 
-  return NextResponse.next()
+  // ── Valid session: slide expiry when past the renewal threshold ─────
+  const remainingMs = verified.expiresAtMs - Date.now();
+  let response: NextResponse;
+  if (isAuthRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.search = "";
+    response = NextResponse.redirect(url);
+    response.cookies.delete("hukm_next");
+  } else {
+    response = NextResponse.next();
+  }
+  if (remainingMs < RENEW_THRESHOLD_MS) {
+    try {
+      const fresh = await mintToken(verified.payload);
+      response.cookies.set(COOKIE_NAME, fresh, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: TOKEN_TTL_SECONDS,
+      });
+    } catch {
+      // Renewal is best-effort; the still-valid token keeps working.
+    }
+  }
+  return response;
 }
 
 export const config = {
@@ -98,4 +167,4 @@ export const config = {
      */
     '/((?!_next/static|_next/image|favicon.ico|api/.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|otf)$).*)',
   ],
-}
+};

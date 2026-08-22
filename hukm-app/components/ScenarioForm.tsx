@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { AnalysisProgress } from "./AnalysisProgress";
@@ -28,6 +28,7 @@ const SCENARIO_MAX = 5000;
 
 export function ScenarioForm(): React.ReactElement {
   const router = useRouter();
+  const pathname = usePathname();
   const { language: uiLanguage, t } = useLanguage();
 
   const [scenario, setScenario] = useState("");
@@ -43,6 +44,7 @@ export function ScenarioForm(): React.ReactElement {
   const [submitting, setSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [authRequired, setAuthRequired] = useState(false);
   const [phase, setPhase] = useState<StreamPhase>("retrieving");
   const [stepIndex, setStepIndex] = useState<number>(-1);
   const [cancelling, setCancelling] = useState(false);
@@ -158,13 +160,15 @@ export function ScenarioForm(): React.ReactElement {
 
       if (!response.ok) {
         const data = (await response.json().catch(() => null)) as
-          | { error?: string }
+          | { error?: string; code?: string }
           | null;
         setSubmitError(
           data?.error ?? `Request failed with status ${response.status}.`,
         );
+        setAuthRequired(data?.code === "UNAUTHORIZED");
         return;
       }
+      setAuthRequired(false);
 
       let resultId: string | null = null;
       let buffer = "";
@@ -357,8 +361,22 @@ export function ScenarioForm(): React.ReactElement {
         {submitError ? (
           <ErrorState
             message={submitError}
-            onRetry={() => setSubmitError(null)}
+            onRetry={() => {
+              setSubmitError(null);
+              setAuthRequired(false);
+            }}
           />
+        ) : null}
+
+        {authRequired ? (
+          <p className="text-center text-[12px]">
+            <a
+              href={`/login?next=${encodeURIComponent(pathname)}`}
+              className="font-medium text-[rgb(var(--accent-cyan))] hover:underline"
+            >
+              {t("auth.signInAgain")}
+            </a>
+          </p>
         ) : null}
 
         {submitting ? (
