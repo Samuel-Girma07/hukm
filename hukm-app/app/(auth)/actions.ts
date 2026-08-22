@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { userQuery } from '@/lib/db/userQuery'
 import { comparePassword, hashPassword, signToken, setAuthCookie, clearAuthCookie } from '@/lib/auth'
+import { isValidEmail, passwordPolicyError } from '@/lib/validation'
+import { logger } from '@/lib/logger'
 
 /**
  * Login a user with email + password.
@@ -21,6 +23,10 @@ export async function login(formData: FormData) {
 
   if (!email || !password) {
     redirect('/login?error=' + encodeURIComponent('Email and password are required.'))
+  }
+
+  if (!isValidEmail(email)) {
+    redirect('/login?error=' + encodeURIComponent('Please enter a valid email address.'))
   }
 
   try {
@@ -61,11 +67,13 @@ export async function signup(formData: FormData) {
     redirect('/signup?error=' + encodeURIComponent('Email and password are required.'))
   }
 
-  if (password.length < 6) {
-    redirect(
-      '/signup?error=' +
-        encodeURIComponent('Password must be at least 6 characters long.'),
-    )
+  if (!isValidEmail(email)) {
+    redirect('/signup?error=' + encodeURIComponent('Please enter a valid email address.'))
+  }
+
+  const policyError = passwordPolicyError(password)
+  if (policyError) {
+    redirect('/signup?error=' + encodeURIComponent(policyError))
   }
 
   try {
@@ -85,7 +93,12 @@ export async function signup(formData: FormData) {
     if (error.code === '23505') {
       redirect('/signup?error=' + encodeURIComponent('An account with that email already exists.'))
     }
-    redirect('/signup?error=' + encodeURIComponent('Could not create account: ' + error.message))
+    // Never surface internal error details to the client — log them instead.
+    logger.error('[auth/signup] account creation failed', {
+      message: error instanceof Error ? error.message : String(error),
+      code: error?.code,
+    })
+    redirect('/signup?error=' + encodeURIComponent('Could not create your account. Please try again.'))
   }
 
   revalidatePath('/', 'layout')
