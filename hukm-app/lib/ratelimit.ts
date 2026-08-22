@@ -4,9 +4,9 @@
  *   - MemoryRateLimiter: a single-process Map-based implementation. The
  *     default; HMR-safe via `globalThis` so we don't stack timers in dev.
  *
- *   - RedisRateLimiter: ioredis with an atomic `MULTI / INCR / PEXPIRE
- *     / PTTL / EXEC` pipeline. Use this when running multiple Next.js
- *     replicas behind a load balancer.
+ *   - RedisRateLimiter: ioredis running an atomic Lua fixed-window script
+ *     (INCR + conditional PEXPIRE + PTTL in one EVAL). Use this when
+ *     running multiple Next.js replicas behind a load balancer.
  *
  * `createRateLimiter()` returns the Redis backend if `REDIS_URL` is set,
  * otherwise the memory backend. Singleton exported as `rateLimiter`.
@@ -69,7 +69,7 @@ interface RateLimitEntry {
   resetAtMs: number;
 }
 
-class MemoryRateLimiter implements RateLimiter {
+export class MemoryRateLimiter implements RateLimiter {
   private map = new Map<string, RateLimitEntry>();
 
   async hit(
@@ -98,7 +98,27 @@ class MemoryRateLimiter implements RateLimiter {
 // Redis backend
 // ---------------------------------------------------------------------------
 
-class RedisRateLimiter implements RateLimiter {
+/**
+ * Atomic fixed-window increment.
+ *
+ * EXPIRE runs ONLY when the counter is created (count == 1), so the window
+ * boundary is pinned to the first hit. The previous implementation ran
+ * PEXPIRE on every request, which slid the window forward indefinitely
+ * under sustained traffic and could lock a user out forever.
+ *
+ * Returns { count, pttl } where pttl is the remaining TTL in ms (or a
+ * negative sentinel if the key vanished between calls — callers treat any
+ * ttl <= 0 as "full fresh window").
+ */
+export const FIXED_WINDOW_LUA = `
+local count = redis.call('INCR', KEYS[1])
+if count == 1 then
+  redis.call('PEXPIRE', KEYS[1], ARGV[1])
+end
+return {count, redis.call('PTTL', KEYS[1])}
+`
+
+export class RedisRateLimiter implements RateLimiter {
   constructor(private readonly redis: IORedis) {}
 
   async hit(
@@ -106,21 +126,15 @@ class RedisRateLimiter implements RateLimiter {
     windowMs: number,
   ): Promise<{ count: number; resetAtMs: number }> {
     const tag = `hukm:rl:${key}`;
-    // Atomic pipeline: increment, refresh TTL, read remaining TTL.
-    const replies = await this.redis
-      .multi()
-      .incr(tag)
-      .pexpire(tag, windowMs)
-      .pttl(tag)
-      .exec();
+    const reply = (await this.redis.eval(
+      FIXED_WINDOW_LUA,
+      1,
+      tag,
+      String(windowMs),
+    )) as [number, number];
 
-    if (!replies || replies.length === 0) {
-      logger.warn("[ratelimit] Redis pipeline returned empty reply, failing open");
-      return { count: 1, resetAtMs: Date.now() + windowMs };
-    }
-
-    const count = Number(replies[0]?.[1] ?? 1);
-    const ttl = Number(replies[2]?.[1] ?? windowMs);
+    const count = Number(reply?.[0] ?? 1);
+    const ttl = Number(reply?.[1] ?? windowMs);
     const resetAtMs = Date.now() + (ttl > 0 ? ttl : windowMs);
     return { count, resetAtMs };
   }
