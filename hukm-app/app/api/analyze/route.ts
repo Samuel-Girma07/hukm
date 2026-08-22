@@ -30,7 +30,7 @@ import { logger, requestLogger } from "@/lib/logger";
 import { ensureMigrationProbed } from "@/lib/migrationCheck";
 import { trackEvent } from "@/lib/analytics";
 import { isValidCrimeCategory } from "@/lib/crimeCategories";
-import { getCachedAnalysis, setCachedAnalysis } from "@/lib/cache/analysisCache";
+import { getCachedAnalysis, setCachedAnalysis, type CachedAnalysisHit } from "@/lib/cache/analysisCache";
 import { hashScenario, hashSession } from "@/lib/hash";
 import { isValidModelId, CHAT_ENDPOINT, getFallbackChain, getModelThinkingConfig } from "@/lib/models";
 import { computeConfidence, type ConfidenceAssessment } from "@/lib/confidence";
@@ -280,6 +280,84 @@ interface RunPipelineFail {
   code: string;
 }
 
+// ---------------------------------------------------------------------------
+// Concurrent-duplicate dedupe (analysis claims)
+// ---------------------------------------------------------------------------
+
+const CLAIM_WAIT_MS = 45_000;
+const CLAIM_POLL_MS = 1_500;
+
+/**
+ * Builds the success payload for a cache/duplicate hit.
+ */
+function buildCachedSuccess(
+  cached: CachedAnalysisHit,
+  body: ValidatedBody,
+  sessionId: string,
+  requestId: string,
+): RunPipelineSuccess {
+  const r = cached.analysis.result;
+  const result: AnalysisResult = {
+    step1FactIdentification: r.step1FactIdentification,
+    step2LegalClassification: r.step2LegalClassification,
+    step3ElementsAnalysis: r.step3ElementsAnalysis,
+    step4DefensesAndMitigation: r.step4DefensesAndMitigation,
+    step5SentencingFramework: r.step5SentencingFramework,
+    step6PrecedentApplication: r.step6PrecedentApplication,
+    step7Conclusion: r.step7Conclusion,
+    estimatedPunishment: r.estimatedPunishment,
+    confidenceLevel: r.confidenceLevel,
+    confidenceReason: r.confidenceReason,
+    proceduralRoadmap: r.proceduralRoadmap,
+    disclaimer: r.disclaimer,
+    isCivilMatter: r.isCivilMatter,
+    civilExplanation: r.civilExplanation,
+    needsClarification: r.needsClarification,
+    clarifyingQuestions: r.clarifyingQuestions,
+    suggestedFollowUps: r.suggestedFollowUps,
+    detectedCrimeCategory: r.detectedCrimeCategory,
+    rawResponse: r.rawResponse,
+  };
+  const chunks = r.retrievedChunks ?? [];
+  const retrieval: RetrievalResult = r.retrieval ?? {
+    chunks,
+    stage: 1,
+    maxSimilarity: chunks.reduce(
+      (m, c) => (c.similarity > m ? c.similarity : m),
+      0,
+    ),
+  };
+  void sessionId;
+  return {
+    ok: true,
+    resultId: cached.resultId,
+    result,
+    retrievedChunks: chunks,
+    retrieval,
+    modelIdActual: cached.analysis.model_id,
+    cache: true,
+  };
+}
+
+/**
+ * While another request holds the claim for an identical analysis, poll
+ * the cache until the winner persists its result. Returns null on timeout
+ * or caller abort.
+ */
+async function waitForClaimResult(
+  cacheKey: string,
+  signal?: AbortSignal,
+): Promise<CachedAnalysisHit | null> {
+  const deadline = Date.now() + CLAIM_WAIT_MS;
+  while (Date.now() < deadline && !signal?.aborted) {
+    await new Promise((resolve) => setTimeout(resolve, CLAIM_POLL_MS));
+    if (signal?.aborted) return null;
+    const hit = await getCachedAnalysis(cacheKey);
+    if (hit) return hit;
+  }
+  return null;
+}
+
 async function runPipelineBuffered(
   body: ValidatedBody,
   sessionId: string,
@@ -302,58 +380,61 @@ async function runPipelineBuffered(
   const cached = await getCachedAnalysis(cacheKey);
   if (cached) {
     reqLog.info({ cacheHit: true, resultId: cached.resultId }, "analysis cache hit");
-    const r = cached.analysis.result;
-    const result: AnalysisResult = {
-      step1FactIdentification: r.step1FactIdentification,
-      step2LegalClassification: r.step2LegalClassification,
-      step3ElementsAnalysis: r.step3ElementsAnalysis,
-      step4DefensesAndMitigation: r.step4DefensesAndMitigation,
-      step5SentencingFramework: r.step5SentencingFramework,
-      step6PrecedentApplication: r.step6PrecedentApplication,
-      step7Conclusion: r.step7Conclusion,
-      estimatedPunishment: r.estimatedPunishment,
-      confidenceLevel: r.confidenceLevel,
-      confidenceReason: r.confidenceReason,
-      proceduralRoadmap: r.proceduralRoadmap,
-      disclaimer: r.disclaimer,
-      isCivilMatter: r.isCivilMatter,
-      civilExplanation: r.civilExplanation,
-      needsClarification: r.needsClarification,
-      clarifyingQuestions: r.clarifyingQuestions,
-      suggestedFollowUps: r.suggestedFollowUps,
-      detectedCrimeCategory: r.detectedCrimeCategory,
-      rawResponse: r.rawResponse,
-    };
-    const chunks = r.retrievedChunks ?? [];
-    const retrieval: RetrievalResult = r.retrieval ?? {
-      chunks,
-      stage: 1,
-      maxSimilarity: chunks.reduce(
-        (m, c) => (c.similarity > m ? c.similarity : m),
-        0,
-      ),
-    };
     await trackEvent({
       eventType: "analyze",
       sessionId,
       modelId: cached.analysis.model_id,
       crimeCategory: body.crimeCategory ?? null,
-      confidenceLevel: result.confidenceLevel,
+      confidenceLevel: cached.analysis.result.confidenceLevel,
       language: body.language,
       metadata: { cache: true, requestId },
     });
-    await logArticleAccesses(cached.resultId, chunks);
+    const success = buildCachedSuccess(cached, body, sessionId, requestId);
+    await logArticleAccesses(cached.resultId, success.retrievedChunks);
+    return success;
+  }
+
+  // Claim the key so concurrent identical submissions don't double-spend
+  // an NVIDIA call. The loser polls the cache for the winner's result.
+  const claimClient = getServerClient();
+  const claimOutcome = await claimClient.rpc("claim_analysis", {
+    p_key: cacheKey,
+  });
+  if (claimOutcome.data !== "claimed") {
+    reqLog.info({ duplicate: true }, "identical analysis in flight; waiting");
+    const dup = await waitForClaimResult(cacheKey);
+    if (dup) {
+      reqLog.info({ resultId: dup.resultId }, "duplicate resolved from winner");
+      return buildCachedSuccess(dup, body, sessionId, requestId);
+    }
     return {
-      ok: true,
-      resultId: cached.resultId,
-      result,
-      retrievedChunks: chunks,
-      retrieval,
-      modelIdActual: cached.analysis.model_id,
-      cache: true,
+      ok: false,
+      status: 503,
+      error:
+        "An identical analysis is already being processed. Please try again in a few seconds.",
+      code: "ANALYSIS_IN_PROGRESS",
     };
   }
 
+  // Resolve/release the claim no matter how the fresh run ends.
+  const finalizeClaim = async (ok: boolean, resultId?: string): Promise<void> => {
+    try {
+      if (ok && resultId) {
+        await claimClient.rpc("resolve_analysis_claim", {
+          p_key: cacheKey,
+          p_result_id: resultId,
+        });
+      } else {
+        await claimClient.rpc("release_analysis_claim", { p_key: cacheKey });
+      }
+    } catch {
+      // Best-effort — stale claims are purged by TTL on later claims.
+    }
+  };
+
+  let freshOutcome: RunPipelineSuccess | RunPipelineFail;
+  try {
+    freshOutcome = await (async (): Promise<RunPipelineSuccess | RunPipelineFail> => {
   // RAG retrieval.
   const retrievalStart = Date.now();
   const retrieval = await retrieveContext(body.scenario);
@@ -494,6 +575,17 @@ async function runPipelineBuffered(
     modelIdActual: actualModelId,
     cache: false,
   };
+    })(); // end fresh-analysis IIFE
+  } catch (err) {
+    await finalizeClaim(false);
+    throw err;
+  }
+
+  await finalizeClaim(freshOutcome.ok, freshOutcome.ok ? freshOutcome.resultId : undefined);
+  if (!freshOutcome.ok) {
+    reqLog.warn({ code: freshOutcome.code }, "fresh analysis failed; claim released");
+  }
+  return freshOutcome;
 }
 
 // ---------------------------------------------------------------------------
@@ -520,6 +612,10 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
   return new ReadableStream<Uint8Array>({
     async start(controller) {
       let closed = false;
+      // Assigned once the claim is acquired; a no-op before that so the
+      // outer catch can always call it safely.
+      let finalizeClaim: (ok: boolean, resultId?: string) => Promise<void> =
+        async () => {};
       const enqueue = (event: Parameters<typeof encodeSSE>[0]): void => {
         if (closed) return;
         try {
@@ -569,6 +665,56 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
             metadata: { cache: true, stream: true, requestId },
           });
           await logArticleAccesses(cached.resultId, r.retrievedChunks ?? []);
+          return;
+        }
+
+        // Claim the key — mirrors the buffered handler so concurrent
+        // identical streams cannot double-spend the NVIDIA call.
+        const claimClient = getServerClient();
+        finalizeClaim = async (ok: boolean, resultId?: string): Promise<void> => {
+          try {
+            if (ok && resultId) {
+              await claimClient.rpc("resolve_analysis_claim", {
+                p_key: cacheKey,
+                p_result_id: resultId,
+              });
+            } else {
+              await claimClient.rpc("release_analysis_claim", { p_key: cacheKey });
+            }
+          } catch {
+            // best-effort; TTL purge covers orphans
+          }
+        };
+
+        const claimOutcome = await claimClient.rpc("claim_analysis", {
+          p_key: cacheKey,
+        });
+        if (claimOutcome.data !== "claimed") {
+          reqLog.info({ duplicate: true }, "identical stream in flight; waiting");
+          const dup = await waitForClaimResult(cacheKey, request.signal);
+          if (dup) {
+            const dupResult = dup.analysis.result;
+            enqueue({ type: "token", content: JSON.stringify(dupResult) });
+            enqueue({
+              type: "done",
+              resultId: dup.resultId,
+              result: dupResult,
+              retrievedChunks: dupResult.retrievedChunks ?? [],
+              cache: true,
+              retrieval: dupResult.retrieval,
+            });
+            enqueue("DONE");
+            closeStream();
+            return;
+          }
+          enqueue({
+            type: "error",
+            error:
+              "An identical analysis is already being processed. Please try again in a few seconds.",
+            code: "ANALYSIS_IN_PROGRESS",
+          });
+          enqueue("DONE");
+          closeStream();
           return;
         }
 
@@ -650,6 +796,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
         }
 
         if (!actualModelId || assistantText.trim().length === 0) {
+          await finalizeClaim(false);
           captureException(lastUpstreamError ?? new Error("All models failed"), {
             endpoint: "/api/analyze",
           });
@@ -685,6 +832,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
         });
 
         if (!resultId) {
+          await finalizeClaim(false);
           enqueue({
             type: "error",
             error: "Analysis was generated but could not be saved. Please try again.",
@@ -699,6 +847,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
           setCachedAnalysis(cacheKey, resultId),
           logArticleAccesses(resultId, retrieval.chunks),
         ]);
+        await finalizeClaim(true, resultId);
         await trackEvent({
           eventType: "analyze",
           sessionId,
@@ -725,6 +874,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
         enqueue("DONE");
         closeStream();
       } catch (err) {
+        await finalizeClaim(false);
         if (err instanceof Error && err.name === "AbortError") {
           reqLog.info("client aborted stream");
         } else {
