@@ -95,19 +95,31 @@ Add a `vercel.json` like this if you want to be explicit:
 | `NEXT_PUBLIC_SUPABASE_URL`        | yes      | `https://xxxx.supabase.co`             |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | yes      | `eyJ…`                                 |
 | `SUPABASE_SERVICE_ROLE_KEY`       | yes      | `eyJ…`  (**server-only — never expose**) |
+| `DATABASE_URL`                    | yes      | Postgres connection string for the direct `pg` pool used by auth (`users` table) |
+| `JWT_SECRET`                      | yes      | HS256 signing secret for `hukm_token` session cookies |
+| `ADMIN_PASSWORD`                  | for /admin | Shared admin password (see `/api/admin/login`) |
 | `REDIS_URL`                       | no       | `redis://default:password@host:6379`   |
 
 Only the two `NEXT_PUBLIC_…` values are sent to the browser; the others stay
-server-side. `lib/env.ts` enforces that all required vars are present at
-module load — the very first request will throw with the missing-variable
-name if any are absent.
+server-side. `lib/env.ts` enforces required vars lazily per access — the
+route that needs a missing var will fail with its name rather than crashing
+the whole process.
 
 ## 5. Supabase configuration
 
-The app assumes the schema in `ARCHITECTURE.md` is already in place. If you
-need to provision it from scratch, run the existing migration scripts in
-the data ingestion repo (they live outside this codebase). Verify after
-migration:
+Provision the schema by running **every SQL file in `migrations/`** in
+filename order inside the Supabase SQL editor (all are idempotent):
+
+1. `migrations/001_base_schema.sql`
+2. `migrations/002_advanced_features.sql`
+3. `migrations/20260515_add_retrieval_stats.sql`
+4. `migrations/20260516_add_performance_indexes.sql`
+5. `migrations/20260620_atomic_share_view_count.sql`
+6. `migrations/20260823_users_table_and_conversations_rpc.sql`
+   (`users` table, `get_recent_conversations` RPC, `updated_at` trigger —
+   required for signup/login and the /history page)
+
+Verify after migration:
 
 ```sql
 -- These should each return a positive number.
@@ -116,6 +128,10 @@ SELECT count(*) FROM conversations;
 
 -- The match RPC should exist:
 SELECT proname FROM pg_proc WHERE proname = 'match_law_chunks';
+
+-- Auth + history prerequisites:
+SELECT to_regclass('public.users');                          -- not null
+SELECT proname FROM pg_proc WHERE proname = 'get_recent_conversations';
 ```
 
 ### Row Level Security
