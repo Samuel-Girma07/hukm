@@ -34,7 +34,7 @@ import { getCachedAnalysis, setCachedAnalysis } from "@/lib/cache/analysisCache"
 import { hashScenario, hashSession } from "@/lib/hash";
 import { isValidModelId, CHAT_ENDPOINT, getFallbackChain, getModelThinkingConfig } from "@/lib/models";
 import { computeConfidence, type ConfidenceAssessment } from "@/lib/confidence";
-import { callChatWithFallback, ChatApiError } from "@/lib/nvidia";
+import { callChatWithFallback, ChatApiError, streamFromCandidate } from "@/lib/nvidia";
 import { parseAnalysisResponse } from "@/lib/parser";
 import { buildAnalysisPrompt } from "@/lib/prompts";
 import {
@@ -607,8 +607,11 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
           try {
             assistantText = await streamFromCandidate({
               modelId: candidate,
-              systemPrompt,
-              userMessage,
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userMessage },
+              ],
+              maxTokens: 2048,
               signal: request.signal,
               onToken: (delta) => {
                 if (delta.length === 0) return;
@@ -625,6 +628,13 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
             break;
           } catch (err) {
             if (err instanceof ChatApiError) {
+              // Tokens already reached the client — retrying another model
+              // would replay a duplicated prefix, so surface the failure.
+              if (err.streamedPartial) {
+                lastUpstreamError = err;
+                reqLog.warn({ candidate }, "candidate failed mid-stream; not retrying");
+                break;
+              }
               if (err.status >= 500 || err.status === 429 || err.status === 408) {
                 lastUpstreamError = err;
                 reqLog.warn({ candidate, status: err.status }, "candidate failed; trying next");
@@ -733,97 +743,6 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
   });
 }
 
-interface StreamCandidateArgs {
-  modelId: string;
-  systemPrompt: string;
-  userMessage: string;
-  signal: AbortSignal;
-  onToken: (delta: string) => void;
-}
-
-interface ChatRequestBody {
-  model: string;
-  messages: Array<{ role: string; content: string }>;
-  temperature: number;
-  max_tokens: number;
-  stream: boolean;
-  chat_template_kwargs?: { enable_thinking: boolean };
-}
-
-async function streamFromCandidate(args: StreamCandidateArgs): Promise<string> {
-  const body: ChatRequestBody = {
-    model: args.modelId,
-    messages: [
-      { role: "system", content: args.systemPrompt },
-      { role: "user", content: args.userMessage },
-    ],
-    temperature: 0.1,
-    max_tokens: 2048,
-    stream: true,
-  };
-  const thinking = getModelThinkingConfig(args.modelId);
-  if (thinking) {
-    body.chat_template_kwargs = thinking;
-  }
-
-  const upstream = await fetch(CHAT_ENDPOINT, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.NVIDIA_API_KEY}`,
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-    },
-    body: JSON.stringify(body),
-    signal: args.signal,
-  });
-
-  if (!upstream.ok || !upstream.body) {
-    const text = await upstream.text().catch(() => "");
-    throw new ChatApiError(
-      `NVIDIA stream error (HTTP ${upstream.status}) for ${args.modelId}: ${text || "no body"}`,
-      upstream.status,
-    );
-  }
-
-  const reader = upstream.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let assembled = "";
-
-  try {
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-
-      for (const rawLine of lines) {
-        const line = rawLine.trim();
-        if (!line.startsWith("data:")) continue;
-        const payload = line.slice("data:".length).trim();
-        if (!payload || payload === "[DONE]") continue;
-        try {
-          const parsed = JSON.parse(payload) as {
-            choices?: Array<{ delta?: { content?: string } }>;
-          };
-          const delta = parsed.choices?.[0]?.delta?.content;
-          if (typeof delta === "string" && delta.length > 0) {
-            assembled += delta;
-            args.onToken(delta);
-          }
-        } catch {
-          // ignore malformed payloads from upstream
-        }
-      }
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  return assembled;
-}
 
 // ---------------------------------------------------------------------------
 // User message

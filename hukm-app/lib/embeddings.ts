@@ -17,6 +17,7 @@ import {
   setCachedEmbedding,
 } from "./cache/embeddingCache";
 import { env } from "./env";
+import { withDeadline } from "./httpTimeout";
 import { hashEmbeddingInput } from "./hash";
 import { logger } from "./logger";
 import { EMBEDDING } from "./models";
@@ -28,6 +29,15 @@ interface EmbeddingApiResponse {
 }
 
 export type EmbeddingInputType = "query" | "passage";
+
+function embedUrl(): string {
+  return process.env.NVIDIA_EMBED_URL || EMBEDDING.endpoint;
+}
+
+function embedTimeoutMs(): number {
+  const parsed = Number(process.env.NVIDIA_EMBED_TIMEOUT_MS);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 10_000;
+}
 
 /**
  * Embeds a single text. Returns a 1024-dim L2-normalised vector.
@@ -47,15 +57,29 @@ export async function embed(
     input_type: inputType,
   };
 
-  const response = await fetch(EMBEDDING.endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.NVIDIA_API_KEY}`,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  const deadline = withDeadline(embedTimeoutMs());
+  let response: Response;
+  try {
+    response = await fetch(embedUrl(), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.NVIDIA_API_KEY}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: deadline.signal,
+    });
+  } catch (err) {
+    if (deadline.timedOut) {
+      throw new Error(
+        `[hukm/embeddings] NVIDIA embeddings call timed out after ${embedTimeoutMs()}ms`,
+      );
+    }
+    throw err;
+  } finally {
+    deadline.cancel();
+  }
 
   if (!response.ok) {
     const text = await response.text().catch(() => "");

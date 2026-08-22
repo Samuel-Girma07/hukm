@@ -21,11 +21,13 @@ import { hashSession } from "@/lib/hash";
 import { jsonError } from "@/lib/http";
 import { logger, requestLogger } from "@/lib/logger";
 import {
-  CHAT_ENDPOINT,
   getFallbackChain,
-  getModelThinkingConfig,
 } from "@/lib/models";
-import { callChatWithFallback, ChatApiError } from "@/lib/nvidia";
+import {
+  callChatWithFallback,
+  ChatApiError,
+  streamFromCandidate,
+} from "@/lib/nvidia";
 import { isConversationOwner } from "@/lib/ownership";
 import { buildChatPrompt } from "@/lib/prompts";
 import {
@@ -390,89 +392,6 @@ async function handleBuffered(
 // Streaming handler
 // ---------------------------------------------------------------------------
 
-interface ChatStreamRequestBody {
-  model: string;
-  messages: Array<{ role: string; content: string }>;
-  temperature: number;
-  max_tokens: number;
-  stream: boolean;
-  chat_template_kwargs?: { enable_thinking: boolean };
-}
-
-async function streamFromCandidate(args: {
-  modelId: string;
-  messages: Array<{ role: string; content: string }>;
-  signal: AbortSignal;
-  onToken: (delta: string) => void;
-}): Promise<string> {
-  const body: ChatStreamRequestBody = {
-    model: args.modelId,
-    messages: args.messages,
-    temperature: 0.1,
-    max_tokens: 1024,
-    stream: true,
-  };
-  const thinking = getModelThinkingConfig(args.modelId);
-  if (thinking) {
-    body.chat_template_kwargs = thinking;
-  }
-
-  const upstream = await fetch(CHAT_ENDPOINT, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.NVIDIA_API_KEY}`,
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-    },
-    body: JSON.stringify(body),
-    signal: args.signal,
-  });
-
-  if (!upstream.ok || !upstream.body) {
-    const text = await upstream.text().catch(() => "");
-    throw new ChatApiError(
-      `NVIDIA stream error (HTTP ${upstream.status}) for ${args.modelId}: ${text || "no body"}`,
-      upstream.status,
-    );
-  }
-
-  const reader = upstream.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let assembled = "";
-
-  try {
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-      for (const rawLine of lines) {
-        const line = rawLine.trim();
-        if (!line.startsWith("data:")) continue;
-        const payload = line.slice("data:".length).trim();
-        if (!payload || payload === "[DONE]") continue;
-        try {
-          const parsed = JSON.parse(payload) as {
-            choices?: Array<{ delta?: { content?: string } }>;
-          };
-          const delta = parsed.choices?.[0]?.delta?.content;
-          if (typeof delta === "string" && delta.length > 0) {
-            assembled += delta;
-            args.onToken(delta);
-          }
-        } catch {
-          // ignore
-        }
-      }
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  return assembled;
-}
 
 function handleStreaming(
   prepared: PreparedRequest,
@@ -535,6 +454,7 @@ function handleStreaming(
             assembled = await streamFromCandidate({
               modelId: candidate,
               messages: messagesForModel,
+              maxTokens: 1024,
               signal: request.signal,
               onToken: (delta) => {
                 if (delta.length === 0) return;
@@ -545,6 +465,13 @@ function handleStreaming(
             break;
           } catch (err) {
             if (err instanceof ChatApiError) {
+              // Tokens already reached the client — retrying would replay
+              // a duplicated prefix, so surface the failure immediately.
+              if (err.streamedPartial) {
+                lastError = err;
+                reqLog.warn({ candidate }, "candidate failed mid-stream; not retrying");
+                break;
+              }
               if (err.status >= 500 || err.status === 429 || err.status === 408) {
                 lastError = err;
                 continue;
