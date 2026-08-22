@@ -60,11 +60,16 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/signup') ||
     pathname.startsWith('/onboarding')
 
+  // Public share links must be viewable by anyone — the /share/[token]
+  // page enforces token validity server-side, so the middleware must not
+  // bounce anonymous visitors to /onboarding.
+  const isPublicShare = pathname.startsWith('/share')
+
   // Check for the custom JWT auth cookie
   const hasAuthCookie = request.cookies.has('hukm_token')
 
   // Unauthenticated user hitting a protected route → send to onboarding.
-  if (!hasAuthCookie && !isAuthRoute) {
+  if (!hasAuthCookie && !isAuthRoute && !isPublicShare) {
     const url = request.nextUrl.clone()
     url.pathname = '/onboarding'
     url.search = ''
