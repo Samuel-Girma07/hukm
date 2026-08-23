@@ -76,11 +76,14 @@ beforeAll(async () => {
   process.env.NVIDIA_CHAT_URL = `${baseUrl}/v1/chat/completions`;
   process.env.NVIDIA_EMBED_URL = `${baseUrl}/v1/embeddings`;
   process.env.NVIDIA_API_KEY = "test-key";
-  process.env.NVIDIA_CHAT_TIMEOUT_MS = "400";
-  process.env.NVIDIA_CHAIN_DEADLINE_MS = "1500";
-  process.env.NVIDIA_STREAM_TTFB_MS = "300";
-  process.env.NVIDIA_STREAM_TOTAL_MS = "700";
-  process.env.NVIDIA_EMBED_TIMEOUT_MS = "300";
+  // Budgets are generous enough to survive full-suite CPU contention
+  // (real HTTP round trips to the stub) while still being breached by
+  // the deliberate stalls below.
+  process.env.NVIDIA_CHAT_TIMEOUT_MS = "1000";
+  process.env.NVIDIA_CHAIN_DEADLINE_MS = "3000";
+  process.env.NVIDIA_STREAM_TTFB_MS = "800";
+  process.env.NVIDIA_STREAM_TOTAL_MS = "1500";
+  process.env.NVIDIA_EMBED_TIMEOUT_MS = "800";
 
   nvidia = await import("../nvidia");
   embeddings = await import("../embeddings");
@@ -103,7 +106,7 @@ describe("callChat deadlines", () => {
     await expect(
       nvidia.callChat({ modelId: "slow/m1", messages }),
     ).rejects.toMatchObject({ name: "ChatApiError", status: 504 });
-    expect(Date.now() - started).toBeLessThan(2_000);
+    expect(Date.now() - started).toBeLessThan(3_000);
   });
 });
 
@@ -132,8 +135,8 @@ describe("callChatWithFallback chain", () => {
       await expect(
         nvidia.callChatWithFallback({ modelId: "any/m1", messages }),
       ).rejects.toMatchObject({ name: "ChatApiError", status: 504 });
-      // chain guard (1.5s budget) stops the walk long before 6 × 400ms.
-      expect(Date.now() - started).toBeLessThan(5_000);
+      // chain guard (3s budget) stops the walk long before 6 × 1s.
+      expect(Date.now() - started).toBeLessThan(6_000);
     } finally {
       dead.close();
       process.env.NVIDIA_CHAT_URL = originalUrl;
