@@ -14,5 +14,9 @@ export default defineConfig({
     globals: true,
     environment: "node",
     include: ["lib/**/*.test.ts", "components/**/*.test.tsx"],
+    // The nvidia timeout suite uses real HTTP + timers; parallel worker
+    // threads on Windows starve it and stall the run. Sequential is
+    // ~80s total and deterministic.
+    fileParallelism: false,
   },
 });
