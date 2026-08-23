@@ -23,12 +23,13 @@ exact source articles that were used.
   articles + similarity scores
 - **Multi-turn conversation** — continue from any analysis to ask follow-up
   questions, with full conversation context persisted in Supabase
-- **Multi-model support** — GLM-4.7/GLM-5 (primary) plus Llama, DeepSeek,
-  and Mistral fallbacks via NVIDIA NIM
+- **Multi-model support** — Nemotron / Kimi / Qwen3-Coder tiers (primary)
+  plus Llama, DeepSeek, and GPT-OSS fallbacks via NVIDIA NIM
 - **Persisted results** — results are saved server-side, so refreshing
   the results page works
-- **Tier-aware rate limiting** — premium models (`z-ai/*`) get 10 req/min,
-  fallback models 30 req/min, applied to both `/api/analyze` and `/api/chat`
+- **Tier-aware rate limiting** — premium models (`qwen/qwen3-coder-*`) get
+  5 req/day, standard models 30 req/min, applied to both `/api/analyze`
+  and `/api/chat`; auth actions and anonymous endpoints are IP-throttled
 
 ---
 
@@ -41,8 +42,8 @@ exact source articles that were used.
 | UI          | Tailwind CSS                                        |
 | Database    | Supabase (PostgreSQL + pgvector)                    |
 | Embeddings  | `nvidia/nv-embedqa-e5-v5` (1024 dims)               |
-| Chat models | NVIDIA NIM API (GLM, Llama, DeepSeek, Mistral)      |
-| Sessions    | HTTP-only cookies, 30-day persistence               |
+| Chat models | NVIDIA NIM API (Nemotron, Kimi, Qwen, Llama, DeepSeek) |
+| Sessions    | HTTP-only JWT cookies, 24 h with sliding renewal     |
 | Tests       | Vitest + React Testing Library + jsdom              |
 | Ingestion   | Python 3 + PyMuPDF                                  |
 
@@ -93,10 +94,13 @@ lib/
   logger.ts                 # Dev-only logger
   types.ts                  # Shared interfaces
 scripts/
-  ingest.py                 # PDF → chunks → embeddings → Supabase
-__tests__/                  # Vitest unit + component + API tests
-supabase-setup.sql                     # law_chunks + match_law_chunks RPC
-supabase-conversations-setup.sql       # conversations + messages + analysis_results
+  apply_migration.mjs       # helper for applying SQL via the Supabase API
+  probe-models.mjs          # live availability probe for lib/models.ts
+  generate-icons.mjs        # PWA icon rasteriser (PNGs committed)
+  generate-icons.mjs        # one-off PWA icon rasteriser (outputs committed)
+lib/__tests__/              # Vitest unit + route tests
+components/*.test.tsx       # RTL component tests (jsdom)
+migrations/                 # idempotent SQL schema, applied via Supabase editor
 ```
 
 ---
@@ -112,10 +116,11 @@ supabase-conversations-setup.sql       # conversations + messages + analysis_res
 
 ## Setup
 
-1. **Clone & install**
+1. **Clone & install** — the app lives in `hukm-app/` (set this as the
+   Vercel Root Directory):
    ```bash
    git clone <this-repo>
-   cd hukm
+   cd hukm/hukm-app
    npm install
    ```
 
@@ -130,21 +135,23 @@ supabase-conversations-setup.sql       # conversations + messages + analysis_res
    NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
    SUPABASE_SERVICE_ROLE_KEY=...
+   DATABASE_URL=postgresql://...   # transaction-pooler URI; used by auth
+   JWT_SECRET=<openssl rand -base64 48>
    ```
    Never put real credentials in `.env`; that file is gitignored
    precisely because the legacy convention leaks it.
 
-3. **Run database migrations** in the Supabase SQL editor:
-   - `supabase-setup.sql` (creates `law_chunks` + `match_law_chunks()`)
-   - `supabase-conversations-setup.sql` (creates `conversations`, `messages`,
-     and the new `analysis_results` table for persisted results)
+3. **Run database migrations** in the Supabase SQL editor, in filename
+   order — every file in `hukm-app/migrations/` is idempotent:
+   `001_base_schema.sql` → `002_advanced_features.sql` → the dated
+   migration files.
 
-4. **Ingest legal PDFs** — drop the source PDFs into `legal-docs/` (see
-   `legal-docs/README.md` for download links) and run:
-   ```bash
-   pip install pymupdf supabase python-dotenv requests
-   python scripts/ingest.py
-   ```
+4. **Legal corpus** — the `law_chunks` table ships pre-populated with the
+   Ethiopian corpus (Constitution, Criminal Code 414/2004, Anti-Corruption,
+   Anti-Terrorism, Human Trafficking, Drug Control, cassation decisions).
+   The old Python ingestion pipeline was removed with the `legacy/` tree;
+   if you ever need to re-ingest, rebuild it from
+   `legacy/scripts/ingest.py` in git history (`git log --all -- legacy/`).
 
 5. **Run the dev server**
    ```bash

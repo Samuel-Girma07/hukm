@@ -22,15 +22,18 @@ context.
 - **Safe response parser** — the parser never throws. Malformed JSON,
   missing fields, or stray prose all degrade gracefully into a
   `NEEDS_REVIEW` result with the raw response preserved.
-- **Tiered rate limiting** — `z-ai/*` premium models are capped at
-  10 req/min/(ip, model); standard models at 30 req/min. Backend is a
-  swappable `RateLimitStore` interface so Redis can be wired in without
-  changing call sites.
+- **Tiered rate limiting** — premium-tier models (`qwen/qwen3-coder-*`)
+  are capped at 5 requests/day/user; standard models at 30 req/min.
+  Login/signup server actions and anonymous endpoints are IP-throttled
+  separately (`TRUST_PROXY` controls whether forwarding headers are
+  trusted when identifying clients). Backend is a swappable
+  `RateLimiter` interface so Redis can be wired in via `REDIS_URL`
+  without changing call sites.
 - **Multi-turn chat** — once an analysis is generated the user can continue
   in a conversation that re-uses the same context but switches to a
   natural-language prompt (no JSON output).
 - **Session-scoped ownership** — every analysis and conversation is bound
-  to the caller's `hukm_session` cookie. Routes refuse to read or extend
+  to the caller's `hukm_token` JWT cookie. Routes refuse to read or extend
   resources owned by another session.
 
 ## Tech stack
@@ -42,9 +45,10 @@ context.
 | Styling          | Tailwind CSS 3                               |
 | Database         | Supabase Postgres + `pgvector`               |
 | Embeddings       | NVIDIA `nv-embedqa-e5-v5` (1024 dims)        |
-| Chat             | NVIDIA chat completions (z-ai/glm4.7 default) |
-| Session          | HttpOnly cookie (`hukm_session`)             |
-| Rate limiting    | Per-IP, per-model, in-memory (Redis-ready)   |
+| Chat             | NVIDIA chat completions (`moonshotai/kimi-k2.6` default) |
+| Session          | HttpOnly JWT cookie (`hukm_token`), 24 h sliding renewal |
+| Rate limiting    | Per-user / per-IP / per-model, in-memory (Redis-ready)   |
+| Testing          | Vitest + React Testing Library + jsdom       |
 
 ## Local setup
 
@@ -116,7 +120,7 @@ hukm-app/
 │   ├── models.ts                  model registry — single source of truth
 │   ├── logger.ts                  structured console logger
 │   ├── supabase.ts                service-role Supabase client
-│   ├── session.ts                 hukm_session cookie helpers
+│   ├── session.ts                 JWT session helpers (hukm_token cookie)
 │   ├── embeddings.ts              NVIDIA embeddings + L2 normalise
 │   ├── retrieval.ts               two-stage RAG retrieval
 │   ├── similarity.ts              Jaccard dedup
@@ -136,17 +140,29 @@ hukm-app/
 
 ## Database
 
-The Supabase schema is created and managed outside this repo. The expected
-shape (already populated with Ethiopian law data) is documented in
-`ARCHITECTURE.md`. This codebase **never** writes DDL; it only calls
-the existing tables and RPCs:
+The schema lives in `migrations/` and is applied manually in the Supabase
+SQL editor (each file is idempotent and safe to re-run). Application code
+**never** writes DDL; it only calls the existing tables and RPCs:
 
-- Tables: `law_chunks`, `conversations`, `messages`, `analysis_results`
-- RPCs:   `match_law_chunks`, `get_recent_conversations`, `get_conversation_messages`
+- Tables: `law_chunks`, `users`, `analysis_results`, `conversations`,
+  `messages`, `feedback`, `usage_events`, `shared_analyses`,
+  `article_access_log`, `cached_embeddings`, `cached_analyses`,
+  `analysis_claims`
+- RPCs:   `match_law_chunks`, `get_recent_conversations`, `get_usage_stats`,
+  `get_article_heatmap`, `increment_share_view_count`, `claim_analysis`,
+  `resolve_analysis_claim`, `release_analysis_claim`
+
+Row Level Security is enabled on every table; the app always connects
+with the service-role key (which bypasses RLS) or a direct Postgres
+connection for auth, so RLS exists purely to lock out anon-key access.
 
 ## Deployment
 
 See `DEPLOYMENT_GUIDE.md` for Vercel + Supabase deployment steps.
+Required environment variables are documented in `.env.example`; the
+app exposes `GET /api/health` (always 200) whose payload reports
+whether all required vars are configured — detailed diagnostics are
+visible only to logged-in admins.
 
 ## Hard rules embedded in the codebase
 
@@ -158,7 +174,9 @@ See `DEPLOYMENT_GUIDE.md` for Vercel + Supabase deployment steps.
   misplaced client import causes a build-time error.
 - Inputs are validated for length, type, and ownership before any
   database write or LLM call.
-- Rate limits are enforced on `/api/analyze` and `/api/chat`.
+- Rate limits are enforced on `/api/analyze`, `/api/chat`, the login/signup
+  server actions, and every anonymous endpoint (`/api/events`,
+  `/api/share/*`, `/api/articles/*`, `/api/admin/login`).
 
 ## License
 

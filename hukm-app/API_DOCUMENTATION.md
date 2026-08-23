@@ -41,7 +41,7 @@ Content-Type: application/json
 ```json
 {
   "scenario": "On 12 March 2024 in Addis Ababa, two men entered a small shop with a knife…",
-  "modelId":  "z-ai/glm4.7",
+  "modelId":  "moonshotai/kimi-k2.6",
   "language": "en"
 }
 ```
@@ -76,7 +76,7 @@ Content-Type: application/json
     "needsClarification":         false,
     "rawResponse":                "{ … original model output … }"
   },
-  "modelId": "z-ai/glm4.7",
+  "modelId": "moonshotai/kimi-k2.6",
   "retrievedChunks": [
     {
       "id":                42,
@@ -121,7 +121,7 @@ language, never JSON.
 ```http
 POST /api/chat
 Content-Type: application/json
-Cookie: hukm_session=…
+Cookie: hukm_token=…
 ```
 
 ```json
@@ -136,7 +136,7 @@ Cookie: hukm_session=…
 | ---------------- | ------ | -------- | ------------------------------------ |
 | `message`        | string | yes      | 1–5000 characters (after trim).      |
 | `conversationId` | string | yes      | Must exist and be owned by your session. |
-| `sessionId`      | string | yes      | Must match the `hukm_session` cookie. |
+| `sessionId`      | string | yes      | Must match the `hukm_token` cookie. |
 
 ### Response 200
 
@@ -174,13 +174,13 @@ Creates a new conversation, optionally seeded from a previous analysis.
 ```http
 POST /api/conversations
 Content-Type: application/json
-Cookie: hukm_session=…
+Cookie: hukm_token=…
 ```
 
 ```json
 {
   "scenarioDescription": "Robbery scenario from 12 March 2024 …",
-  "modelId":             "z-ai/glm4.7",
+  "modelId":             "moonshotai/kimi-k2.6",
   "analysisId":          "8f6e1a13-…"
 }
 ```
@@ -222,7 +222,7 @@ Returns the caller's recent conversations (up to 20).
       "id":                   "2b7e8a06-…",
       "scenario_description": "Robbery scenario …",
       "first_user_message":   "Would the sentence change if …",
-      "model_id":             "z-ai/glm4.7",
+      "model_id":             "moonshotai/kimi-k2.6",
       "confidence_level":     "MEDIUM",
       "created_at":           "2025-05-01T12:30:00.000Z",
       "updated_at":           "2025-05-01T12:34:11.000Z",
@@ -249,7 +249,7 @@ Returns a single conversation along with its full message history.
   "conversation": {
     "id":                   "2b7e8a06-…",
     "scenario_description": "…",
-    "model_id":             "z-ai/glm4.7",
+    "model_id":             "moonshotai/kimi-k2.6",
     "confidence_level":     "MEDIUM",
     "is_civil_matter":      false,
     "needs_clarification":  false,
@@ -289,14 +289,14 @@ Returns a previously persisted analysis (and the chunks it cited).
 {
   "success":         true,
   "id":              "8f6e1a13-…",
-  "scenarioInput":   { "scenario": "…", "modelId": "z-ai/glm4.7", "language": "en" },
+  "scenarioInput":   { "scenario": "…", "modelId": "moonshotai/kimi-k2.6", "language": "en" },
   "result": {
     "step1FactIdentification": "…",
     "...":                    "...",
     "rawResponse":            "…"
   },
   "retrievedChunks": [ /* LawChunk[] */ ],
-  "modelId":         "z-ai/glm4.7",
+  "modelId":         "moonshotai/kimi-k2.6",
   "createdAt":       "2025-05-01T12:30:00.000Z"
 }
 ```
@@ -315,7 +315,7 @@ Returns a previously persisted analysis (and the chunks it cited).
 
 Returns the caller's session id (minting one if necessary). The browser
 needs to read this value before posting to `/api/chat`, because the
-`hukm_session` cookie is HttpOnly and unreadable from JavaScript.
+`hukm_token` cookie is HttpOnly and unreadable from JavaScript.
 
 ### Response 200
 
@@ -330,35 +330,41 @@ cookie if it wasn't already set.
 
 ## Rate limiting
 
-All endpoints that hit the LLM (`/api/analyze`, `/api/chat`) are rate-limited
-per (IP, modelId). When the limit is exceeded, the response is HTTP 429 with
+LLM endpoints (`/api/analyze`, `/api/chat`) are rate-limited per
+(userId, modelId). When the limit is exceeded, the response is HTTP 429 with
 a `Retry-After` header (seconds).
 
-| Tier      | Models             | Limit          |
-| --------- | ------------------ | -------------- |
-| Premium   | `z-ai/*`           | 10 / minute    |
-| Standard  | All other models   | 30 / minute    |
+| Tier      | Models                          | Limit          |
+| --------- | ------------------------------- | -------------- |
+| Premium   | `qwen/qwen3-coder-*`            | 5 / day        |
+| Standard  | All other registered models     | 30 / minute    |
 
-The limiter is in-memory by default. Set `REDIS_URL` and call
-`setRateLimitStore(...)` at startup to swap in a Redis-backed implementation
-(see `lib/ratelimit.ts`).
+Separate IP-based limits apply to anonymous endpoints and auth:
+`/api/events`, `/api/share/*` (60/min), `/api/articles/*` (30/min),
+`/api/admin/login` (5 / 15 min), login server action (10 / 15 min),
+signup server action (5 / hour). `TRUST_PROXY=0` ignores spoofable
+forwarding headers when self-hosting.
+
+The limiter is in-memory by default; set `REDIS_URL` for a shared
+Redis-backed fixed window across replicas (see `lib/ratelimit.ts`).
 
 ---
 
 ## Models
 
 The model registry is the single source of truth (`lib/models.ts`).
-Primary (recommended) models:
+Primary (user-selectable) models:
 
-| ID            | Display name | Notes                          |
-| ------------- | ------------ | ------------------------------ |
-| `z-ai/glm4.7` | GLM-4.7      | Default; free tier; 131K ctx. |
-| `z-ai/glm5`   | GLM-5        | Highest quality; paid endpoint. |
+| ID                                    | Display name   | Notes                    |
+| ------------------------------------- | -------------- | ------------------------ |
+| `nvidia/nemotron-3-super-120b-a12b`   | Fast           | Quick checks             |
+| `moonshotai/kimi-k2.6`                | Balanced       | Default                  |
+| `qwen/qwen3-coder-480b-a35b-instruct` | Thinking high  | Premium tier; 5 req/day  |
 
 Fallback chain (used automatically by `callChatWithFallback`):
 
 1. `meta/llama-4-maverick-17b-128e-instruct`
-2. `meta/llama-3.1-405b-instruct`
-3. `meta/llama-3.3-70b-instruct`
-4. `deepseek-ai/deepseek-v3.2`
-5. `mistralai/mistral-large-3-675b-instruct-2512`
+2. `qwen/qwen3.5-122b-a10b`
+3. `nvidia/llama-3.3-nemotron-super-49b-v1.5`
+4. `deepseek-ai/deepseek-v4-flash`
+5. `openai/gpt-oss-20b`
