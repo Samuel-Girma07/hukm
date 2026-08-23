@@ -21,8 +21,10 @@ interface ConversationOwnershipRow {
 }
 
 /**
- * Returns true when `conversationId` exists AND belongs to `sessionId`.
- * Returns false when the row is missing OR the session does not match.
+ * Returns true when `conversationId` exists AND belongs to `sessionId`
+ * AND has not been soft-deleted. Returns false when the row is missing,
+ * was soft-deleted (deleted_at set — the UI hides these, so direct URLs
+ * must not serve them either), or the session does not match.
  */
 export async function isConversationOwner(
   conversationId: string,
@@ -35,6 +37,7 @@ export async function isConversationOwner(
     .from("conversations")
     .select("id, session_id")
     .eq("id", conversationId)
+    .is("deleted_at", null)
     .maybeSingle<ConversationOwnershipRow>();
 
   if (error) {
