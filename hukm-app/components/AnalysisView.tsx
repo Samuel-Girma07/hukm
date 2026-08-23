@@ -72,6 +72,8 @@ export function AnalysisView({
   const router = useRouter();
   const [creatingChat, setCreatingChat] = useState(false);
   const [creatingShare, setCreatingShare] = useState(false);
+  const [activeShareToken, setActiveShareToken] = useState<string | null>(null);
+  const [disablingShare, setDisablingShare] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [openChunk, setOpenChunk] = useState<LawChunk | null>(null);
@@ -142,11 +144,38 @@ export function AnalysisView({
       } catch {
         // ignore
       }
+      setActiveShareToken(data.token);
       setToast(t("results.shareCopied"));
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setCreatingShare(false);
+    }
+  }
+
+  async function disableShareLink(): Promise<void> {
+    if (!activeShareToken || disablingShare) return;
+    setError(null);
+    setDisablingShare(true);
+    try {
+      const response = await fetch(`/api/share/${activeShareToken}`, {
+        method: "DELETE",
+      });
+      const data = (await response.json().catch(() => null)) as
+        | { success?: boolean; error?: string }
+        | null;
+      if (!response.ok || !data?.success) {
+        setError(
+          data?.error ?? `Failed to disable the link (HTTP ${response.status}).`,
+        );
+        return;
+      }
+      setActiveShareToken(null);
+      setToast(t("results.shareDisabled"));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setDisablingShare(false);
     }
   }
 
@@ -196,6 +225,26 @@ export function AnalysisView({
               loading={creatingShare}
               label={t("results.sharePublicly")}
             />
+            {activeShareToken ? (
+              <button
+                type="button"
+                onClick={disableShareLink}
+                disabled={disablingShare}
+                className="btn-secondary"
+              >
+                {disablingShare ? (
+                  <>
+                    <Spinner className="h-4 w-4" />
+                    <span>{t("results.shareDisabling")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon name="link_break" size={14} />
+                    <span>{t("results.shareDisable")}</span>
+                  </>
+                )}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={continueInChat}

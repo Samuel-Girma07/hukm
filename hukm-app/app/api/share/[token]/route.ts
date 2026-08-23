@@ -12,6 +12,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { trackEvent } from "@/lib/analytics";
 import { jsonError } from "@/lib/http";
 import { logger } from "@/lib/logger";
+import { isAnalysisOwner } from "@/lib/ownership";
 import { checkEndpointRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { readSessionId } from "@/lib/session";
 import { getServerClient } from "@/lib/supabase";
@@ -26,6 +27,8 @@ interface SharedAnalysisRow {
   analysis_id: string;
   view_count: number;
   created_at: string;
+  revoked_at: string | null;
+  expires_at: string | null;
 }
 
 interface AnalysisRow {
@@ -65,11 +68,18 @@ export async function GET(
 
   const shareLookup = await supabase
     .from("shared_analyses")
-    .select("id, share_token, analysis_id, view_count, created_at")
+    .select("id, share_token, analysis_id, view_count, created_at, revoked_at, expires_at")
     .eq("share_token", token)
     .maybeSingle<SharedAnalysisRow>();
 
   if (shareLookup.error || !shareLookup.data) {
+    return jsonError(404, "Share link not found.", "NOT_FOUND");
+  }
+
+  // Revoked or expired links are indistinguishable from never-existing
+  // ones — no information leak about the token's history.
+  const { revoked_at: revokedAt, expires_at: expiresAt } = shareLookup.data;
+  if (revokedAt || (expiresAt && new Date(expiresAt).getTime() <= Date.now())) {
     return jsonError(404, "Share link not found.", "NOT_FOUND");
   }
 
@@ -145,4 +155,69 @@ export async function GET(
     viewCount,
     createdAt: shareLookup.data.created_at,
   });
+}
+
+/**
+ * DELETE /api/share/[token]
+ *
+ * Owner-gated revocation ("Disable link"). Requires the caller's session
+ * to match BOTH the share row's creator AND the underlying analysis
+ * owner. Revoked links 404 from then on; the operation is permanent.
+ * Returns 404 for unknown tokens / non-owners — no enumeration oracle.
+ */
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: { token: string } },
+): Promise<NextResponse> {
+  const token = params.token?.trim();
+  if (!token) {
+    return jsonError(400, "Missing share token.", "VALIDATION");
+  }
+
+  const sessionId = await readSessionId();
+  if (!sessionId) {
+    return jsonError(404, "Share link not found.", "NOT_FOUND");
+  }
+
+  const supabase = getServerClient();
+
+  const shareLookup = await supabase
+    .from("shared_analyses")
+    .select("id, analysis_id, created_by_session")
+    .eq("share_token", token)
+    .maybeSingle<{ id: string; analysis_id: string; created_by_session: string }>();
+
+  if (shareLookup.error || !shareLookup.data) {
+    return jsonError(404, "Share link not found.", "NOT_FOUND");
+  }
+
+  if (shareLookup.data.created_by_session !== sessionId) {
+    return jsonError(404, "Share link not found.", "NOT_FOUND");
+  }
+
+  const ownsAnalysis = await isAnalysisOwner(shareLookup.data.analysis_id, sessionId);
+  if (!ownsAnalysis) {
+    return jsonError(404, "Share link not found.", "NOT_FOUND");
+  }
+
+  const { error } = await supabase
+    .from("shared_analyses")
+    .update({ revoked_at: new Date().toISOString() })
+    .eq("id", shareLookup.data.id);
+
+  if (error) {
+    logger.error("[share/revoke] failed", {
+      error: error.message,
+      code: error.code,
+    });
+    return jsonError(500, "Could not disable the share link.", "PERSIST_FAILED");
+  }
+
+  await trackEvent({
+    eventType: "share_revoked",
+    sessionId,
+    metadata: { token, analysisId: shareLookup.data.analysis_id },
+  });
+
+  return NextResponse.json({ success: true });
 }

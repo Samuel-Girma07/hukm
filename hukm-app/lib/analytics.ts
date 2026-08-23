@@ -23,6 +23,7 @@ export type UsageEventType =
   | "export_pdf"
   | "share_created"
   | "share_viewed"
+  | "share_revoked"
   | "feedback_submitted"
   | "article_viewed"
   | "language_changed"
@@ -90,6 +91,7 @@ const VALID_EVENT_TYPES: ReadonlySet<UsageEventType> = new Set([
   "export_pdf",
   "share_created",
   "share_viewed",
+  "share_revoked",
   "feedback_submitted",
   "article_viewed",
   "language_changed",

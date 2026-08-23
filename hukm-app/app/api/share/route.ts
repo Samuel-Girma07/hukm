@@ -24,6 +24,17 @@ export const dynamic = "force-dynamic";
 
 interface ExistingShareRow {
   share_token: string;
+  revoked_at: string | null;
+  expires_at: string | null;
+}
+
+/** True when a share row is still viewable (not revoked, not expired). */
+function isShareLive(row: { revoked_at: string | null; expires_at: string | null }): boolean {
+  if (row.revoked_at) return false;
+  if (row.expires_at && new Date(row.expires_at).getTime() <= Date.now()) {
+    return false;
+  }
+  return true;
 }
 
 function publicAppUrl(request: NextRequest): string {
@@ -66,12 +77,16 @@ export async function POST(
 
   const supabase = getServerClient();
 
-  // Reuse an existing share token from this session if present.
+  // Reuse an existing LIVE share token from this session if present.
+  // Revoked/expired links are never reused — a fresh token is minted so
+  // "share again" always produces a working link.
   const existing = await supabase
     .from("shared_analyses")
-    .select("share_token")
+    .select("share_token, revoked_at, expires_at")
     .eq("analysis_id", analysisId)
     .eq("created_by_session", sessionId)
+    .order("created_at", { ascending: false })
+    .limit(1)
     .maybeSingle<ExistingShareRow>();
 
   if (existing.error && isMigrationPending(existing.error)) {
@@ -83,7 +98,7 @@ export async function POST(
     return jsonError(described.status, described.error, described.code);
   }
 
-  let token = existing.data?.share_token;
+  let token = existing.data && isShareLive(existing.data) ? existing.data.share_token : undefined;
   if (!token) {
     token = nanoid(12);
     const { error } = await supabase.from("shared_analyses").insert({

@@ -18,6 +18,8 @@ interface SharedAnalysisRow {
   analysis_id: string;
   view_count: number;
   created_at: string;
+  revoked_at: string | null;
+  expires_at: string | null;
 }
 
 interface AnalysisRow {
@@ -37,7 +39,7 @@ export default async function SharePage({
 
   const shareLookup = await supabase
     .from("shared_analyses")
-    .select("id, share_token, analysis_id, view_count, created_at")
+    .select("id, share_token, analysis_id, view_count, created_at, revoked_at, expires_at")
     .eq("share_token", token)
     .maybeSingle<SharedAnalysisRow>();
 
@@ -62,6 +64,13 @@ export default async function SharePage({
   }
 
   if (shareLookup.error || !shareLookup.data) notFound();
+
+  // Revoked or expired links are dead — indistinguishable from a token
+  // that never existed.
+  const { revoked_at: revokedAt, expires_at: expiresAt } = shareLookup.data;
+  if (revokedAt || (expiresAt && new Date(expiresAt).getTime() <= Date.now())) {
+    notFound();
+  }
 
   const analysisLookup = await supabase
     .from("analysis_results")
