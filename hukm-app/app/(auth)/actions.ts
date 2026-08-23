@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { userQuery } from '@/lib/db/userQuery'
 import { comparePassword, hashPassword, signToken, setAuthCookie, clearAuthCookie } from '@/lib/auth'
 import { isValidEmail, passwordPolicyError, safeNextPath } from '@/lib/validation'
+import { checkAuthRateLimit } from '@/lib/ratelimit'
 import { logger } from '@/lib/logger'
 
 /**
@@ -40,6 +41,19 @@ async function resolveNext(formData: FormData): Promise<string> {
  * need to (and cannot) return anything.
  */
 export async function login(formData: FormData) {
+  // Throttle before touching credentials. Successful logins consume quota
+  // too (same policy as /api/admin/login) so attackers can't distinguish
+  // outcomes by throughput.
+  const rateLimit = await checkAuthRateLimit('login')
+  if (!rateLimit.allowed) {
+    redirect(
+      '/login?error=' +
+        encodeURIComponent(
+          `Too many attempts. Please try again in ${rateLimit.retryAfterSeconds} seconds.`,
+        ),
+    )
+  }
+
   const email = String(formData.get('email') ?? '').trim()
   const password = String(formData.get('password') ?? '')
 
@@ -84,6 +98,17 @@ export async function login(formData: FormData) {
  * On error:   redirect to "/signup?error=<message>".
  */
 export async function signup(formData: FormData) {
+  // Throttle account creation per IP to prevent bulk spam signups.
+  const rateLimit = await checkAuthRateLimit('signup')
+  if (!rateLimit.allowed) {
+    redirect(
+      '/signup?error=' +
+        encodeURIComponent(
+          `Too many attempts. Please try again in ${rateLimit.retryAfterSeconds} seconds.`,
+        ),
+    )
+  }
+
   const email = String(formData.get('email') ?? '').trim()
   const password = String(formData.get('password') ?? '')
 

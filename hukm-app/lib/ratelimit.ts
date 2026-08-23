@@ -280,28 +280,26 @@ export function rateLimitHeaders(
 }
 
 /**
- * Generic rate-limit check for unauthenticated endpoints (events, share
- * views, article lookups, etc.). Uses the client IP (via identifyClient)
- * as the bucket key so anonymous abuse can be throttled.
- *
- * Defaults: 60 requests / minute / IP. Pass `max` and `windowMs` to override.
- *
- * Like checkRateLimit(), this fails open on backend errors (Redis down).
+ * Minimal structural type satisfied by NextRequest.headers (Route
+ * Handlers), ReadonlyHeaders from next/headers (Server Actions), and
+ * plain test doubles. Only `get` is ever needed.
  */
-export async function checkEndpointRateLimit(
-  request: { headers: Headers },
-  opts: { endpoint: string; max?: number; windowMs?: number },
-): Promise<RateLimitOutcome> {
-  const max = opts.max ?? 60;
-  const windowMs = opts.windowMs ?? 60_000;
-  const identifier = identifyClient(request.headers);
-  const key = `ep:${opts.endpoint}:${identifier}`;
+export interface HeadersLike {
+  headers: { get(name: string): string | null };
+}
 
+/** Shared hit-and-evaluate used by every endpoint/auth limiter. */
+async function limitByKey(
+  key: string,
+  max: number,
+  windowMs: number,
+  failOpenLabel: string,
+): Promise<RateLimitOutcome> {
   let entry: { count: number; resetAtMs: number };
   try {
     entry = await rateLimiter.hit(key, windowMs);
   } catch (err) {
-    logger.error("[ratelimit] endpoint limiter.hit() failed; failing open", err);
+    logger.error(`[ratelimit] ${failOpenLabel} limiter.hit() failed; failing open`, err);
     return {
       allowed: true,
       remaining: max,
@@ -330,7 +328,79 @@ export async function checkEndpointRateLimit(
   };
 }
 
-export function identifyClient(headers: Headers): string {
+/**
+ * Generic rate-limit check for unauthenticated endpoints (events, share
+ * views, article lookups, etc.). Uses the client IP (via identifyClient)
+ * as the bucket key so anonymous abuse can be throttled.
+ *
+ * Defaults: 60 requests / minute / IP. Pass `max` and `windowMs` to override.
+ *
+ * Like checkRateLimit(), this fails open on backend errors (Redis down).
+ */
+export async function checkEndpointRateLimit(
+  request: HeadersLike,
+  opts: { endpoint: string; max?: number; windowMs?: number },
+): Promise<RateLimitOutcome> {
+  const max = opts.max ?? 60;
+  const windowMs = opts.windowMs ?? 60_000;
+  const identifier = identifyClient(request.headers);
+  const key = `ep:${opts.endpoint}:${identifier}`;
+  return limitByKey(key, max, windowMs, "endpoint");
+}
+
+// ---------------------------------------------------------------------------
+// Auth (server actions)
+// ---------------------------------------------------------------------------
+
+/**
+ * Per-action ceilings for the login/signup server actions, which have no
+ * NextRequest to hand to checkEndpointRateLimit(). Successful attempts
+ * consume quota too — same policy as /api/admin/login — so attackers can't
+ * distinguish outcomes by throughput.
+ */
+export const AUTH_RATE_LIMITS: Record<
+  "login" | "signup",
+  { windowMs: number; max: number }
+> = {
+  login: { windowMs: 15 * 60 * 1000, max: 10 }, // 10 attempts / 15 min
+  signup: { windowMs: 60 * 60 * 1000, max: 5 }, // 5 accounts / hour
+};
+
+/**
+ * Rate-limit an auth server action by client IP. Reads the IP from
+ * `next/headers` because Server Actions receive no request object.
+ *
+ * Fails open (consistent with every other limiter here) if headers()
+ * is unavailable outside a request scope or the backend errors.
+ */
+export async function checkAuthRateLimit(
+  action: keyof typeof AUTH_RATE_LIMITS,
+): Promise<RateLimitOutcome> {
+  const config = AUTH_RATE_LIMITS[action];
+
+  let identifier = "anonymous";
+  try {
+    const { headers } = await import("next/headers");
+    identifier = identifyClient(await headers());
+  } catch (err) {
+    logger.warn("[ratelimit] could not read request headers for auth limiter", {
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  const key = `ep:auth-${action}:${identifier}`;
+  return limitByKey(key, config.max, config.windowMs, `auth-${action}`);
+}
+
+/**
+ * Extracts the best-guess client IP from proxy headers. When self-hosting
+ * without a trusted reverse proxy these headers are client-controlled and
+ * MUST NOT be trusted for security decisions — see TRUST_PROXY in
+ * .env.example.
+ */
+export function identifyClient(
+  headers: { get(name: string): string | null },
+): string {
   const forwarded = headers.get("x-forwarded-for");
   if (forwarded) {
     const first = forwarded.split(",")[0];

@@ -18,8 +18,21 @@ import {
   RedisRateLimiter,
   FIXED_WINDOW_LUA,
   RATE_LIMITS,
+  AUTH_RATE_LIMITS,
   checkRateLimit,
+  checkAuthRateLimit,
 } from "../ratelimit";
+
+// next/headers is only reachable inside a request scope; the auth limiter
+// must fail open when it isn't (e.g. unit-test context). The mutable IP
+// lets each case below exercise its own bucket.
+const authHeaders = vi.hoisted(() => ({ ip: null as string | null }));
+vi.mock("next/headers", () => ({
+  headers: vi.fn(async () => ({
+    get: (name: string) =>
+      name === "x-forwarded-for" ? authHeaders.ip : null,
+  })),
+}));
 
 const WINDOW_MS = 60_000;
 
@@ -199,5 +212,51 @@ describe("checkRateLimit (memory backend)", () => {
     const blocked = await checkRateLimit(id, PREMIUM_MODEL);
     expect(blocked.allowed).toBe(false);
     expect(blocked.limit).toBe(RATE_LIMITS.premium.max);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// checkAuthRateLimit — server-action wiring (login / signup)
+// ---------------------------------------------------------------------------
+
+describe("checkAuthRateLimit (memory backend)", () => {
+  it("defines distinct ceilings for login and signup", () => {
+    expect(AUTH_RATE_LIMITS.login).toMatchObject({ max: 10 });
+    expect(AUTH_RATE_LIMITS.signup).toMatchObject({ max: 5 });
+    expect(AUTH_RATE_LIMITS.login.windowMs).toBeLessThan(
+      AUTH_RATE_LIMITS.signup.windowMs,
+    );
+  });
+
+  it("allows up to the ceiling per IP, then blocks", async () => {
+    authHeaders.ip = `192.0.2.${Math.floor(Math.random() * 250) + 1}`;
+    for (let i = 0; i < AUTH_RATE_LIMITS.login.max; i += 1) {
+      const out = await checkAuthRateLimit("login");
+      expect(out.allowed).toBe(true);
+    }
+    const blocked = await checkAuthRateLimit("login");
+    expect(blocked.allowed).toBe(false);
+    expect(blocked.limit).toBe(AUTH_RATE_LIMITS.login.max);
+    expect(blocked.retryAfterSeconds).toBeGreaterThan(0);
+  });
+
+  it("keys buckets per IP so another client is unaffected", async () => {
+    authHeaders.ip = "198.51.100.77";
+    const first = await checkAuthRateLimit("signup");
+    expect(first.allowed).toBe(true);
+    expect(first.remaining).toBe(AUTH_RATE_LIMITS.signup.max - 1);
+
+    authHeaders.ip = "198.51.100.78";
+    const other = await checkAuthRateLimit("signup");
+    expect(other.allowed).toBe(true);
+    expect(other.remaining).toBe(AUTH_RATE_LIMITS.signup.max - 1);
+  });
+
+  it("fails open to a shared anonymous bucket when headers are unavailable", async () => {
+    authHeaders.ip = null;
+    const out = await checkAuthRateLimit("login");
+    // Must never throw — worst case it throttles the anonymous bucket.
+    expect(typeof out.allowed).toBe("boolean");
+    expect(out.limit).toBe(AUTH_RATE_LIMITS.login.max);
   });
 });
