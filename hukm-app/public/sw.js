@@ -22,8 +22,10 @@ self.addEventListener("install", (event) => {
       cache.addAll([
         OFFLINE_URL,
         "/manifest.json",
-        "/icons/icon-192.svg",
-        "/icons/icon-512.svg",
+        "/icons/icon-192.png",
+        "/icons/icon-512.png",
+        "/icons/icon-maskable-192.png",
+        "/icons/icon-maskable-512.png",
       ]),
     ),
   );

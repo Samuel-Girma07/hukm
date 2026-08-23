@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts.bak
+
+# generated PWA icons — re-included despite the parent repo's *.png rule
+!public/apple-touch-icon.png
+!public/icons/*.png
+vitest-probe.log
+build-probe.log
