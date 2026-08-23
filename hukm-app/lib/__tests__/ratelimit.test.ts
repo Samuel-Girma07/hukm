@@ -21,6 +21,7 @@ import {
   AUTH_RATE_LIMITS,
   checkRateLimit,
   checkAuthRateLimit,
+  identifyClient,
 } from "../ratelimit";
 
 // next/headers is only reachable inside a request scope; the auth limiter
@@ -258,5 +259,44 @@ describe("checkAuthRateLimit (memory backend)", () => {
     // Must never throw — worst case it throttles the anonymous bucket.
     expect(typeof out.allowed).toBe("boolean");
     expect(out.limit).toBe(AUTH_RATE_LIMITS.login.max);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// identifyClient — TRUST_PROXY gating
+// ---------------------------------------------------------------------------
+
+describe("identifyClient TRUST_PROXY", () => {
+  const headersOf = (xff: string | null, xri: string | null = null) => ({
+    get: (name: string) =>
+      name === "x-forwarded-for" ? xff : name === "x-real-ip" ? xri : null,
+  });
+
+  afterEach(() => {
+    delete process.env.TRUST_PROXY;
+  });
+
+  it("trusts forwarding headers by default (Vercel / trusted proxy)", () => {
+    delete process.env.TRUST_PROXY;
+    expect(identifyClient(headersOf("203.0.113.5, 70.41.3.18"))).toBe(
+      "203.0.113.5",
+    );
+    expect(identifyClient(headersOf(null, "198.51.100.9"))).toBe("198.51.100.9");
+  });
+
+  it("trusts them when TRUST_PROXY=1", () => {
+    process.env.TRUST_PROXY = "1";
+    expect(identifyClient(headersOf("203.0.113.5"))).toBe("203.0.113.5");
+  });
+
+  it("ignores spoofable headers when TRUST_PROXY=0 (self-hosted)", () => {
+    process.env.TRUST_PROXY = "0";
+    expect(identifyClient(headersOf("203.0.113.5"))).toBe("anonymous");
+    expect(identifyClient(headersOf(null, "198.51.100.9"))).toBe("anonymous");
+  });
+
+  it("falls back to anonymous when no headers are present", () => {
+    delete process.env.TRUST_PROXY;
+    expect(identifyClient(headersOf(null))).toBe("anonymous");
   });
 });

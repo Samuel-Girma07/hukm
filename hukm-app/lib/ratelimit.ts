@@ -393,14 +393,26 @@ export async function checkAuthRateLimit(
 }
 
 /**
- * Extracts the best-guess client IP from proxy headers. When self-hosting
- * without a trusted reverse proxy these headers are client-controlled and
- * MUST NOT be trusted for security decisions — see TRUST_PROXY in
- * .env.example.
+ * Extracts the best-guess client IP from proxy headers.
+ *
+ * TRUST_PROXY semantics:
+ *   - unset or "1" → trust x-forwarded-for / x-real-ip. Correct on Vercel
+ *     and behind any reverse proxy that overwrites (not appends to) these
+ *     headers.
+ *   - "0"          → headers are client-controlled (self-hosted, no trusted
+ *     proxy), so they are IGNORED and every client shares the "anonymous"
+ *     bucket rather than being spoofable into unlimited fresh buckets.
+ *
+ * The trade-off is explicit: untrusted mode trades per-IP granularity for
+ * spoof-proofing. Deploy behind a trusted proxy (or set TRUST_PROXY=1 on
+ * Vercel) to regain per-IP limits.
  */
 export function identifyClient(
   headers: { get(name: string): string | null },
 ): string {
+  const trustProxy = process.env.TRUST_PROXY !== "0";
+  if (!trustProxy) return "anonymous";
+
   const forwarded = headers.get("x-forwarded-for");
   if (forwarded) {
     const first = forwarded.split(",")[0];
