@@ -48,11 +48,11 @@ describe("utf8ByteLength", () => {
 
 describe("passwordPolicyError", () => {
   it("rejects below minimum length", () => {
-    expect(passwordPolicyError("abc12")).toMatch(/at least 6/);
+    expect(passwordPolicyError("abc123")).toMatch(/at least 8/);
   });
 
   it("accepts the exact minimum", () => {
-    expect(passwordPolicyError("abc123")).toBeNull();
+    expect(passwordPolicyError("abc12345")).toBeNull();
   });
 
   it("rejects passwords whose UTF-8 encoding exceeds bcrypt's 72-byte limit", () => {

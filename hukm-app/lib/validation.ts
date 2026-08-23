@@ -13,7 +13,7 @@ export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 /** bcrypt's hard input limit. */
 export const PASSWORD_MAX_BYTES = 72;
-export const PASSWORD_MIN_CHARS = 6;
+export const PASSWORD_MIN_CHARS = 8;
 
 export function isValidEmail(email: string): boolean {
   return EMAIL_PATTERN.test(email);
@@ -32,7 +32,7 @@ export function passwordPolicyError(password: string): string | null {
     return `Password must be at least ${PASSWORD_MIN_CHARS} characters long.`;
   }
   if (utf8ByteLength(password) > PASSWORD_MAX_BYTES) {
-    return `Password must be no longer than ${PASSWORD_MAX_BYTES} characters.`;
+    return `Password must be no longer than ${PASSWORD_MAX_BYTES} bytes. Long non-ASCII passwords (e.g. CJK or emoji) can exceed this even with few characters — bcrypt silently truncates beyond 72 bytes, so we reject them instead.`;
   }
   return null;
 }
