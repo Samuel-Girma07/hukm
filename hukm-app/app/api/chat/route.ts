@@ -7,7 +7,7 @@
  * 2. Verifies session ownership of the conversation.
  * 3. Loads the last 20 messages.
  * 4. Runs RAG retrieval over the new user message.
- * 5. Builds the chat prompt and calls NVIDIA.
+ * 5. Builds the chat prompt and calls Google.
  * 6. Persists user + assistant messages.
  * 7. Returns the assistant reply.
  */
@@ -336,7 +336,7 @@ async function handleBuffered(
     actualModelId = result.modelId;
   } catch (err) {
     captureException(err, { endpoint: "/api/chat" });
-    reqLog.error({ err }, "NVIDIA call failed");
+    reqLog.error({ err }, "Google call failed");
     return jsonError(
       503,
       "The AI service is currently unavailable. Please try again in a moment.",

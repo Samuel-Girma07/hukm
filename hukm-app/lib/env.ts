@@ -19,6 +19,7 @@ import "server-only";
 
 type RequiredVar =
   | "NVIDIA_API_KEY"
+  | "GOOGLE_API_KEY"
   | "NEXT_PUBLIC_SUPABASE_URL"
   | "NEXT_PUBLIC_SUPABASE_ANON_KEY"
   | "SUPABASE_SERVICE_ROLE_KEY"
@@ -27,6 +28,7 @@ type RequiredVar =
 
 const REQUIRED_VARS: ReadonlyArray<RequiredVar> = [
   "NVIDIA_API_KEY",
+  "GOOGLE_API_KEY",
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
@@ -83,6 +85,9 @@ export const env = {
    */
   get NVIDIA_API_KEY(): string {
     return readRequired("NVIDIA_API_KEY");
+  },
+  get GOOGLE_API_KEY(): string {
+    return readRequired("GOOGLE_API_KEY");
   },
   get SUPABASE_URL(): string {
     return readRequired("NEXT_PUBLIC_SUPABASE_URL");

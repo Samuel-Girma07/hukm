@@ -76,6 +76,7 @@ beforeAll(async () => {
   process.env.NVIDIA_CHAT_URL = `${baseUrl}/v1/chat/completions`;
   process.env.NVIDIA_EMBED_URL = `${baseUrl}/v1/embeddings`;
   process.env.NVIDIA_API_KEY = "test-key";
+  process.env.GOOGLE_API_KEY = "test-key";
   // Budgets are generous enough to survive full-suite CPU contention
   // (real HTTP round trips to the stub) while still being breached by
   // the deliberate stalls below.

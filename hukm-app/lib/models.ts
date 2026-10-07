@@ -1,24 +1,24 @@
 /**
  * HUKM — Model registry.
  *
- * Single source of truth for every NVIDIA Build model id used by the
- * app. The roster below was probed live against
- * `https://integrate.api.nvidia.com/v1/chat/completions` (see
- * `scripts/probe-models.mjs`) — every entry returned 200 OK with a
- * latency we measured at the time of the probe.
+ * Chat runs on Google Gemini Flash via the OpenAI-compatible endpoint
+ * (`https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`,
+ * see `scripts/probe-models.mjs`). Embeddings stay on NVIDIA Build
+ * (`nvidia/nv-embedqa-e5-v5`, 1024-dim) so the pgvector store is untouched.
  *
  * Conventions:
  *   - `displayName` is the user-facing tier label (e.g. "Fast",
- *     "Thinking low"). Users never see raw model names.
+ *     "Balanced"). Users never see raw model names.
  *   - `tagline` is the one-line description under the label.
  *   - `modelName` / `contextLength` / `bestFor` are surfaced in the
  *     hover tooltip so power users know what is running.
  *   - `tier` drives rate limiting. `premium` models get a tighter
- *     ceiling (see `lib/ratelimit.ts`).
+ *     ceiling (see `lib/ratelimit.ts`). All Flash models are standard.
  *   - `icon` drives the visual glyph in the picker (`speed` = lightning,
  *     `brain` = thinking depth).
- *   - `thinkingConfig` is injected into the NVIDIA request body when
- *     present (replaces the old hard-coded `z-ai/` prefix check).
+ *   - `thinkingConfig` is legacy NVIDIA-only metadata. Google Flash
+ *     models carry none; the field stays so old rows/tests referencing
+ *     it keep compiling, but the chat client never sends it.
  *   - `PRIMARY_MODELS` is what users see in the selector.
  *   - `FALLBACK_MODELS` is the transparent retry chain — fast,
  *     reliable models that take over when the user's pick errors.
@@ -39,16 +39,17 @@ export const EMBEDDING = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Chat models
+// Chat models (Google Gemini Flash)
 // ---------------------------------------------------------------------------
 
 export const CHAT_ENDPOINT =
-  "https://integrate.api.nvidia.com/v1/chat/completions";
+  "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
 export type ModelTier = "premium" | "standard";
 
 /** Vendor identifier — kept for internal tracking and admin surfaces. */
 export type ModelVendor =
+  | "google"
   | "nvidia"
   | "openai"
   | "meta"
@@ -77,7 +78,10 @@ export interface ChatModel {
   vendor: ModelVendor;
   /** Rate-limit tier. */
   tier: ModelTier;
-  /** Per-model NVIDIA API thinking configuration (injected into request body). */
+  /**
+   * Legacy NVIDIA-only thinking configuration. Never sent to Google —
+   * kept so persisted rows and old call sites keep their shape.
+   */
   thinkingConfig?: {
     enable_thinking: boolean;
     lowEffort?: boolean;
@@ -86,38 +90,37 @@ export interface ChatModel {
 
 export const PRIMARY_MODELS: readonly ChatModel[] = [
   {
-    id: "nvidia/nemotron-3-super-120b-a12b",
+    id: "gemini-2.0-flash",
     displayName: "Fast",
     tagline: "Instant results, great for simple cases",
-    modelName: "Nemotron Super 120B",
-    contextLength: "128K",
+    modelName: "Gemini 2.0 Flash",
+    contextLength: "1M",
     bestFor: "Quick checks, simple cases",
     icon: "speed",
-    vendor: "nvidia",
+    vendor: "google",
     tier: "standard",
   },
   {
-    id: "moonshotai/kimi-k2.6",
+    id: "gemini-2.5-flash",
     displayName: "Balanced",
     tagline: "Balanced speed and depth",
-    modelName: "Kimi k2.6",
-    contextLength: "128K",
+    modelName: "Gemini 2.5 Flash",
+    contextLength: "1M",
     bestFor: "Most analyses",
     icon: "brain",
-    vendor: "z-ai",
+    vendor: "google",
     tier: "standard",
   },
   {
-    id: "qwen/qwen3-coder-480b-a35b-instruct",
-    displayName: "Thinking high",
-    tagline: "Maximum reasoning depth",
-    modelName: "Qwen3 Coder 480B",
-    contextLength: "128K",
-    bestFor: "Critical cases",
-    icon: "brain",
-    vendor: "qwen",
-    tier: "premium",
-    thinkingConfig: { enable_thinking: false },
+    id: "gemini-2.5-flash-lite",
+    displayName: "Efficient",
+    tagline: "Cheapest and fastest, lighter reasoning",
+    modelName: "Gemini 2.5 Flash-Lite",
+    contextLength: "1M",
+    bestFor: "High-volume, simple cases",
+    icon: "speed",
+    vendor: "google",
+    tier: "standard",
   },
 ] as const;
 
@@ -129,58 +132,36 @@ export const PRIMARY_MODELS: readonly ChatModel[] = [
  */
 export const FALLBACK_MODELS: readonly ChatModel[] = [
   {
-    id: "meta/llama-4-maverick-17b-128e-instruct",
-    displayName: "Fast",
-    tagline: "Instant results, great for simple cases",
-    modelName: "Llama 4 Maverick 17B MoE",
-    contextLength: "128K",
-    bestFor: "Quick checks, simple cases",
-    icon: "speed",
-    vendor: "meta",
-    tier: "standard",
-  },
-  {
-    id: "qwen/qwen3.5-122b-a10b",
-    displayName: "Thinking low",
-    tagline: "Deep analysis, best quality-to-speed ratio",
-    modelName: "Qwen3.5 122B",
-    contextLength: "128K",
+    id: "gemini-2.5-flash",
+    displayName: "Balanced",
+    tagline: "Balanced speed and depth",
+    modelName: "Gemini 2.5 Flash",
+    contextLength: "1M",
     bestFor: "Most analyses",
     icon: "brain",
-    vendor: "qwen",
+    vendor: "google",
     tier: "standard",
   },
   {
-    id: "nvidia/llama-3.3-nemotron-super-49b-v1.5",
-    displayName: "Fast thinking",
-    tagline: "Fast with reasoning",
-    modelName: "Nemotron Super 49B",
-    contextLength: "128K",
-    bestFor: "Balanced speed and depth",
-    icon: "speed",
-    vendor: "nvidia",
-    tier: "standard",
-  },
-  {
-    id: "deepseek-ai/deepseek-v4-flash",
+    id: "gemini-2.0-flash",
     displayName: "Fast",
     tagline: "Instant results, great for simple cases",
-    modelName: "DeepSeek V4 Flash",
-    contextLength: "128K",
+    modelName: "Gemini 2.0 Flash",
+    contextLength: "1M",
     bestFor: "Quick checks, simple cases",
     icon: "speed",
-    vendor: "deepseek",
+    vendor: "google",
     tier: "standard",
   },
   {
-    id: "openai/gpt-oss-20b",
-    displayName: "Thinking low",
-    tagline: "Deep analysis, best quality-to-speed ratio",
-    modelName: "GPT-OSS 20B",
-    contextLength: "128K",
-    bestFor: "Most analyses",
-    icon: "brain",
-    vendor: "openai",
+    id: "gemini-2.5-flash-lite",
+    displayName: "Efficient",
+    tagline: "Cheapest and fastest, lighter reasoning",
+    modelName: "Gemini 2.5 Flash-Lite",
+    contextLength: "1M",
+    bestFor: "High-volume, simple cases",
+    icon: "speed",
+    vendor: "google",
     tier: "standard",
   },
 ] as const;
@@ -192,7 +173,7 @@ export const ALL_MODELS: readonly ChatModel[] = [
   ),
 ];
 
-/** Default: Thinking low (best quality-to-speed ratio). */
+/** Default: Balanced (best quality-to-speed ratio). */
 export const DEFAULT_MODEL_ID = PRIMARY_MODELS[1]!.id;
 
 // ---------------------------------------------------------------------------
@@ -234,7 +215,8 @@ export function getModelTier(modelId: string): ModelTier {
 
 /**
  * Returns the thinking configuration for a model id, if any.
- * Used by `lib/nvidia.ts` to inject `chat_template_kwargs`.
+ * Legacy NVIDIA-only hook — Google Flash models carry none, so this
+ * is undefined for every registered model. Kept for shape compat.
  */
 export function getModelThinkingConfig(
   modelId: string,

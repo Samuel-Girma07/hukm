@@ -1,5 +1,5 @@
 /**
- * Probe the NVIDIA Build catalog for the models we want to register.
+ * Probe the Google Gemini Flash roster for the models we register.
  * For each candidate id, fire a tiny chat completion and report:
  *   ✓ ok (returned text)        → the model works
  *   ✗ HTTP <code>               → reason returned by upstream
@@ -9,31 +9,17 @@
 import { config } from "dotenv";
 config({ path: ".env.local" });
 
-const KEY = process.env.NVIDIA_API_KEY;
-if (!KEY) throw new Error("Missing NVIDIA_API_KEY");
+const KEY = process.env.GOOGLE_API_KEY;
+if (!KEY) throw new Error("Missing GOOGLE_API_KEY");
 
-const ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
+const ENDPOINT =
+  process.env.GOOGLE_CHAT_URL ||
+  "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
 const CANDIDATES = [
-  // Premium / state-of-the-art
-  "z-ai/glm-5.1",
-  "z-ai/glm5",
-  "z-ai/glm4.7",
-  "deepseek-ai/deepseek-v4-pro",
-  "deepseek-ai/deepseek-v4-flash",
-  "qwen/qwen3.5-397b-a17b",
-  "qwen/qwen3.5-122b-a10b",
-  "qwen/qwen3-next-80b-a3b-thinking",
-  "qwen/qwen3-next-80b-a3b-instruct",
-  "nvidia/nemotron-3-super-120b-a12b",
-  "nvidia/llama-3.3-nemotron-super-49b-v1.5",
-  "nvidia/llama-3.1-nemotron-ultra-253b-v1",
-  "openai/gpt-oss-120b",
-  "openai/gpt-oss-20b",
-  "meta/llama-4-maverick-17b-128e-instruct",
-  "meta/llama-3.3-70b-instruct",
-  "meta/llama-3.1-405b-instruct",
-  "mistralai/mistral-large-3-675b-instruct-2512",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-2.5-flash-lite",
 ];
 
 async function probe(id) {

@@ -9,7 +9,7 @@
  *   3. Analysis-cache check  → cache HIT short-circuits the whole pipeline
  *   4. RAG retrieval (with embedding cache)
  *   5. Compute deterministic confidence from retrieval stats
- *   6. Build prompt and call NVIDIA chat (with model fallback)
+ *   6. Build prompt and call Google chat (with model fallback)
  *   7. Parse with the safe parser
  *   8. Override parser confidence with computed confidence
  *   9. Persist to analysis_results
@@ -17,7 +17,7 @@
  *   11. Return { resultId, result, retrievedChunks, retrieval, cache }
  *
  * Streaming variant: instead of step 6 + step 7 buffered, we forward
- * NVIDIA SSE deltas to the client as `{ type: "token", content }`
+ * Google SSE deltas to the client as `{ type: "token", content }`
  * events. After the upstream stream ends we run the parser, override
  * confidence, persist, and emit one final `{ type: "done", … }` event
  * followed by `[DONE]`.
@@ -395,7 +395,7 @@ async function runPipelineBuffered(
   }
 
   // Claim the key so concurrent identical submissions don't double-spend
-  // an NVIDIA call. The loser polls the cache for the winner's result.
+  // a Google call. The loser polls the cache for the winner's result.
   const claimClient = getServerClient();
   const claimOutcome = await claimClient.rpc("claim_analysis", {
     p_key: cacheKey,
@@ -471,7 +471,7 @@ async function runPipelineBuffered(
   });
   const userMessage = buildUserMessage(body);
 
-  // Call NVIDIA.
+  // Call Google.
   const chatStart = Date.now();
   let assistantContent: string;
   let actualModelId: string;
@@ -487,7 +487,7 @@ async function runPipelineBuffered(
     actualModelId = result.modelId;
   } catch (err) {
     captureException(err, { endpoint: "/api/analyze" });
-    reqLog.error({ err }, "NVIDIA chat failed across fallback chain");
+    reqLog.error({ err }, "Google chat failed across fallback chain");
     return {
       ok: false,
       status: 503,
@@ -669,7 +669,7 @@ function buildStreamingResponse(args: StreamArgs): ReadableStream<Uint8Array> {
         }
 
         // Claim the key — mirrors the buffered handler so concurrent
-        // identical streams cannot double-spend the NVIDIA call.
+        // identical streams cannot double-spend the Google call.
         const claimClient = getServerClient();
         finalizeClaim = async (ok: boolean, resultId?: string): Promise<void> => {
           try {

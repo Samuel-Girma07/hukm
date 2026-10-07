@@ -188,8 +188,9 @@ describe("RedisRateLimiter", () => {
 // ---------------------------------------------------------------------------
 
 describe("checkRateLimit (memory backend)", () => {
-  const STANDARD_MODEL = "nvidia/nemotron-3-super-120b-a12b";
-  const PREMIUM_MODEL = "qwen/qwen3-coder-480b-a35b-instruct";
+  const STANDARD_MODEL = "gemini-2.0-flash";
+  // Defensive premium mapping (see getModelTier): z-ai/* stays premium.
+  const PREMIUM_MODEL = "z-ai/legacy-glm";
 
   it("allows up to the standard-tier limit, then blocks with retryAfterSeconds > 0", async () => {
     const id = `std-${Math.random().toString(36).slice(2)}`;

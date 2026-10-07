@@ -42,6 +42,7 @@ describe("GET /api/health", () => {
   it("returns 200 ok with a count-only payload when all vars are present", async () => {
     for (const v of [
       "NVIDIA_API_KEY",
+      "GOOGLE_API_KEY",
       "NEXT_PUBLIC_SUPABASE_URL",
       "NEXT_PUBLIC_SUPABASE_ANON_KEY",
       "SUPABASE_SERVICE_ROLE_KEY",
@@ -62,6 +63,7 @@ describe("GET /api/health", () => {
   it("stays 200 and hides var NAMES from anonymous callers when config is broken", async () => {
     for (const v of [
       "NVIDIA_API_KEY",
+      "GOOGLE_API_KEY",
       "NEXT_PUBLIC_SUPABASE_URL",
       "NEXT_PUBLIC_SUPABASE_ANON_KEY",
       "SUPABASE_SERVICE_ROLE_KEY",
@@ -80,7 +82,7 @@ describe("GET /api/health", () => {
       missing?: string[];
     };
     expect(body.configured).toBe(false);
-    expect(body.missingCount).toBe(6);
+    expect(body.missingCount).toBe(7);
     expect(body.missing).toBeUndefined();
   });
 
@@ -90,6 +92,7 @@ describe("GET /api/health", () => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "x";
     process.env.SUPABASE_SERVICE_ROLE_KEY = "x";
     delete process.env.NVIDIA_API_KEY;
+    delete process.env.GOOGLE_API_KEY;
     delete process.env.DATABASE_URL;
     delete process.env.JWT_SECRET;
     isRequestAdminMock.mockReturnValue(true);
@@ -103,6 +106,7 @@ describe("GET /api/health", () => {
     };
     expect([...(body.missing ?? [])].sort()).toEqual([
       "DATABASE_URL",
+      "GOOGLE_API_KEY",
       "JWT_SECRET",
       "NVIDIA_API_KEY",
     ]);

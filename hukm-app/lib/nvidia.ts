@@ -1,27 +1,30 @@
 /**
- * HUKM — NVIDIA chat client.
+ * HUKM — Google chat client (Gemini Flash via OpenAI-compatible endpoint).
+ *
+ * Embeddings stay on NVIDIA (`lib/embeddings.ts`); only chat moved.
  *
  *   callChat()                  single model under a hard per-attempt deadline
  *   callChatWithFallback()      walks the fallback chain under a chain deadline
  *   streamFromCandidate()       shared SSE streamer (analyze + chat routes)
  *
  * Endpoints/budgets are env-overridable so tests can target a local stub:
- *   NVIDIA_CHAT_URL            default integrate.api.nvidia.com/v1/chat/completions
- *   NVIDIA_CHAT_TIMEOUT_MS     buffered attempt      (45_000)
- *   NVIDIA_CHAIN_DEADLINE_MS   entire chain          (55_000)
- *   NVIDIA_STREAM_TTFB_MS      first byte on streams (20_000)
- *   NVIDIA_STREAM_TOTAL_MS     stream overall        (55_000)
+ *   GOOGLE_CHAT_URL            default generativelanguage.googleapis.com/v1beta/openai/chat/completions
+ *   GOOGLE_CHAT_TIMEOUT_MS     buffered attempt      (45_000)
+ *   GOOGLE_CHAIN_DEADLINE_MS   entire chain          (55_000)
+ *   GOOGLE_STREAM_TTFB_MS      first byte on streams (20_000)
+ *   GOOGLE_STREAM_TOTAL_MS     stream overall        (55_000)
+ * (Legacy NVIDIA_* overrides are still honoured as fallbacks.)
+ *
+ * Auth is `Authorization: Bearer ${GOOGLE_API_KEY}` — the Gemini
+ * OpenAI-compatibility surface speaks the same chat-completions +
+ * SSE wire format the NVIDIA client used, so callers are unchanged.
  */
 
 import "server-only";
 
 import { env } from "./env";
 import { logger } from "./logger";
-import {
-  CHAT_ENDPOINT,
-  getFallbackChain,
-  getModelThinkingConfig,
-} from "./models";
+import { CHAT_ENDPOINT, getFallbackChain } from "./models";
 import { withDeadline } from "./httpTimeout";
 
 // ---------------------------------------------------------------------------
@@ -34,23 +37,39 @@ function positiveNum(value: string | undefined, fallback: number): number {
 }
 
 export function chatUrl(): string {
-  return process.env.NVIDIA_CHAT_URL || CHAT_ENDPOINT;
+  return (
+    process.env.GOOGLE_CHAT_URL ||
+    process.env.NVIDIA_CHAT_URL ||
+    CHAT_ENDPOINT
+  );
 }
 
 export function chatAttemptTimeoutMs(): number {
-  return positiveNum(process.env.NVIDIA_CHAT_TIMEOUT_MS, 45_000);
+  return positiveNum(
+    process.env.GOOGLE_CHAT_TIMEOUT_MS ?? process.env.NVIDIA_CHAT_TIMEOUT_MS,
+    45_000,
+  );
 }
 
 export function chainDeadlineMs(): number {
-  return positiveNum(process.env.NVIDIA_CHAIN_DEADLINE_MS, 55_000);
+  return positiveNum(
+    process.env.GOOGLE_CHAIN_DEADLINE_MS ?? process.env.NVIDIA_CHAIN_DEADLINE_MS,
+    55_000,
+  );
 }
 
 export function streamTtfbTimeoutMs(): number {
-  return positiveNum(process.env.NVIDIA_STREAM_TTFB_MS, 20_000);
+  return positiveNum(
+    process.env.GOOGLE_STREAM_TTFB_MS ?? process.env.NVIDIA_STREAM_TTFB_MS,
+    20_000,
+  );
 }
 
 export function streamTotalTimeoutMs(): number {
-  return positiveNum(process.env.NVIDIA_STREAM_TOTAL_MS, 55_000);
+  return positiveNum(
+    process.env.GOOGLE_STREAM_TOTAL_MS ?? process.env.NVIDIA_STREAM_TOTAL_MS,
+    55_000,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -91,25 +110,19 @@ interface ChatRequestBody {
   temperature: number;
   max_tokens: number;
   stream: boolean;
-  chat_template_kwargs?: { enable_thinking: boolean };
 }
 
 function buildRequestBody(
   options: CallChatOptions,
   stream: boolean,
 ): ChatRequestBody {
-  const body: ChatRequestBody = {
+  return {
     model: options.modelId,
     messages: options.messages,
     temperature: options.temperature ?? 0.1,
     max_tokens: options.maxTokens ?? 2048,
     stream,
   };
-  const thinking = getModelThinkingConfig(options.modelId);
-  if (thinking) {
-    body.chat_template_kwargs = thinking;
-  }
-  return body;
 }
 
 // ---------------------------------------------------------------------------
@@ -127,7 +140,7 @@ export async function callChat(
     const response = await fetch(chatUrl(), {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${env.NVIDIA_API_KEY}`,
+        Authorization: `Bearer ${env.GOOGLE_API_KEY}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -137,14 +150,14 @@ export async function callChat(
 
     if (!response.ok) {
       const text = await response.text().catch(() => "");
-      logger.error("[nvidia] chat call failed", {
+      logger.error("[google] chat call failed", {
         status: response.status,
         modelId: options.modelId,
         durationMs: Date.now() - start,
         bodyExcerpt: text.slice(0, 300),
       });
       throw new ChatApiError(
-        `NVIDIA chat API error (HTTP ${response.status}) for model ${options.modelId}: ${text || "no body"}`,
+        `Google chat API error (HTTP ${response.status}) for model ${options.modelId}: ${text || "no body"}`,
         response.status,
       );
     }
@@ -153,12 +166,12 @@ export async function callChat(
     const content = data.choices?.[0]?.message?.content;
     if (typeof content !== "string" || content.trim().length === 0) {
       throw new ChatApiError(
-        `NVIDIA chat API returned an empty response for model ${options.modelId}`,
+        `Google chat API returned an empty response for model ${options.modelId}`,
         502,
       );
     }
 
-    logger.info("[nvidia] chat call succeeded", {
+    logger.info("[google] chat call succeeded", {
       modelId: options.modelId,
       durationMs: Date.now() - start,
       finishReason: data.choices?.[0]?.finish_reason,
@@ -169,7 +182,7 @@ export async function callChat(
   } catch (err) {
     if (deadline.timedOut && !options.signal?.aborted) {
       throw new ChatApiError(
-        `NVIDIA chat call timed out after ${budgetMs}ms for model ${options.modelId}`,
+        `Google chat call timed out after ${budgetMs}ms for model ${options.modelId}`,
         504,
       );
     }
@@ -195,7 +208,7 @@ export async function callChatWithFallback(
     const candidate = chain[i]!;
     // Reserve time for at least one meaningful attempt beyond the first.
     if (i > 0 && Date.now() - chainStart > chainBudgetMs - 500) {
-      logger.warn("[nvidia] chain deadline exhausted; stopping fallback walk", {
+      logger.warn("[google] chain deadline exhausted; stopping fallback walk", {
         requested: options.modelId,
         elapsedMs: Date.now() - chainStart,
       });
@@ -204,7 +217,7 @@ export async function callChatWithFallback(
     try {
       const result = await callChat({ ...options, modelId: candidate });
       if (candidate !== options.modelId) {
-        logger.warn("[nvidia] primary model failed; fallback succeeded", {
+        logger.warn("[google] primary model failed; fallback succeeded", {
           requested: options.modelId,
           actual: candidate,
         });
@@ -215,7 +228,7 @@ export async function callChatWithFallback(
       if (!isRetryableError(err)) {
         throw err;
       }
-      logger.warn("[nvidia] candidate failed, trying next in chain", {
+      logger.warn("[google] candidate failed, trying next in chain", {
         candidate,
         error: err instanceof Error ? err.message : String(err),
       });
@@ -224,7 +237,7 @@ export async function callChatWithFallback(
 
   throw lastError instanceof Error
     ? lastError
-    : new ChatApiError("All NVIDIA chat models in the fallback chain failed.", 503);
+    : new ChatApiError("All Google chat models in the fallback chain failed.", 503);
 }
 
 function isRetryableError(err: unknown): boolean {
@@ -303,7 +316,7 @@ export async function streamFromCandidate(
     const upstream = await fetch(chatUrl(), {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${env.NVIDIA_API_KEY}`,
+        Authorization: `Bearer ${env.GOOGLE_API_KEY}`,
         "Content-Type": "application/json",
         Accept: "text/event-stream",
       },
@@ -324,7 +337,7 @@ export async function streamFromCandidate(
     if (!upstream.ok || !upstream.body) {
       const text = await upstream.text().catch(() => "");
       throw new ChatApiError(
-        `NVIDIA stream error (HTTP ${upstream.status}) for ${args.modelId}: ${text || "no body"}`,
+        `Google stream error (HTTP ${upstream.status}) for ${args.modelId}: ${text || "no body"}`,
         upstream.status,
       );
     }
@@ -375,15 +388,16 @@ export async function streamFromCandidate(
     const userAborted = args.signal?.aborted ?? false;
     if (!userAborted && totalFired) {
       throw new ChatApiError(
-        `NVIDIA stream exceeded total budget ${totalMs}ms for ${args.modelId}`,
+        `Google stream exceeded total budget ${totalMs}ms for ${args.modelId}`,
         504,
         assembled.length > 0,
       );
     }
     if (!userAborted && ttfbFired && assembled.length === 0) {
       throw new ChatApiError(
-        `NVIDIA stream time-to-first-byte exceeded ${ttfbMs}ms for ${args.modelId}`,
+        `Google stream time-to-first-byte exceeded ${ttfbMs}ms for ${args.modelId}`,
         504,
+        false,
       );
     }
     throw err;
