@@ -9,6 +9,7 @@ import {
   ALL_MODELS,
   DEFAULT_MODEL_ID,
   FALLBACK_MODELS,
+  LEGACY_MODEL_ALIASES,
   PRIMARY_MODELS,
   EMBEDDING,
   getFallbackChain,
@@ -16,6 +17,7 @@ import {
   getModelThinkingConfig,
   getModelTier,
   isValidModelId,
+  resolveModelId,
 } from "../models";
 
 describe("model registry", () => {
@@ -77,6 +79,23 @@ describe("getModelTier", () => {
   it("treats unknown models as standard (fail-open) but keeps z-ai/* premium", () => {
     expect(getModelTier("totally/unknown-model")).toBe("standard");
     expect(getModelTier("z-ai/legacy-glm")).toBe("premium");
+  });
+});
+
+describe("legacy NVIDIA aliases", () => {
+  it("resolves every retired id to a registered Flash model", () => {
+    for (const [legacy, canonical] of Object.entries(LEGACY_MODEL_ALIASES)) {
+      expect(isValidModelId(canonical)).toBe(true);
+      expect(resolveModelId(legacy)).toBe(canonical);
+      expect(isValidModelId(legacy)).toBe(true);
+      expect(getModel(legacy)?.id).toBe(canonical);
+    }
+  });
+
+  it("starts the fallback chain at the resolved id for legacy requests", () => {
+    const chain = getFallbackChain("moonshotai/kimi-k2.6");
+    expect(chain[0]).toBe("gemini-2.5-flash");
+    for (const id of chain) expect(isValidModelId(id)).toBe(true);
   });
 });
 

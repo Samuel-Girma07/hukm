@@ -11,7 +11,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { jsonError } from "@/lib/http";
 import { logger } from "@/lib/logger";
-import { isValidModelId } from "@/lib/models";
+import { isValidModelId, resolveModelId } from "@/lib/models";
 import { isAnalysisOwner } from "@/lib/ownership";
 import { getOrCreateSessionId, readSessionId } from "@/lib/session";
 import { getServerClient } from "@/lib/supabase";
@@ -69,7 +69,7 @@ function validateCreate(raw: unknown): ValidatedCreateBody | string {
     analysisId = body.analysisId.trim();
   }
 
-  return { scenarioDescription: scenarioDescription.trim(), modelId, analysisId };
+  return { scenarioDescription: scenarioDescription.trim(), modelId: resolveModelId(modelId), analysisId };
 }
 
 interface AnalysisResultRow {

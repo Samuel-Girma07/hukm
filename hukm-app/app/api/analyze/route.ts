@@ -32,7 +32,7 @@ import { trackEvent } from "@/lib/analytics";
 import { isValidCrimeCategory } from "@/lib/crimeCategories";
 import { getCachedAnalysis, setCachedAnalysis, type CachedAnalysisHit } from "@/lib/cache/analysisCache";
 import { hashScenario, hashSession } from "@/lib/hash";
-import { isValidModelId, CHAT_ENDPOINT, getFallbackChain, getModelThinkingConfig } from "@/lib/models";
+import { isValidModelId, resolveModelId, CHAT_ENDPOINT, getFallbackChain, getModelThinkingConfig } from "@/lib/models";
 import { computeConfidence, type ConfidenceAssessment } from "@/lib/confidence";
 import { callChatWithFallback, ChatApiError, streamFromCandidate } from "@/lib/nvidia";
 import { parseAnalysisResponse } from "@/lib/parser";
@@ -146,7 +146,7 @@ function validateBody(raw: unknown): ValidatedBody | string {
 
   return {
     scenario: trimmed,
-    modelId,
+    modelId: resolveModelId(modelId),
     language,
     crimeCategory,
     scenarioContext: ctx,

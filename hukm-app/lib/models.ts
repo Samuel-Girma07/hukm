@@ -166,6 +166,28 @@ export const FALLBACK_MODELS: readonly ChatModel[] = [
   },
 ] as const;
 
+/**
+ * Legacy NVIDIA-era model ids retired when chat moved to Google Flash.
+ * Old clients (cached JS, saved curl snippets) and existing DB rows
+ * (`conversations.model_id`, `analysis_results.model_id`) still carry
+ * them. Resolve to the closest Flash equivalent instead of rejecting.
+ */
+export const LEGACY_MODEL_ALIASES: Readonly<Record<string, string>> = {
+  "nvidia/nemotron-3-super-120b-a12b": "gemini-2.0-flash",
+  "moonshotai/kimi-k2.6": "gemini-2.5-flash",
+  "qwen/qwen3-coder-480b-a35b-instruct": "gemini-2.5-flash",
+  "meta/llama-4-maverick-17b-128e-instruct": "gemini-2.0-flash",
+  "qwen/qwen3.5-122b-a10b": "gemini-2.5-flash",
+  "nvidia/llama-3.3-nemotron-super-49b-v1.5": "gemini-2.0-flash",
+  "deepseek-ai/deepseek-v4-flash": "gemini-2.5-flash-lite",
+  "openai/gpt-oss-20b": "gemini-2.5-flash-lite",
+} as const;
+
+/** Maps a possibly-retired id to the registered canonical id. */
+export function resolveModelId(modelId: string): string {
+  return LEGACY_MODEL_ALIASES[modelId] ?? modelId;
+}
+
 export const ALL_MODELS: readonly ChatModel[] = [
   ...PRIMARY_MODELS,
   ...FALLBACK_MODELS.filter(
@@ -181,11 +203,11 @@ export const DEFAULT_MODEL_ID = PRIMARY_MODELS[1]!.id;
 // ---------------------------------------------------------------------------
 
 export function isValidModelId(modelId: string): boolean {
-  return ALL_MODELS.some((model) => model.id === modelId);
+  return ALL_MODELS.some((model) => model.id === resolveModelId(modelId));
 }
 
 export function getModel(modelId: string): ChatModel | undefined {
-  return ALL_MODELS.find((model) => model.id === modelId);
+  return ALL_MODELS.find((model) => model.id === resolveModelId(modelId));
 }
 
 /** Returns the raw model display name (for admin / technical surfaces). */
@@ -230,7 +252,8 @@ export function getModelThinkingConfig(
  * skipping duplicates.
  */
 export function getFallbackChain(requested: string): string[] {
-  const chain: string[] = [requested];
+  const resolved = resolveModelId(requested);
+  const chain: string[] = [resolved];
   for (const m of FALLBACK_MODELS) {
     if (!chain.includes(m.id)) chain.push(m.id);
   }

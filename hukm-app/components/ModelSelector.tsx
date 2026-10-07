@@ -45,20 +45,17 @@ function iconForModel(icon: ModelIcon): React.ReactNode {
 
 const MODEL_META: Record<string, ModelVisualMeta> = {
   // ── Primary models (kept in sync with lib/models.ts PRIMARY_MODELS) ──
-  "nvidia/nemotron-3-super-120b-a12b": {
+  "gemini-2.0-flash": {
     iconColor: "text-orange-400",
   },
-  "moonshotai/kimi-k2.6": {
+  "gemini-2.5-flash": {
     iconColor: "text-cyan-400",
     badge: "Most Popular",
     badgeClass:
       "text-[10px] font-semibold text-[rgb(var(--accent-blue))] bg-[rgb(var(--accent-blue))]/10 px-1.5 py-0.5 rounded-full border border-[rgb(var(--accent-blue))]/20",
   },
-  "qwen/qwen3-coder-480b-a35b-instruct": {
+  "gemini-2.5-flash-lite": {
     iconColor: "text-indigo-400",
-    badge: "Premium",
-    badgeClass:
-      "text-[9px] uppercase tracking-wider font-bold text-indigo-300 bg-gradient-to-r from-indigo-900/50 to-purple-900/50 px-2 py-0.5 rounded-full border border-indigo-500/30",
   },
 };
 

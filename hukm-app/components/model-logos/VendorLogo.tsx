@@ -29,6 +29,25 @@ export function VendorLogo({
   };
 
   switch (vendor) {
+    /* ── Google: G mark ── */
+    case "google":
+      return (
+        <svg {...shared}>
+          <circle cx="12" cy="12" r="11" fill="#4285F4" />
+          <text
+            x="12"
+            y="16.5"
+            textAnchor="middle"
+            fontSize="12"
+            fontWeight="bold"
+            fill="#fff"
+            fontFamily="sans-serif"
+          >
+            G
+          </text>
+        </svg>
+      );
+
     /* ── NVIDIA: stylised eye ── */
     case "nvidia":
       return (
